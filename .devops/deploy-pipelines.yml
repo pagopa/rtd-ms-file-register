@@ -138,7 +138,8 @@ stages:
                       ./kustomize edit set image rtdmsingestor=$(containerRegistry)/$(imageRepository):latest
                       rm -rf kustomize
                       cd $(Pipeline.Workspace)
-                      echo $(containerRegistry)
+                      echo $(deployNamespace)
+                      echo $(containerRegistry)/$(imageRepository):$(pomversion)
                     failOnStderr: true
                 - task: KubernetesManifest@0
                   displayName: Customize Manifest
@@ -156,11 +157,3 @@ stages:
                     namespace: '$(deployNamespace)'
                     manifests: $(customizeManifest.manifestsBundle)
                     containers: '$(containerRegistry)/$(imageRepository):$(pomversion)'
-            on:
-              failure:
-                steps:
-                  - script: echo This is on failure
-                  - script: echo $(containerRegistry)
-                  - script: echo $(namespace)
-                  - script: echo $(manifests)
-                  - script: echo $(containers)
