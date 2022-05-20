@@ -160,4 +160,4 @@ stages:
                     kubernetesServiceConnection: ${{ variables.kubernetesServiceConnection }}
                     namespace: '$(deployNamespace)'
                     manifests: $(customizeManifest.manifestsBundle)
-                    containers: "$(containerRegistry)/$(imageRepository):$(pomversion)"
+                    containers: "${variables.containerRegistry}/${variables.imageRepository}:${variables.pomversion}"
