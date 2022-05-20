@@ -156,10 +156,14 @@ stages:
                     namespace: '$(deployNamespace)'
                     manifests:  $(customizeManifest.manifestsBundle)
                     containers: '$(containerRegistry)/$(imageRepository):$(pomversion)'
-                    script: |
-                      echo "Debug print"
-                      echo $(containerRegistry)
-                      echo $(namespace)
-                      echo $(manifests)
-                      echo $(containers)
-                      echo "End debug print"
+                - task: Bash@3
+                    displayName: Debug print
+                    name: debugPrint
+                    inputs:
+                      targetType: 'inline'
+                      script: |
+                        echo $(containerRegistry)
+                        echo $(namespace)
+                        echo $(manifests)
+                        echo $(containers)
+                      failOnStderr: true
