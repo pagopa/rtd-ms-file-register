@@ -1,4 +1,4 @@
-package it.gov.pagopa.rtd.ms.rtdmsfileregister;
+package it.gov.pagopa.rtd.ms.rtdmsfileregister.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
