@@ -156,7 +156,11 @@ stages:
                     namespace: '$(deployNamespace)'
                     manifests: $(customizeManifest.manifestsBundle)
                     containers: '$(containerRegistry)/$(imageRepository):$(pomversion)'
-                - script: echo $(containerRegistry)
-                - script: echo $(namespace)
-                - script: echo $(manifests)
-                - script: echo $(containers)
+            on:
+              failure:
+                steps:
+                  - script: echo This is on failure
+                  - script: echo $(containerRegistry)
+                  - script: echo $(namespace)
+                  - script: echo $(manifests)
+                  - script: echo $(containers)
