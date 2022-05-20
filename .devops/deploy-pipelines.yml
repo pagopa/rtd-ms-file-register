@@ -139,9 +139,6 @@ stages:
                       rm -rf kustomize
                       cd $(Pipeline.Workspace)
                       echo $(containerRegistry)
-                      namespace: '$(deployNamespace)'
-                                          manifests:  $(customizeManifest.manifestsBundle)
-                                          containers: '$(containerRegistry)/$(imageRepository):$(pomversion)'
                     failOnStderr: true
                 - task: KubernetesManifest@0
                   displayName: Customize Manifest
