@@ -138,6 +138,7 @@ stages:
                       ./kustomize edit set image rtdmsingestor=$(containerRegistry)/$(imageRepository):latest
                       rm -rf kustomize
                       cd $(Pipeline.Workspace)
+                      echo $(containerRegistry)
                     failOnStderr: true
                 - task: KubernetesManifest@0
                   displayName: Customize Manifest
