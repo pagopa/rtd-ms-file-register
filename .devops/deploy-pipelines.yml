@@ -104,7 +104,7 @@ stages:
 
   - stage: 'Deploy'
     displayName: 'Deploy to ${{ variables.environment }} K8S'
-    dependsOn: ['Release', 'Build']
+    dependsOn: [ 'Release', 'Build' ]
     condition: and(succeeded(), eq(variables.isToDeploy, true))
     variables:
       pomversion: $[ stageDependencies.Release.POM.outputs['getpomversion.outputpomversion'] ]
@@ -124,7 +124,7 @@ stages:
                     buildType: 'current'
                     artifactName: 'manifests'
                     targetPath: '$(Pipeline.Workspace)/manifests'
-        
+
                 - task: Bash@3
                   displayName: Generate Kustomization
                   name: generateKustomization
@@ -154,16 +154,9 @@ stages:
                     rolloutStatusTimeout: 180
                     kubernetesServiceConnection: ${{ variables.kubernetesServiceConnection }}
                     namespace: '$(deployNamespace)'
-                    manifests:  $(customizeManifest.manifestsBundle)
+                    manifests: $(customizeManifest.manifestsBundle)
                     containers: '$(containerRegistry)/$(imageRepository):$(pomversion)'
-                - task: Bash@3
-                    displayName: Debug print
-                    name: debugPrint
-                    inputs:
-                      targetType: 'inline'
-                      script: |
-                        echo $(containerRegistry)
-                        echo $(namespace)
-                        echo $(manifests)
-                        echo $(containers)
-                      failOnStderr: true
+                - script: echo $(containerRegistry)
+                - script: echo $(namespace)
+                - script: echo $(manifests)
+                - script: echo $(containers)
