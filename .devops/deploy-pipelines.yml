@@ -141,6 +141,10 @@ stages:
                       echo $(deployNamespace)
                       echo $(containerRegistry)/$(imageRepository):$(pomversion)
                     failOnStderr: true
+                - task: CmdLine@2
+                  displayName: Print manifestsBundle
+                  inputs:
+                    script: 'echo $(customizeManifest.manifestsBundle)'
                 - task: KubernetesManifest@0
                   displayName: Customize Manifest
                   name: customizeManifest
