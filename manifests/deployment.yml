@@ -17,8 +17,8 @@ spec:
           image: rtdmsfileregister
           imagePullPolicy: Always
           envFrom:
-            - configMapRef:
-                name: rtdmsfileregister
+#            - configMapRef:
+#                name: rtdmsfileregister
             # - secretRef:
             #     name: application-insights
             # - secretRef:
