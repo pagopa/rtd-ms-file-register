@@ -12,7 +12,7 @@ public class RtdFileCrudService {
   private RtdFileRepository repository;
 
   public boolean storeRtdFileStatus(RtdFile f){
-    repository.save(f);
+    repository.insert(f);
     return true;
   }
 }
