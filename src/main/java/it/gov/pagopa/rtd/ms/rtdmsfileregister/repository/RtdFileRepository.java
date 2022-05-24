@@ -24,6 +24,5 @@ import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.RtdFile;
 
 public interface RtdFileRepository extends MongoRepository<RtdFile, String> {
 
-  List<RtdFile> findByEnabled(boolean enabled);
-
+  RtdFile insert(RtdFile f);
 }
