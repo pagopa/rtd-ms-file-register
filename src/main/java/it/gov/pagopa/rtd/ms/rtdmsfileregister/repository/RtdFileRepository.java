@@ -1,8 +1,7 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.repository;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.List;
-import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.RtdFile;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadata;
 
 // import org.springframework.data.repository.CrudRepository;
 // import org.springframework.stereotype.Repository;
@@ -22,7 +21,7 @@ import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.RtdFile;
 
 
 
-public interface RtdFileRepository extends MongoRepository<RtdFile, String> {
+public interface RtdFileRepository extends MongoRepository<FileMetadata, String> {
 
-  RtdFile insert(RtdFile f);
+  FileMetadata insert(FileMetadata f);
 }

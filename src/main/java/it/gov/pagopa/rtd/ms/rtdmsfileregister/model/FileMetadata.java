@@ -1,15 +1,11 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.model;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
@@ -18,7 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document("fileregister")
-public class RtdFile {
+public class FileMetadata {
 
   private String name;
 

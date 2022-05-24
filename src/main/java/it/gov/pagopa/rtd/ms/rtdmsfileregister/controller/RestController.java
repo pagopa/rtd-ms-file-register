@@ -1,8 +1,7 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.controller;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiParam;
-import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.RtdFile;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadata;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -33,5 +32,5 @@ public interface RestController {
 
   @PutMapping(value = "/file-status")
   ResponseEntity<String> updateFileStatus(@RequestParam(value = "filename") String fileName,
-      @RequestBody RtdFile body);
+      @RequestBody FileMetadata body);
 }

@@ -1,9 +1,7 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.RtdFile;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadata;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.RtdFileCrudService;
 import java.util.HashMap;
 import javax.validation.constraints.NotBlank;
@@ -25,7 +23,7 @@ public class RestControllerImpl implements
   @Autowired
   RtdFileCrudService service;
 
-  private HashMap<String, RtdFile> dbStub = new HashMap<>();
+  private HashMap<String, FileMetadata> dbStub = new HashMap<>();
 
 
   ObjectMapper mapper = new ObjectMapper();
@@ -54,7 +52,7 @@ public class RestControllerImpl implements
 
   @Override
   public ResponseEntity<String> updateFileStatus(@NotNull @NotBlank String fileName,
-      @NotNull @NotBlank RtdFile body) {
+      @NotNull @NotBlank FileMetadata body) {
 
     HttpHeaders headers = new HttpHeaders();
 //    RtdFile tmpFile = null;
@@ -96,8 +94,8 @@ public class RestControllerImpl implements
     return new ResponseEntity<>(headers, HttpStatus.OK);
   }
 
-  public void resetDbStub() {
-//    repository.deleteAll();
-//    this.dbStub = new HashMap<>();
-  }
+//  public void resetDbStub() {
+////    repository.deleteAll();
+////    this.dbStub = new HashMap<>();
+//  }
 }
