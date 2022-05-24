@@ -1,0 +1,64 @@
+#logging:
+#  level:
+#    root: INFO
+#
+#file-register:
+#  resources:
+#    base:
+#      path: src/test/resources
+#  api:
+#    baseurl: https://${CSV_FILE_REGISTER_HOST:internal.it}
+#  blobclient:
+#    basepath: storage
+#    apikey: ${INTERNAL_SERVICES_API_KEY:myapikey}
+#    sourceContainers:
+#      decrypterContatiner: rtd-transactions-*
+#      ingestorContainer: rtd-transactions-decrypted
+#
+#---
+spring:
+  data:
+    mongodb:
+      uri: ${MONGODB_CONNECTION_URI:mongodb://cstar-d-cosmos-mongo-db-account:${MONGODB_KEY}==@cstar-d-cosmos-mongo-db-account.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@cstar-d-cosmos-mongo-db-account@}
+      database: ${MONGODB_NAME:fileregister}
+#  application:
+#    name: "@project.parent.artifactId@"
+#    version: "@project.version@"
+#    profiles:
+#      include:
+#        # TO enable italian documentations
+#        - swaggerIT
+#  config:
+#    activate:
+#      on-profile: default
+#  cloud:
+#    stream:
+#      source: rtdTrxProducer
+#      function:
+#        definition: deadLetterQueueConsumer
+#      bindings:
+#        deadLetterQueueConsumer-in-0: # name must match [handler name]-in-0
+#          destination: rtd-platform-events-dlq
+#          group: rtd-file-register-consumer-group
+#          content-type: application/json
+#          binder: rtd-dlq
+#      binders:
+#        rtd-dlq:
+#          type: kafka
+#          environment:
+#            spring:
+#              cloud:
+#                stream:
+#                  kafka:
+#                    binder:
+#                      auto-create-topics: false
+#                      brokers: ${KAFKA_BROKER}
+#                      configuration:
+#                        sasl:
+#                          jaas:
+#                            config: ${KAFKA_SASL_JAAS_CONFIG_PRODUCER_RTD_TRX}
+#                          mechanism: PLAIN
+#                        security:
+#                          protocol: SASL_SSL
+#                        default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+#                        default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
