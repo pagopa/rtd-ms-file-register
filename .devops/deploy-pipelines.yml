@@ -135,11 +135,9 @@ stages:
                       rm -rf kustomization.*
                       curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
                       ./kustomize create --autodetect
-                      ./kustomize edit set image rtdmsingestor=$(containerRegistry)/$(imageRepository):latest
+                      ./kustomize edit set image rtdmsfileregister=$(containerRegistry)/$(imageRepository):latest
                       rm -rf kustomize
                       cd $(Pipeline.Workspace)
-                      echo $(deployNamespace)
-                      echo $(containerRegistry)/$(imageRepository):$(pomversion)
                     failOnStderr: true
                 - task: CmdLine@2
                   displayName: Print manifestsBundle
