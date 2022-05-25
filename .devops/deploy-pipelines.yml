@@ -139,10 +139,6 @@ stages:
                       rm -rf kustomize
                       cd $(Pipeline.Workspace)
                     failOnStderr: true
-                - task: CmdLine@2
-                  displayName: Print manifestsBundle
-                  inputs:
-                    script: 'echo $(customizeManifest.manifestsBundle)'
                 - task: KubernetesManifest@0
                   displayName: Customize Manifest
                   name: customizeManifest
