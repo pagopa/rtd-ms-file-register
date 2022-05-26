@@ -34,6 +34,5 @@ public interface RestController {
   ResponseEntity<String> setFileStatus(@RequestBody FileMetadataDTO body);
 
   @DeleteMapping(value = "/file-status")
-  @ResponseBody
   ResponseEntity<String> deleteFileMetadata();
 }
