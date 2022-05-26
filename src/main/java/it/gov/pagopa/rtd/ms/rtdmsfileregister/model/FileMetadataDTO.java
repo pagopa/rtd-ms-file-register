@@ -6,23 +6,19 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document("fileregister")
-public class FileMetadata {
+public class FileMetadataDTO {
 
   private String name;
 
   private String hash;
 
-
   private int numTrx;
-
 
   private int numAggregates;
 
@@ -35,5 +31,4 @@ public class FileMetadata {
   private int numChunks;
 
   private int status;
-
 }
