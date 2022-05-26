@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadata;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.RtdFileCrudService;
 import java.util.HashMap;
+import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
@@ -23,31 +24,14 @@ public class RestControllerImpl implements
   @Autowired
   RtdFileCrudService service;
 
-  private HashMap<String, FileMetadata> dbStub = new HashMap<>();
-
-
-  ObjectMapper mapper = new ObjectMapper();
-
   @Override
   public void healthCheck() {
     //Return OK if the service is reachable
   }
 
   @Override
-  public ResponseEntity<String> getFileStatus(@NotNull @NotBlank String fileName) {
-    HttpHeaders headers = new HttpHeaders();
-//
-//    //if (repository.findByName(fileName) == null) {
-//    if (dbStub.get(fileName) == null) {
-//      headers.add("Error", "file not found");
-//      return new ResponseEntity<>(headers, HttpStatus.NOT_FOUND);
-//    }
-//
-//    //int tmpStaus = repository.findByName(fileName).getStatus();
-//    int tmpStaus = dbStub.get(fileName).getStatus();
-//
-//    headers.add("current-status", String.valueOf(tmpStaus));
-    return new ResponseEntity<>(headers, HttpStatus.OK);
+  public List<FileMetadata> getFileStatus() {
+    return service.retrieveFileMetadata();
   }
 
   @Override
@@ -94,8 +78,8 @@ public class RestControllerImpl implements
     return new ResponseEntity<>(headers, HttpStatus.OK);
   }
 
-//  public void resetDbStub() {
-////    repository.deleteAll();
-////    this.dbStub = new HashMap<>();
-//  }
+  public void resetDbStub() {
+//    repository.deleteAll();
+//    this.dbStub = new HashMap<>();
+  }
 }

@@ -2,6 +2,8 @@ package it.gov.pagopa.rtd.ms.rtdmsfileregister.controller;
 
 import io.swagger.annotations.Api;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadata;
+import java.util.List;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadata;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -25,9 +27,7 @@ public interface RestController {
   void healthCheck();
 
   @GetMapping(value = "/file-status")
-  ResponseEntity<String> getFileStatus(
-      //@ApiParam(value = "${swagger.filestatus.filename}", required = true) String fileName);
-      @RequestParam(value = "filename") String fileName);
+  List<FileMetadata> getFileStatus();
 
 
   @PutMapping(value = "/file-status")
