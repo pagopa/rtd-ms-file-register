@@ -75,8 +75,12 @@ public class RestControllerImpl implements
     return new ResponseEntity<>(headers, HttpStatus.OK);
   }
 
-  public void resetDbStub() {
-//    repository.deleteAll();
-//    this.dbStub = new HashMap<>();
+  @Override
+  public ResponseEntity<String> deleteFileMetadata() {
+    HttpHeaders headers = new HttpHeaders();
+
+    service.deleteFileMetadata();
+    return new ResponseEntity<>(headers, HttpStatus.OK);
   }
+
 }

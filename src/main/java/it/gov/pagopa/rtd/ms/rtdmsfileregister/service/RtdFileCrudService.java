@@ -25,4 +25,9 @@ public class RtdFileCrudService {
   public List<FileMetadataDTO> retrieveFileMetadata(){
     return Arrays.asList(modelMapper.map(repository.findAll(), FileMetadataDTO[].class));
   }
+
+  public boolean deleteFileMetadata(){
+    repository.deleteAll();
+    return true;
+  }
 }
