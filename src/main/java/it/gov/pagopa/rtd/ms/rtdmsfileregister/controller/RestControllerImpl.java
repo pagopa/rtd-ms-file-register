@@ -1,9 +1,7 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadata;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.RtdFileCrudService;
-import java.util.HashMap;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -30,13 +28,12 @@ public class RestControllerImpl implements
   }
 
   @Override
-  public List<FileMetadata> getFileStatus() {
+  public List<FileMetadataDTO> getFileStatus() {
     return service.retrieveFileMetadata();
   }
 
   @Override
-  public ResponseEntity<String> updateFileStatus(@NotNull @NotBlank String fileName,
-      @NotNull @NotBlank FileMetadata body) {
+  public ResponseEntity<String> setFileStatus(@NotNull @NotBlank FileMetadataDTO body) {
 
     HttpHeaders headers = new HttpHeaders();
 //    RtdFile tmpFile = null;
