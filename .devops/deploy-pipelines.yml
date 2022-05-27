@@ -104,7 +104,7 @@ stages:
 
   - stage: 'Deploy'
     displayName: 'Deploy to ${{ variables.environment }} K8S'
-    dependsOn: ['Release', 'Build']
+    dependsOn: [ 'Release', 'Build' ]
     condition: and(succeeded(), eq(variables.isToDeploy, true))
     variables:
       pomversion: $[ stageDependencies.Release.POM.outputs['getpomversion.outputpomversion'] ]
@@ -135,7 +135,7 @@ stages:
                       rm -rf kustomization.*
                       curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
                       ./kustomize create --autodetect
-                      ./kustomize edit set image rtdmsingestor=$(containerRegistry)/$(imageRepository):latest
+                      ./kustomize edit set image rtdmsfileregister=$(containerRegistry)/$(imageRepository):latest
                       rm -rf kustomize
                       cd $(Pipeline.Workspace)
                     failOnStderr: true
@@ -153,5 +153,5 @@ stages:
                     rolloutStatusTimeout: 180
                     kubernetesServiceConnection: ${{ variables.kubernetesServiceConnection }}
                     namespace: '$(deployNamespace)'
-                    manifests:  $(customizeManifest.manifestsBundle)
-                    containers: '$(containerRegistry)/$(imageRepository):$(pomversion)'
+                    manifests: $(customizeManifest.manifestsBundle)
+                    containers: "${variables.containerRegistry}/${variables.imageRepository}:${variables.pomversion}"
