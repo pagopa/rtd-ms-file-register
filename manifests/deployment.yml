@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rtdmsfileregister
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rtdmsfileregister
+  template:
+    metadata:
+      labels:
+        app: rtdmsfileregister
+    spec:
+      containers:
+        - name: rtdmsfileregister
+          image: rtdmsfileregister
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Always
+          envFrom:
+#            - configMapRef:
+#                name: rtdmsfileregister
+            # - secretRef:
+            #     name: application-insights
+            # - secretRef:
+            #     name: rtd-blob-storage-events
+            # - secretRef:
+            #     name: rtd-internal-api
+            - secretRef:
+                name: mongo-credentials
+          resources:
+            limits:
+              cpu: 500m
+              memory: 4Gi
+            requests:
+              cpu: 50m
+              memory: 256Mi
+
+
+
