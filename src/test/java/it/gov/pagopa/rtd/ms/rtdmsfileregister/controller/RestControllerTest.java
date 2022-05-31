@@ -14,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-//@RunWith(SpringRunner.class)
 @WebMvcTest(RestControllerImpl.class)
 @Slf4j
 class RestControllerTest {
@@ -31,12 +30,21 @@ class RestControllerTest {
 
   @Test
   void shouldGetMetadata() throws Exception {
-    //insertDummy();
+    mockMvc.perform(MockMvcRequestBuilders
+            .get(BASE_URI + METADATA_ENDPOINT)
+            .param("filename", "test")
+            .accept(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  void shouldNotGetNullFilename() throws Exception {
     mockMvc.perform(MockMvcRequestBuilders
             .get(BASE_URI + METADATA_ENDPOINT)
             .accept(MediaType.APPLICATION_JSON))
         .andDo(print())
-        .andExpect(status().isOk());
+        .andExpect(status().isBadRequest());
   }
 
   @Test
@@ -45,13 +53,14 @@ class RestControllerTest {
             .put(BASE_URI + METADATA_ENDPOINT)
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"name\":\"test0\",\"hash\":\"abc\",\"numTrx\":5,\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":0}")
-            .accept(MediaType.TEXT_PLAIN))
+            .accept(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isOk());
   }
 
   @ParameterizedTest
   @ValueSource(strings = {
+      "",
       "{\"name\":\"test0\",\"hash\":\"abc\",\"numTrx\":\"wrong value\",\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":0}",
       "{\"name\":\"test0\",\"hash\":\"abc\",\"numTrx\":5,\"numAggregates\":\"wrong value\",\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":0}",
       "{\"name\":\"test0\",\"hash\":\"abc\",\"numTrx\":5,\"numAggregates\":2,\"amountAde\":\"wrong value\",\"amountRtd\":700,\"numChunks\":5,\"status\":0}",
@@ -62,9 +71,9 @@ class RestControllerTest {
   void shouldNotPut(String body) throws Exception {
     mockMvc.perform(MockMvcRequestBuilders
             .put(BASE_URI + METADATA_ENDPOINT)
-            .contentType(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(body)
-            .accept(MediaType.TEXT_PLAIN))
+            .accept(MediaType.APPLICATION_JSON_VALUE))
         .andDo(print())
         .andExpect(status().isBadRequest());
   }
@@ -73,9 +82,19 @@ class RestControllerTest {
   void shouldDelete() throws Exception {
     mockMvc.perform(MockMvcRequestBuilders
             .delete(BASE_URI + METADATA_ENDPOINT)
-            .accept(MediaType.TEXT_PLAIN))
+            .param("filename", "test")
+            .accept(MediaType.APPLICATION_JSON_VALUE))
         .andDo(print())
         .andExpect(status().isOk());
+  }
+
+  @Test
+  void shouldNotDeleteNullFilename() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders
+            .delete(BASE_URI + METADATA_ENDPOINT)
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
   }
 
 }
