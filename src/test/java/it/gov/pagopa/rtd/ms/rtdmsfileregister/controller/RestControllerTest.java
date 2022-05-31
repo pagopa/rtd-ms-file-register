@@ -29,17 +29,6 @@ class RestControllerTest {
 
   static String METADATA_ENDPOINT = "/file-status";
 
-  static String HEALTHCHECK_ENDPOINT = "/";
-
-  @Test
-  void shouldGetHealthcheck() throws Exception {
-    mockMvc.perform(MockMvcRequestBuilders
-            .get(BASE_URI+HEALTHCHECK_ENDPOINT)
-            .accept(MediaType.APPLICATION_JSON))
-        .andDo(print())
-        .andExpect(status().isOk());
-  }
-
   @Test
   void shouldGetMetadata() throws Exception {
     //insertDummy();
