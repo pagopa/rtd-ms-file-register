@@ -5,6 +5,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -29,17 +31,8 @@ class RestControllerTest {
 
   static String HEALTHCHECK_ENDPOINT = "/";
 
-  void insertDummy() throws Exception {
-    mockMvc.perform(MockMvcRequestBuilders
-        .put(BASE_URI + METADATA_ENDPOINT)
-        .param("filename", "prova")
-        .content("{\"status\":5}")
-        .accept(MediaType.TEXT_PLAIN));
-  }
-
   @Test
   void shouldGetHealthcheck() throws Exception {
-    //insertDummy();
     mockMvc.perform(MockMvcRequestBuilders
             .get(BASE_URI+HEALTHCHECK_ENDPOINT)
             .accept(MediaType.APPLICATION_JSON))
@@ -68,12 +61,20 @@ class RestControllerTest {
         .andExpect(status().isOk());
   }
 
-  @Test
-  void shouldNotPut() throws Exception {
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "{\"name\":\"test0\",\"hash\":\"abc\",\"numTrx\":\"wrong value\",\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":0}",
+      "{\"name\":\"test0\",\"hash\":\"abc\",\"numTrx\":5,\"numAggregates\":\"wrong value\",\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":0}",
+      "{\"name\":\"test0\",\"hash\":\"abc\",\"numTrx\":5,\"numAggregates\":2,\"amountAde\":\"wrong value\",\"amountRtd\":700,\"numChunks\":5,\"status\":0}",
+      "{\"name\":\"test0\",\"hash\":\"abc\",\"numTrx\":5,\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":\"wrong value\",\"numChunks\":5,\"status\":0}",
+      "{\"name\":\"test0\",\"hash\":\"abc\",\"numTrx\":5,\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":\"wrong value\",\"status\":0}",
+      "{\"name\":\"test0\",\"hash\":\"abc\",\"numTrx\":5,\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":\"wrong value\"}",
+  })
+  void shouldNotPut(String body) throws Exception {
     mockMvc.perform(MockMvcRequestBuilders
             .put(BASE_URI + METADATA_ENDPOINT)
             .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"name\":\"test0\",\"hash\":\"abc\",\"numTrx\":\"test\",\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":0}")
+            .content(body)
             .accept(MediaType.TEXT_PLAIN))
         .andDo(print())
         .andExpect(status().isBadRequest());
@@ -88,40 +89,4 @@ class RestControllerTest {
         .andExpect(status().isOk());
   }
 
-//  @Test
-//  void shouldFailGetNotFound() throws Exception {
-//    mockMvc.perform(MockMvcRequestBuilders
-//            .get(BASE_URI + ENDPOINT)
-//            .param("filename", "prova")
-//            .accept(MediaType.TEXT_PLAIN))
-//        .andDo(print())
-//        .andExpect(status().isNotFound())
-//        .andExpect(header().string("Error", "file not found"));
-//  }
-//
-//  @Test
-//  void shouldFailGetNoParam() throws Exception {
-//    mockMvc.perform(MockMvcRequestBuilders
-//            .get(BASE_URI + ENDPOINT)
-//            .accept(MediaType.TEXT_PLAIN))
-//        .andDo(print())
-//        .andExpect(status().isBadRequest());
-//  }
-//
-//  @ParameterizedTest
-//  @ValueSource(strings = {
-//      "{\"status\":1}",
-//      "{\"status\":2}"
-//  })
-//  void shouldPutStatus(String body) throws Exception {
-//    mockMvc.perform(MockMvcRequestBuilders
-//            .put(BASE_URI + ENDPOINT)
-//            .param("filename", "prova")
-//            .content(body)
-//            .accept(MediaType.TEXT_PLAIN)
-//            .accept(MediaType.APPLICATION_JSON))
-//        .andDo(print())
-//        .andExpect(status().isOk())
-//        .andExpect(header().string("current-status", body.split(":")[1].replace("}", "")));
-//  }
 }
