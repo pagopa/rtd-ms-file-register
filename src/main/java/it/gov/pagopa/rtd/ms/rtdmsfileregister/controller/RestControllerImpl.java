@@ -18,11 +18,6 @@ public class RestControllerImpl implements
     it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController {
 
   @Override
-  public void healthCheck() {
-    //Return OK if the service is reachable
-  }
-
-  @Override
   public List<FileMetadataDTO> getFileStatus() {
     FileMetadataDTO stub = new FileMetadataDTO("test0", "abc", 5, 2, new BigDecimal(900),
         new BigDecimal(700), 5, 0);
