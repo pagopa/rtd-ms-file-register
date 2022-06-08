@@ -33,10 +33,10 @@ public class FileMetadataEntity {
   private String hash;
 
   @Min(value = 0, message = "The value must be positive")
-  private int numTrx;
+  private Integer numTrx;
 
   @Min(value = 0, message = "The value must be positive")
-  private int numAggregates;
+  private Integer numAggregates;
 
   @Min(value = 0, message = "The value must be positive")
   private BigDecimal amountAde;
@@ -45,10 +45,9 @@ public class FileMetadataEntity {
   private BigDecimal amountRtd;
 
   @Min(value = 0, message = "The value must be positive")
-  private int numChunks;
+  private Integer numChunks;
 
   @NotNull
-  @NotBlank
-  private int status;
+  private Integer status;
 
 }
