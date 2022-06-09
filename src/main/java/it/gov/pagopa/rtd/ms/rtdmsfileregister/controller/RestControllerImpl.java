@@ -1,12 +1,14 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.FileMetadataService;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -15,61 +17,65 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @ResponseBody
 @Slf4j
-public class RestControllerImpl implements
+class RestControllerImpl implements
     it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController {
 
-  protected ObjectMapper objectMapper = new ObjectMapper();
-
-  static String testFilemetadata = "{\"name\":\"presentFilename\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":5,\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":0}";
+  @Autowired
+  FileMetadataService fileMetadataService;
 
   @Override
-  public List<FileMetadataDTO> getFileMetadata(String filename) {
+  public FileMetadataDTO getFileMetadata(@Valid @NotNull @NotBlank String filename) {
     log.info("Received GET [{}]", filename);
 
-    FileMetadataDTO updatedTestFileMetadataDTO;
-
-    try {
-      updatedTestFileMetadataDTO = objectMapper.readValue(testFilemetadata, FileMetadataDTO.class);
-    } catch (JsonProcessingException e) {
-      updatedTestFileMetadataDTO = null;
+    FileMetadataDTO retrieved = fileMetadataService.retrieveFileMetadata(filename);
+    if (retrieved == null) {
+      throw new FilenameNotPresent();
     }
 
-    return List.of(updatedTestFileMetadataDTO);
+    return retrieved;
   }
 
   @Override
-  public FileMetadataDTO putFileMetadata(FileMetadataDTO body) {
-    log.info("Received PUT [{}]", body);
+  public FileMetadataDTO setFileMetadata(FileMetadataDTO body) {
+    log.info("Received POST [{}]", body);
 
-    return body;
+    return fileMetadataService.storeFileMetadata(body);
   }
 
   @Override
-  public List<FileMetadataDTO> deleteFileMetadata(String filename) {
+  public FileMetadataDTO deleteFileMetadata(String filename) {
     log.info("Received DELETE [{}]", filename);
 
-    FileMetadataDTO updatedTestFileMetadataDTO;
-
-    try {
-      updatedTestFileMetadataDTO = objectMapper.readValue(testFilemetadata, FileMetadataDTO.class);
-    } catch (JsonProcessingException e) {
-      updatedTestFileMetadataDTO = null;
-    }
-    return List.of(updatedTestFileMetadataDTO);
-  }
-
-    @Override
-    public Map<String, String> handleValidationExceptions (MethodArgumentNotValidException ex){
-      {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-          String fieldName = ((FieldError) error).getField();
-          String errorMessage = error.getDefaultMessage();
-          errors.put(fieldName, errorMessage);
-        });
-        log.error(String.valueOf(errors));
-        return errors;
-      }
+    FileMetadataDTO deleted = fileMetadataService.deleteFileMetadata(filename);
+    if (deleted == null) {
+      throw new FilenameNotPresent();
     }
 
+    return deleted;
   }
+
+  @Override
+  public FileMetadataDTO updateFileMetadata(FileMetadataDTO metadata) {
+    log.info("Received PUT [{}]", metadata);
+
+    FileMetadataDTO deleted = fileMetadataService.updateFileMetadata(metadata);
+    if (deleted == null) {
+      throw new FilenameNotPresent();
+    }
+
+    return deleted;
+  }
+
+  @Override
+  public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    Map<String, String> errors = new HashMap<>();
+    ex.getBindingResult().getAllErrors().forEach(error -> {
+      String fieldName = ((FieldError) error).getField();
+      String errorMessage = error.getDefaultMessage();
+      errors.put(fieldName, errorMessage);
+    });
+    log.error(String.valueOf(errors));
+    return errors;
+  }
+
+}
