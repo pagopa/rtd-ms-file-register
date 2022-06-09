@@ -1,5 +1,6 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
@@ -26,7 +27,7 @@ public class RestControllerImpl implements
 
     try {
       updatedTestFileMetadataDTO = objectMapper.readValue(testFilemetadata, FileMetadataDTO.class);
-    } catch (JsonMappingException e) {
+    } catch (JsonProcessingException e) {
       updatedTestFileMetadataDTO = null;
     }
 
@@ -48,7 +49,7 @@ public class RestControllerImpl implements
 
     try {
       updatedTestFileMetadataDTO = objectMapper.readValue(testFilemetadata, FileMetadataDTO.class);
-    } catch (JsonMappingException e) {
+    } catch (JsonProcessingException e) {
       updatedTestFileMetadataDTO = null;
     }
 
