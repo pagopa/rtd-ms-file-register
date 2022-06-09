@@ -1,7 +1,9 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
-import java.math.BigDecimal;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -13,14 +15,25 @@ import org.springframework.web.bind.annotation.RestController;
 public class RestControllerImpl implements
     it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController {
 
+  protected ObjectMapper objectMapper = new ObjectMapper();
+
+  static String TEST_FILE_METADATA = "{\"name\":\"presentFilename\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":5,\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":0}";
+
   @Override
   public List<FileMetadataDTO> getFileMetadata(String filename) {
     log.info("Received GET [{}]", filename);
 
-    FileMetadataDTO stub = new FileMetadataDTO(filename, "abc", 5, 2, new BigDecimal(900),
-        new BigDecimal(700), 5, 0);
+    FileMetadataDTO updatedTestFileMetadataDTO;
 
-    return List.of(stub);
+    try {
+      updatedTestFileMetadataDTO = objectMapper.readValue(TEST_FILE_METADATA, FileMetadataDTO.class);
+    } catch (JsonMappingException e) {
+      throw new RuntimeException(e);
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
+
+    return List.of(updatedTestFileMetadataDTO);
   }
 
   @Override
@@ -34,10 +47,17 @@ public class RestControllerImpl implements
   public List<FileMetadataDTO> deleteFileMetadata(String filename) {
     log.info("Received DELETE [{}]", filename);
 
-    FileMetadataDTO stub = new FileMetadataDTO(filename, "abc", 5, 2, new BigDecimal(900),
-        new BigDecimal(700), 5, 0);
+    FileMetadataDTO updatedTestFileMetadataDTO;
 
-    return List.of(stub);
+    try {
+      updatedTestFileMetadataDTO = objectMapper.readValue(TEST_FILE_METADATA, FileMetadataDTO.class);
+    } catch (JsonMappingException e) {
+      throw new RuntimeException(e);
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
+
+    return List.of(updatedTestFileMetadataDTO);
   }
 
 }
