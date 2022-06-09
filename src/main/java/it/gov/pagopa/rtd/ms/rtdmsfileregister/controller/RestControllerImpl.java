@@ -1,14 +1,12 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
-import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.FileMetadataService;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -57,19 +55,21 @@ public class RestControllerImpl implements
     } catch (JsonProcessingException e) {
       updatedTestFileMetadataDTO = null;
     }
-
-  @Override
-  public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-    {
-      Map<String, String> errors = new HashMap<>();
-      ex.getBindingResult().getAllErrors().forEach((error) -> {
-        String fieldName = ((FieldError) error).getField();
-        String errorMessage = error.getDefaultMessage();
-        errors.put(fieldName, errorMessage);
-      });
-      log.error(String.valueOf(errors));
-      return errors;
-    }
+    return List.of(updatedTestFileMetadataDTO);
   }
 
-}
+    @Override
+    public Map<String, String> handleValidationExceptions (MethodArgumentNotValidException ex){
+      {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+          String fieldName = ((FieldError) error).getField();
+          String errorMessage = error.getDefaultMessage();
+          errors.put(fieldName, errorMessage);
+        });
+        log.error(String.valueOf(errors));
+        return errors;
+      }
+    }
+
+  }
