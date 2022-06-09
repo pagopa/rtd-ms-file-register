@@ -1,6 +1,5 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
@@ -17,7 +16,7 @@ public class RestControllerImpl implements
 
   protected ObjectMapper objectMapper = new ObjectMapper();
 
-  static String TEST_FILE_METADATA = "{\"name\":\"presentFilename\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":5,\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":0}";
+  static String testFilemetadata = "{\"name\":\"presentFilename\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":5,\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":0}";
 
   @Override
   public List<FileMetadataDTO> getFileMetadata(String filename) {
@@ -26,11 +25,9 @@ public class RestControllerImpl implements
     FileMetadataDTO updatedTestFileMetadataDTO;
 
     try {
-      updatedTestFileMetadataDTO = objectMapper.readValue(TEST_FILE_METADATA, FileMetadataDTO.class);
+      updatedTestFileMetadataDTO = objectMapper.readValue(testFilemetadata, FileMetadataDTO.class);
     } catch (JsonMappingException e) {
-      throw new RuntimeException(e);
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
+      updatedTestFileMetadataDTO = null;
     }
 
     return List.of(updatedTestFileMetadataDTO);
@@ -50,11 +47,9 @@ public class RestControllerImpl implements
     FileMetadataDTO updatedTestFileMetadataDTO;
 
     try {
-      updatedTestFileMetadataDTO = objectMapper.readValue(TEST_FILE_METADATA, FileMetadataDTO.class);
+      updatedTestFileMetadataDTO = objectMapper.readValue(testFilemetadata, FileMetadataDTO.class);
     } catch (JsonMappingException e) {
-      throw new RuntimeException(e);
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
+      updatedTestFileMetadataDTO = null;
     }
 
     return List.of(updatedTestFileMetadataDTO);
