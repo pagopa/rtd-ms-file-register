@@ -1,0 +1,745 @@
+{
+	"info": {
+		"_postman_id": "8c4474ce-5afa-425c-958a-74f1dadb460a",
+		"name": "Local File Register Micro-service Integration test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20034811"
+	},
+	"item": [
+		{
+			"name": "000 - Healthcheck",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('000 - Healthcheck', () => {",
+							"    pm.response.to.have.status(200);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(pm.variables.get(\"up_actuator_message\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{file_register_url}}{{actuator_healthcheck_path}}",
+					"host": [
+						"{{file_register_url}}{{actuator_healthcheck_path}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "001a - Fail POST new metadata missing filename",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('001a - Fail POST new metadata missing filename', () => {",
+							"    pm.response.to.have.status(400);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.name).to.be.oneOf([\"must not be null\", \"must not be blank\"]);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hash\": \"{{test_hash}}\",\n    \"status\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{file_register_url}}{{file_metadata_path}}",
+					"host": [
+						"{{file_register_url}}{{file_metadata_path}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "001b - Fail POST new metadata missing hash",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('001b - Fail POST new metadata missing hash', () => {",
+							"    pm.response.to.have.status(400);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.hash).to.be.oneOf([\"must not be null\", \"must not be blank\"]);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"status\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{file_register_url}}{{file_metadata_path}}",
+					"host": [
+						"{{file_register_url}}{{file_metadata_path}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "001c - Fail POST new metadata missing status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('001c - Fail POST new metadata missing status', () => {",
+							"    pm.response.to.have.status(400);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.be.eql(\"must not be null\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"hash\": \"{{test_hash}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{file_register_url}}{{file_metadata_path}}",
+					"host": [
+						"{{file_register_url}}{{file_metadata_path}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "001d - Fail POST malformed hash",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('001d - Fail POST malformed hash', () => {",
+							"    pm.response.to.have.status(400);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.hash).to.be.eql(\"Hash length must be 64 alphanumeric char\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"hash\": \"{{test_hash}}A\",\n    \"status\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{file_register_url}}{{file_metadata_path}}",
+					"host": [
+						"{{file_register_url}}{{file_metadata_path}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "001 - POST file metadata",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('001 - POST new metadata', () => {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"hash\": \"{{test_hash}}\",\n    \"status\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{file_register_url}}{{file_metadata_path}}",
+					"host": [
+						"{{file_register_url}}{{file_metadata_path}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "001e - Fail POST duplicate metadata",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('001e - Fail POST duplicate metadata', () => {",
+							"    pm.response.to.have.status(409);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"hash\": \"{{test_hash}}\",\n    \"status\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{file_register_url}}{{file_metadata_path}}",
+					"host": [
+						"{{file_register_url}}{{file_metadata_path}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "002a - Fail GET missing filename parameter",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('002a - Fail GET missing filename parameter', () => {",
+							"    pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{file_register_url}}{{file_metadata_path}}",
+					"host": [
+						"{{file_register_url}}{{file_metadata_path}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "002b - Fail GET not existing filename",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('002b - Fail GET not existing filename', () => {",
+							"    pm.response.to.have.status(404);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{file_register_url}}{{file_metadata_path}}?{{filename_parameter}}={{not_existing_filename}}",
+					"host": [
+						"{{file_register_url}}{{file_metadata_path}}"
+					],
+					"query": [
+						{
+							"key": "{{filename_parameter}}",
+							"value": "{{not_existing_filename}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "002 - GET file metadata",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('002 - GET file metadata', () => {",
+							"    pm.response.to.have.status(200);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.name).to.be.eql(pm.variables.get('test_filename'));",
+							"    pm.expect(jsonData.hash).to.be.eql(\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\");",
+							"    pm.expect(jsonData.numTrx).to.be.null;",
+							"    pm.expect(jsonData.numAggregates).to.be.null;",
+							"    pm.expect(jsonData.amountAde).to.be.null;",
+							"    pm.expect(jsonData.amountRtd).to.be.null;",
+							"    pm.expect(jsonData.numChunks).to.be.null;",
+							"    pm.expect(jsonData.status).to.be.eql(1);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{file_register_url}}{{file_metadata_path}}?{{filename_parameter}}={{test_filename}}",
+					"host": [
+						"{{file_register_url}}{{file_metadata_path}}"
+					],
+					"query": [
+						{
+							"key": "{{filename_parameter}}",
+							"value": "{{test_filename}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "003a - Fail PUT missing filename",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('003a - Fail PUT missing filename', () => {",
+							"    pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"status\": 5\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{file_register_url}}{{file_metadata_path}}",
+					"host": [
+						"{{file_register_url}}{{file_metadata_path}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "003b - Fail PUT not existing filename",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('003b - Fail PUT not existing filename', () => {",
+							"    pm.response.to.have.status(404);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{not_existing_filename}}\",\n    \"status\": 5\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{file_register_url}}{{file_metadata_path}}",
+					"host": [
+						"{{file_register_url}}{{file_metadata_path}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "003c - Fail PUT malformed hash",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('003c - Fail PUT malformed hash', () => {",
+							"    pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"hash\": \"{{test_hash}}A\",\n    \"status\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{file_register_url}}{{file_metadata_path}}",
+					"host": [
+						"{{file_register_url}}{{file_metadata_path}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "003 - PUT  file metadata",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('003 - PUT  file metadata', () => {",
+							"    pm.response.to.have.status(200);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.name).to.be.eql(pm.collectionVariables.get(\"test_filename\"));",
+							"    pm.expect(jsonData.hash).to.be.eql(pm.collectionVariables.get(\"test_hash\"));",
+							"    pm.expect(jsonData.numTrx).to.be.null;",
+							"    pm.expect(jsonData.numAggregates).to.be.null;",
+							"    pm.expect(jsonData.amountAde).to.be.null;",
+							"    pm.expect(jsonData.amountRtd).to.be.null;",
+							"    pm.expect(jsonData.numChunks).to.be.null;",
+							"    pm.expect(jsonData.status).to.be.eql(5);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"status\": 5\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{file_register_url}}{{file_metadata_path}}",
+					"host": [
+						"{{file_register_url}}{{file_metadata_path}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "004a - Fail DELETE filename not found",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('004a - Fail DELETE filename not found', () => {",
+							"    pm.response.to.have.status(404);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{file_register_url}}{{file_metadata_path}}?{{filename_parameter}}={{not_existing_filename}}",
+					"host": [
+						"{{file_register_url}}{{file_metadata_path}}"
+					],
+					"query": [
+						{
+							"key": "{{filename_parameter}}",
+							"value": "{{not_existing_filename}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "004b - Fail DELETE missing filename parameter",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('004b - Fail DELETE missing filename parameter', () => {",
+							"    pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{file_register_url}}{{file_metadata_path}}",
+					"host": [
+						"{{file_register_url}}{{file_metadata_path}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "004 - DELETE file metadata",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('004 - DELETE file metadata', () => {",
+							"    pm.response.to.have.status(200);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.name).to.be.eql(pm.variables.get('test_filename'));",
+							"    pm.expect(jsonData.hash).to.be.eql(\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\");",
+							"    pm.expect(jsonData.numTrx).to.be.null;",
+							"    pm.expect(jsonData.numAggregates).to.be.null;",
+							"    pm.expect(jsonData.amountAde).to.be.null;",
+							"    pm.expect(jsonData.amountRtd).to.be.null;",
+							"    pm.expect(jsonData.numChunks).to.be.null;",
+							"    pm.expect(jsonData.status).to.be.eql(5);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{file_register_url}}{{file_metadata_path}}?{{filename_parameter}}={{test_filename}}",
+					"host": [
+						"{{file_register_url}}{{file_metadata_path}}"
+					],
+					"query": [
+						{
+							"key": "{{filename_parameter}}",
+							"value": "{{test_filename}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "file_register_url",
+			"value": "localhost:8080",
+			"type": "default"
+		},
+		{
+			"key": "file_metadata_path",
+			"value": "/file-status",
+			"type": "default"
+		},
+		{
+			"key": "actuator_healthcheck_path",
+			"value": "/actuator/health",
+			"type": "default"
+		},
+		{
+			"key": "filename_parameter",
+			"value": "filename",
+			"type": "default"
+		},
+		{
+			"key": "test_filename",
+			"value": "test",
+			"type": "default"
+		},
+		{
+			"key": "not_existing_filename",
+			"value": "notExisting",
+			"type": "default"
+		},
+		{
+			"key": "up_actuator_message",
+			"value": "UP",
+			"type": "default"
+		},
+		{
+			"key": "test_hash",
+			"value": "0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5",
+			"type": "string"
+		}
+	]
+}
