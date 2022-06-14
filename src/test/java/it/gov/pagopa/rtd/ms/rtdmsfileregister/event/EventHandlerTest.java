@@ -26,14 +26,15 @@ import org.springframework.integration.support.MessageBuilder;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest
 @ActiveProfiles("test")
-@EmbeddedKafka(topics = {"rtd-platform-events", "rtd-trx"}, partitions = 1,
+@EmbeddedKafka(topics = {"rtd-platform-events"}, partitions = 1,
     bootstrapServersProperty = "spring.embedded.kafka.brokers")
 @EnableAutoConfiguration(exclude = {TestSupportBinderAutoConfiguration.class})
-//@ContextConfiguration(classes = {EventHandler.class})
+@ContextConfiguration(classes = {EventHandler.class})
 @TestPropertySource(value = {"classpath:application-test.yml"}, inheritProperties = false)
 @DirtiesContext
 @ExtendWith(OutputCaptureExtension.class)
