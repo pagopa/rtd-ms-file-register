@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.RtdMsFileRegisterApplication;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.DTOViolationException;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.EmptyFilenameException;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameAlreadyPresent;
@@ -23,17 +24,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@SpringBootTest
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = FileMetadataServiceImpl.class)
+@DataMongoTest
+@ContextConfiguration(classes = {FileMetadataServiceImpl.class, RtdMsFileRegisterApplication.class})
+@EntityScan("it.gov.pagopa.rtd.ms.rtdmsfileregister.model")
 class FileMetadataServiceTest {
 
   @MockBean
