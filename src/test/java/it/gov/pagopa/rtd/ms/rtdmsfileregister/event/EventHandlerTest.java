@@ -4,7 +4,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.EventGridEvent;
-import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.BlobRegisterAdapter;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -19,7 +18,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.cloud.stream.function.StreamBridge;
@@ -43,9 +41,6 @@ class EventHandlerTest {
 
   @Autowired
   private StreamBridge stream;
-
-  @SpyBean
-  private BlobRegisterAdapter blobRestConnector;
 
   private final String container = "rtd-transactions-decrypted";
   private final String blob = "CSTAR.99999.TRNLOG.20220316.103107.001.csv.pgp";
