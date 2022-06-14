@@ -1,0 +1,38 @@
+logging:
+  level:
+    root: INFO
+
+# kafka:
+#   binder:
+#     brokers: ${KAFKA_BROKER:localhost}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  cloud:
+    stream:
+      bindings:
+        blobStorageConsumer-in-0: # name must match [handler name]-in-0
+          destination: rtd-platform-events
+          group: rtd-file-register-consumer-group
+          content-type: application/json
+          binder: blob-storage
+      binders:
+        blob-storage:
+          type: kafka
+          environment:
+            spring:
+              cloud:
+                stream:
+                  kafka:
+                    binder:
+                      auto-create-topics: false
+                      brokers: ${spring.embedded.kafka.brokers}
+                      consumerProperties:
+                        key: 
+                          deserializer: org.apache.kafka.common.serialization.StringDeserializer
+                        value:
+                          deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  
