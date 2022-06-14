@@ -34,7 +34,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = FileMetadataServiceImpl.class)
-public class FileMetadataServiceTest {
+class FileMetadataServiceTest {
 
   @MockBean
   private FileMetadataRepository fileMetadataRepository;
@@ -54,7 +54,7 @@ public class FileMetadataServiceTest {
 
   private String notPresentMetadataUpdatesJSON = "{\"name\":\"notPresentFilename\", \"status\":1}";
 
-  @Before
+  @BeforeEach
   public void setUpTest() throws JsonProcessingException {
     reset(fileMetadataRepository);
 
@@ -82,7 +82,7 @@ public class FileMetadataServiceTest {
   }
 
   @Test
-  public void store() {
+  void store() {
     FileMetadataDTO stored = service.storeFileMetadata(newTestFileMetadataDTO);
 
     assertNotNull(stored);
@@ -91,7 +91,7 @@ public class FileMetadataServiceTest {
   }
 
   @Test
-  public void storeKo() {
+  void storeKo() {
     Exception exception = assertThrows(FilenameAlreadyPresent.class, () -> {
       FileMetadataDTO stored = service.storeFileMetadata(testFileMetadataDTO);
     });
@@ -100,7 +100,7 @@ public class FileMetadataServiceTest {
   }
 
   @Test
-  public void retrieve() {
+  void retrieve() {
     FileMetadataDTO retrieved = service.retrieveFileMetadata("presentFilename");
 
     assertNotNull(retrieved);
@@ -108,7 +108,7 @@ public class FileMetadataServiceTest {
   }
 
   @Test
-  public void retrieveKoNotPresent() {
+  void retrieveKoNotPresent() {
     FileMetadataDTO retrieved = service.retrieveFileMetadata("notPresentFilename");
 
     assertNull(retrieved);
@@ -116,7 +116,7 @@ public class FileMetadataServiceTest {
   }
 
   @Test
-  public void delete() {
+  void delete() {
     FileMetadataDTO deleted = service.deleteFileMetadata("presentFilename");
 
     assertNotNull(deleted);
@@ -124,7 +124,7 @@ public class FileMetadataServiceTest {
   }
 
   @Test
-  public void deleteKo() {
+  void deleteKo() {
     FileMetadataDTO deleted = service.deleteFileMetadata("notPresentFilename");
 
     assertNull(deleted);
@@ -132,7 +132,7 @@ public class FileMetadataServiceTest {
   }
 
   @Test
-  public void update() throws JsonProcessingException {
+  void update() throws JsonProcessingException {
     ObjectMapper objectMapper = new ObjectMapper();
 
     FileMetadataDTO updated = service.updateFileMetadata(
@@ -146,7 +146,7 @@ public class FileMetadataServiceTest {
   }
 
   @Test
-  public void updateKoNotPresent() throws JsonProcessingException {
+  void updateKoNotPresent() throws JsonProcessingException {
     ObjectMapper objectMapper = new ObjectMapper();
 
     FileMetadataDTO updated = service.updateFileMetadata(
@@ -158,94 +158,35 @@ public class FileMetadataServiceTest {
     verify(fileMetadataRepository, Mockito.times(0)).save(any(FileMetadataEntity.class));
   }
 
-  @Test
-  public void updateKoNullFilename() throws JsonProcessingException {
-    String nonNumericalNumTrx = "{\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":\"1\",\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":0}";
-
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "{\"name\":\"test0\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":\"-1\",\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":0}",
+      "{\"name\":\"test0\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":\"1\",\"numAggregates\":-1,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":0}",
+      "{\"name\":\"test0\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":\"1\",\"numAggregates\":1,\"amountAde\":-1,\"amountRtd\":700,\"numChunks\":5,\"status\":0}",
+      "{\"name\":\"test0\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":\"1\",\"numAggregates\":1,\"amountAde\":900,\"amountRtd\":-1,\"numChunks\":5,\"status\":0}",
+      "{\"name\":\"test0\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":\"1\",\"numAggregates\":1,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":-1,\"status\":0}"
+  })
+  void updateKoNonValidDTO(String body) throws JsonProcessingException {
     ObjectMapper objectMapper = new ObjectMapper();
 
-    FileMetadataDTO mapped = objectMapper.readValue(nonNumericalNumTrx, FileMetadataDTO.class);
+    FileMetadataDTO mapped = objectMapper.readValue(body, FileMetadataDTO.class);
+
+    assertThrows(DTOViolationException.class, () -> {
+      service.updateFileMetadata(mapped);
+    });
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "{\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":\"1\",\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":0}",
+      "{\"name\":\"\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":\"1\",\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":0}",
+  })
+  void updateKoEmptyFilename(String body) throws JsonProcessingException {
+    ObjectMapper objectMapper = new ObjectMapper();
+
+    FileMetadataDTO mapped = objectMapper.readValue(body, FileMetadataDTO.class);
 
     assertThrows(EmptyFilenameException.class, () -> {
-      service.updateFileMetadata(mapped);
-    });
-  }
-
-  @Test
-  public void updateKoBlankFilename() throws JsonProcessingException {
-    String nonNumericalNumTrx = "{\"name\":\"\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":\"1\",\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":0}";
-
-    ObjectMapper objectMapper = new ObjectMapper();
-
-    FileMetadataDTO mapped = objectMapper.readValue(nonNumericalNumTrx, FileMetadataDTO.class);
-
-    assertThrows(EmptyFilenameException.class, () -> {
-      service.updateFileMetadata(mapped);
-    });
-  }
-
-  @Test
-  public void updateKoNonNumericalNumTrx() throws JsonProcessingException {
-    String nonNumericalNumTrx = "{\"name\":\"test0\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":\"-1\",\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":0}";
-
-    ObjectMapper objectMapper = new ObjectMapper();
-
-    FileMetadataDTO mapped = objectMapper.readValue(nonNumericalNumTrx, FileMetadataDTO.class);
-
-    assertThrows(DTOViolationException.class, () -> {
-      service.updateFileMetadata(mapped);
-    });
-  }
-
-  @Test
-  public void updateKoNonNumericalNumAggregates() throws JsonProcessingException {
-    String nonNumericalNumAggregates = "{\"name\":\"test0\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":\"1\",\"numAggregates\":-1,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":0}";
-
-    ObjectMapper objectMapper = new ObjectMapper();
-
-    FileMetadataDTO mapped = objectMapper.readValue(nonNumericalNumAggregates,
-        FileMetadataDTO.class);
-
-    assertThrows(DTOViolationException.class, () -> {
-      service.updateFileMetadata(mapped);
-    });
-  }
-
-  @Test
-  public void updateKoNonNumericalAmountAde() throws JsonProcessingException {
-    String nonNumericalAmountAde = "{\"name\":\"test0\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":\"1\",\"numAggregates\":1,\"amountAde\":-1,\"amountRtd\":700,\"numChunks\":5,\"status\":0}";
-
-    ObjectMapper objectMapper = new ObjectMapper();
-
-    FileMetadataDTO mapped = objectMapper.readValue(nonNumericalAmountAde, FileMetadataDTO.class);
-
-    assertThrows(DTOViolationException.class, () -> {
-      service.updateFileMetadata(mapped);
-    });
-  }
-
-  @Test
-  public void updateKoNonNumericalAmountRtd() throws JsonProcessingException {
-    String nonNumericalAmountRtd = "{\"name\":\"test0\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":\"1\",\"numAggregates\":1,\"amountAde\":900,\"amountRtd\":-1,\"numChunks\":5,\"status\":0}";
-
-    ObjectMapper objectMapper = new ObjectMapper();
-
-    FileMetadataDTO mapped = objectMapper.readValue(nonNumericalAmountRtd, FileMetadataDTO.class);
-
-    assertThrows(DTOViolationException.class, () -> {
-      service.updateFileMetadata(mapped);
-    });
-  }
-
-  @Test
-  public void updateKoNonNumericalNumChunks() throws JsonProcessingException {
-    String nonNumericalNumChunks = "{\"name\":\"test0\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":\"1\",\"numAggregates\":1,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":-1,\"status\":0}";
-
-    ObjectMapper objectMapper = new ObjectMapper();
-
-    FileMetadataDTO mapped = objectMapper.readValue(nonNumericalNumChunks, FileMetadataDTO.class);
-
-    assertThrows(DTOViolationException.class, () -> {
       service.updateFileMetadata(mapped);
     });
   }
