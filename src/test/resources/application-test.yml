@@ -2,10 +2,6 @@ logging:
   level:
     root: INFO
 
-# kafka:
-#   binder:
-#     brokers: ${KAFKA_BROKER:localhost}
-
 ---
 spring:
   config:
