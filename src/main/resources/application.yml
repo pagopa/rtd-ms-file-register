@@ -19,7 +19,7 @@ spring:
             bindings:
                 blobStorageConsumer-in-0: # name must match [handler name]-in-0
                     destination: rtd-platform-events
-                    group: rtd-ingestor-consumer-group
+                    group: rtd-file-register-consumer-group
                     content-type: application/json
                     binder: blob-storage
             binders:
