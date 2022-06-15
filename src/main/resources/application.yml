@@ -2,10 +2,6 @@ logging:
     level:
         root: INFO
 
-file-register:
-    resources:
-        base:
-            path: src/test/resources
 spring:
     config:
         activate:
