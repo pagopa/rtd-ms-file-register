@@ -19,14 +19,8 @@ spec:
             - containerPort: 8080
           imagePullPolicy: Always
           envFrom:
-#            - configMapRef:
-#                name: rtdmsfileregister
-            # - secretRef:
-            #     name: application-insights
-            # - secretRef:
-            #     name: rtd-blob-storage-events
-            # - secretRef:
-            #     name: rtd-internal-api
+            - secretRef:
+                name: rtd-blob-storage-events
             - secretRef:
                 name: mongo-credentials
           resources:
