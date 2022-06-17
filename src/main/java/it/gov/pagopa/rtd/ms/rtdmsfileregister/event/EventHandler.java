@@ -1,5 +1,6 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.event;
 
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.adapter.BlobRegisterAdapter;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.EventGridEvent;
 import java.util.List;
 import java.util.function.Consumer;
@@ -24,13 +25,11 @@ public class EventHandler {
    * @return a consumer for Event Grid events.
    */
   @Bean
-  public Consumer<Message<List<EventGridEvent>>> blobStorageConsumer() {
+  public Consumer<Message<List<EventGridEvent>>> blobStorageConsumer(BlobRegisterAdapter blobRegisterAdapter) {
     return message -> message.getPayload().stream()
         .filter(e -> "Microsoft.Storage.BlobCreated".equals(e.getEventType()))
-        .map(m -> {
-          log.error("Received event: {}", m.getSubject());
-          return m;
-        })
+        .filter(blobRegisterAdapter::evaluateContainer)
+        .map(blobRegisterAdapter::evaluateEvent)
         .collect(Collectors.toList());
   }
 }
