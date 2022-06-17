@@ -2,6 +2,7 @@ package it.gov.pagopa.rtd.ms.rtdmsfileregister.event;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -91,6 +92,22 @@ class EventHandlerTest {
 
     stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
     assertThat(output.getOut(), containsString("Evaluated event: "+ uri));
+  }
+
+  @ParameterizedTest
+  @CsvSource({"bpd-terms-and-conditions, bpd-tc.pdf",
+      "cstar-exports, hashedPans.zip",
+      "fa-terms-and-conditions, fa-tc.pdf",
+      "info-privacy, info-privacy.pdf"})
+  void notConsumeEvent(String container, String blob, CapturedOutput output) {
+    String uri = "/blobServices/default/containers/" + container+ "/blobs/" + blob;
+
+    myEvent.setSubject(uri);
+
+    myList = List.of(myEvent);
+
+    stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
+    assertThat(output.getOut(), not(containsString("Evaluated event: "+ uri)));
   }
 
 }
