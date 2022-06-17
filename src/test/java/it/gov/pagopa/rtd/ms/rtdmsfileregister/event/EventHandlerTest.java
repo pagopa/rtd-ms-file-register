@@ -2,22 +2,26 @@ package it.gov.pagopa.rtd.ms.rtdmsfileregister.event;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.adapter.BlobRegisterAdapter;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.EventGridEvent;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.FileMetadataService;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.cloud.stream.function.StreamBridge;
@@ -43,9 +47,11 @@ class EventHandlerTest {
   @Autowired
   private StreamBridge stream;
 
-  private final String container = "rtd-transactions-decrypted";
-  private final String blob = "CSTAR.99999.TRNLOG.20220316.103107.001.csv.pgp";
-  private final String blobUri = "/blobServices/default/containers/" + container + "/blobs/" + blob;
+  @MockBean
+  FileMetadataService fileMetadataService;
+
+  @SpyBean
+  BlobRegisterAdapter blobRegisterAdapter;
 
   private final String myId = "myId";
   private final String myTopic = "myTopic";
@@ -54,16 +60,13 @@ class EventHandlerTest {
   List<EventGridEvent> myList;
   EventGridEvent myEvent;
 
-  ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-
-  Validator validator = factory.getValidator();
-
   @BeforeEach
   void setUp() {
+    when(fileMetadataService.storeFileMetadata(any())).thenAnswer(i -> i.getArguments()[0]);
+
     myEvent = new EventGridEvent();
     myEvent.setId(myId);
     myEvent.setTopic(myTopic);
-    myEvent.setSubject(blobUri);
     myEvent.setEventType(myEventType);
 
     OffsetDateTime off = OffsetDateTime.parse("2020-08-06T12:19:16.500+03:00");
@@ -71,13 +74,23 @@ class EventHandlerTest {
     LocalDateTime localDateTime = zoned.toLocalDateTime();
     myEvent.setEventTime(localDateTime);
 
-    myList = List.of(myEvent);
   }
 
-  @Test
-  void failInstantiateEvent(CapturedOutput output) {
+  @ParameterizedTest
+  @CsvSource({"sender-ade-ack, ADE.99999.TRNLOG.20220607.163518.001.csv",
+      "rtd-transactions-32489876908u74bh781e2db57k098c5ad00000000000, CSTAR.99999.TRNLOG.20220419.121045.001.csv.pgp",
+      "ade-transactions-32489876908u74bh781e2db57k098c5ad00000000000, ADE.99999.TRNLOG.20220503.172038.001.csv.pgp",
+      "rtd-transactions-decrypted, CSTAR.99999.TRNLOG.20220419.121045.001.csv.pgp.0.decrypted",
+      "ade-transactions-decrypted, ADE.99999.TRNLOG.20220503.172038.001.csv.pgp.0.decrypted"})
+  void consumeEvent(String container, String blob, CapturedOutput output) {
+    String uri = "/blobServices/default/containers/" + container+ "/blobs/" + blob;
+
+    myEvent.setSubject(uri);
+
+    myList = List.of(myEvent);
+
     stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
-    assertThat(output.getOut(), containsString("Received event: "));
+    assertThat(output.getOut(), containsString("Evaluated event: "+ uri));
   }
 
 }
