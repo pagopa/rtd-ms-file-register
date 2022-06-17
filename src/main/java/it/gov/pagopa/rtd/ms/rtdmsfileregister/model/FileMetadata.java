@@ -1,6 +1,7 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.model;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -8,6 +9,7 @@ import javax.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @Getter
@@ -16,6 +18,13 @@ public class FileMetadata {
   @NotNull
   @NotBlank
   private String name;
+
+//  @NotNull
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+  private OffsetDateTime receiveTimestamp ;
+
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+  private OffsetDateTime lastTransitionTimestamp ;
 
   @NotNull
   @NotBlank
