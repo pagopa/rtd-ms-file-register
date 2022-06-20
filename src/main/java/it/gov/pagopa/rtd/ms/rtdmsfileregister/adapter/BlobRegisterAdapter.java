@@ -19,7 +19,7 @@ public class BlobRegisterAdapter {
   @Autowired
   FileMetadataService fileMetadataService;
 
-  public boolean evaluateContainer(EventGridEvent event) {
+  public boolean validateContainer(EventGridEvent event) {
     String uri = event.getSubject();
     String[] parts = uri.split("/");
     String containerName = parts[4];
@@ -28,7 +28,9 @@ public class BlobRegisterAdapter {
         ||
         containerName.matches("(ade|rtd)-transactions-decrypted")
         ||
-        containerName.matches("sender-ade-ack");
+        containerName.matches("sender-ade-ack")
+        ||
+        containerName.matches("ade");
   }
 
   public EventGridEvent evaluateEvent(EventGridEvent event) {
