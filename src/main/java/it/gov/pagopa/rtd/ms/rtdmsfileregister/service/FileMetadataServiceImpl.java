@@ -72,10 +72,7 @@ public class FileMetadataServiceImpl implements FileMetadataService {
               .equals("must not be blank")) {
             throw new EmptyFilenameException();
           }
-        } else if (!(violation.getMessage().equals("must not be null") || violation.getMessage()
-            .equals("must not be blank"))) {
-          throw new DTOViolationException();
-        }
+        } else throw new DTOViolationException();
       }
     }
 
