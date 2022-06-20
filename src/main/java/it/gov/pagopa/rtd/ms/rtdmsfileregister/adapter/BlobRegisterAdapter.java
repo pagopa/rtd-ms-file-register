@@ -11,6 +11,75 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class BlobRegisterAdapter {
+
+  public enum STATUS {
+
+    DECRYPTIONERROR {
+      @Override
+      public int getOrder() {
+        return -1;
+      }
+    },
+
+    MALFORMEDTRX {
+      @Override
+      public int getOrder() {
+        return -2;
+      }
+    },
+
+    RECEIVED {
+      @Override
+      public int getOrder() {
+        return 0;
+      }
+    },
+
+    DECRYPTEDANDSPLIT {
+      @Override
+      public int getOrder() {
+        return 1;
+      }
+    },
+
+    PROCESSED {
+      @Override
+      public int getOrder() {
+        return 10;
+      }
+    },
+
+    DEPOSITED {
+      @Override
+      public int getOrder() {
+        return 20;
+      }
+    },
+
+    ADEACKPRODUCED {
+      @Override
+      public int getOrder() {
+        return 21;
+      }
+    },
+
+    SENDERADEACKPRODUCED {
+      @Override
+      public int getOrder() {
+        return 22;
+      }
+    },
+
+    SENDERACKCONSUMED {
+      @Override
+      public int getOrder() {
+        return 23;
+      }
+    };
+
+    public abstract int getOrder();
+  }
+
   String timeZone = "Europe/Rome";
 
   @Autowired
