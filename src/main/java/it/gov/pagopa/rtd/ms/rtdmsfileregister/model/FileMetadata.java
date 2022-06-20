@@ -1,7 +1,12 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
+import java.util.List;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -15,38 +20,68 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Getter
 @Setter
 public class FileMetadata {
+
+  //Common File Metadata
+
   @NotNull
   @NotBlank
   private String name;
 
-//  @NotNull
+  @NotNull
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  private OffsetDateTime receiveTimestamp ;
-
-  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  private OffsetDateTime lastTransitionTimestamp ;
+  @JsonSerialize(using = LocalDateTimeSerializer.class)
+  @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+  private LocalDateTime receiveTimestamp;
 
   @NotNull
-  @NotBlank
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+  @JsonSerialize(using = LocalDateTimeSerializer.class)
+  @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+  private LocalDateTime lastTransitionTimestamp;
+
+  @NotNull
+  private Integer status;
+
+  //CSTAR File Metadata
+
+  @Pattern(regexp = "[a-zA-Z0-9]{5}",
+      message = "Sender code must be 5 alphanumeric char")
+  private String sender;
+
+  //ADEACK File Metadata
+
+  private List<String> originalFilesList;
+
+  //RTD File Metadata
+
   @Pattern(regexp = "[a-zA-Z0-9]{64}",
       message = "Hash length must be 64 alphanumeric char")
   private String hash;
 
-  @Min(value = 0, message = "numTrx value must be positive")
-  private Integer numTrx;
+  private String application;
+
+  @Min(value = 0, message = "Number of chunks total value must be positive")
+  private Integer chunksTotal;
+
+  @Min(value = 0, message = "Number of chunks left value must be positive")
+  private Integer chunksLeft;
+
+  //AppRTD File Metadata
+
+  @Min(value = 0, message = "numTransactions value must be positive")
+  private Integer numTransactions;
+
+  @Min(value = 0, message = "amountTransactions value must be positive")
+  private BigDecimal amountTransactions;
+
+  //AppADE File Metadata
 
   @Min(value = 0, message = "numAggregates value must be positive")
   private Integer numAggregates;
 
-  @Min(value = 0, message = "amountAde value must be positive")
-  private BigDecimal amountAde;
+  @Min(value = 0, message = "amountAggregates value must be positive")
+  private BigDecimal amountAggregates;
 
-  @Min(value = 0, message = "amountRtd value must be positive")
-  private BigDecimal amountRtd;
+  private List<String> senderAdeAckFilesList;
 
-  @Min(value = 0, message = "numChunks value must be positive")
-  private Integer numChunks;
-
-  @NotNull
-  private Integer status;
 }
