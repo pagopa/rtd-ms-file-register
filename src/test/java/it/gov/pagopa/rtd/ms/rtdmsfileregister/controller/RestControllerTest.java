@@ -1,6 +1,5 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.controller;
 
-import static org.hamcrest.Matchers.matchesPattern;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -13,7 +12,6 @@ import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
@@ -48,13 +46,13 @@ class RestControllerTest {
 
   static String METADATA_ENDPOINT = "/file-status";
 
-  static String TEST_FILE_METADATA = "{\"name\":\"presentFilename\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":5,\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":0}";
+  static String TEST_FILE_METADATA = "{\"name\":\"presentFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0}";
 
-  static String UPDATED_TEST_FILE_METADATA = "{\"name\":\"presentFilename\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":5,\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":1}";
+  static String UPDATED_TEST_FILE_METADATA = "{\"name\":\"presentFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTransactions\":5,\"numAggregates\":2,\"amountAggregates\":900,\"amountTransactions\":700,\"chunksTotal\":5,\"status\":1}";
 
   static String UPDATE_FILE_METADATA = "{\"name\":\"presentFilename\",\"status\":5}";
 
-  static String MALFORMED_UPDATE_FILE_METADATA = "{\"name\":\"\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":5,\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":1}";
+  static String MALFORMED_UPDATE_FILE_METADATA = "{\"name\":\"\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTransactions\":5,\"numAggregates\":2,\"amountAggregates\":900,\"amountTransactions\":700,\"chunksTotal\":5,\"status\":1}";
 
   static FileMetadataDTO testFileMetadataDTO;
 
@@ -163,12 +161,28 @@ class RestControllerTest {
   @ParameterizedTest
   @ValueSource(strings = {
       "",
-      "{\"name\":\"test0\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":\"wrong value\",\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":0}",
-      "{\"name\":\"test0\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":5,\"numAggregates\":\"wrong value\",\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":0}",
-      "{\"name\":\"test0\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":5,\"numAggregates\":2,\"amountAde\":\"wrong value\",\"amountRtd\":700,\"numChunks\":5,\"status\":0}",
-      "{\"name\":\"test0\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":5,\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":\"wrong value\",\"numChunks\":5,\"status\":0}",
-      "{\"name\":\"test0\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":5,\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":\"wrong value\",\"status\":0}",
-      "{\"name\":\"test0\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\":5,\"numAggregates\":2,\"amountAde\":900,\"amountRtd\":700,\"numChunks\":5,\"status\":\"wrong value\"}",
+      "{\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0}",
+      "{\"name\":\"\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"wrong value\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"wrong value\",\"status\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\"}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":\"wrong value\"}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"sender\":\"1234\"}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"sender\":\"123456\"}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b\"}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5a\"}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"chunksTotal\":\"wrong value\"}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"chunksTotal\":-1}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"chunksLeft\":\"wrong value\"}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"chunksLeft\":-1}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"numTransactions\":\"wrong value\"}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"numTransactions\":-1}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"amountTransactions\":\"wrong value\"}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"amountTransactions\":-1}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"numAggregates\":\"wrong value\"}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"numAggregates\":-1}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"amountAggregates\":\"wrong value\"}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"amountAggregates\":-1}",
   })
   void shouldNotPostWrongValue(String body) throws Exception {
     mockMvc.perform(MockMvcRequestBuilders
@@ -178,59 +192,6 @@ class RestControllerTest {
             .accept(MediaType.APPLICATION_JSON_VALUE))
         .andDo(print())
         .andExpect(status().isBadRequest());
-  }
-
-  // The following tests are in the form:
-  // body
-  // + expected response
-  @ParameterizedTest
-  @CsvSource(value = {
-  "{}; "
-      + "\\{\"name\":\"must not be (null|blank)\",\"hash\":\"must not be (null|blank)\",\"status\":\"must not be (null|blank)\"\\}",
-
-  "{\"name\":\"\"};"
-      + " \\{\"name\":\"must not be (null|blank)\",\"hash\":\"must not be (null|blank)\",\"status\":\"must not be (null|blank)\"\\}",
-
-  "{\"name\":\"test\"};"
-      + "\\{\"hash\":\"must not be (null|blank)\",\"status\":\"must not be (null|blank)\"\\}",
-
-  "{\"name\":\"test\",\"hash\":\"\"}; "
-      + "\\{\"hash\":\"(Hash length must be 64 alphanumeric char|must not be (null|blank))\",\"status\":\"must not be (null|blank)\"\\}",
-
-  "{\"name\":\"test\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\"}; "
-      + "\\{\"status\":\"must not be (null|blank)\"\\}",
-
-  "{\"name\":\"test\",\"hash\":\"abc\",\"status\":0};"
-      + "\\{\"hash\":\"Hash length must be 64 alphanumeric char\"\\}",
-
-  "{\"name\":\"test\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTrx\": -1,\"status\":0};"
-      + "\\{\"numTrx\":\"numTrx value must be positive\"\\}",
-
-  "{\"name\":\"test\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numAggregates\": -1,\"status\":0};"
-      + "\\{\"numAggregates\":\"numAggregates value must be positive\"\\}",
-
-  "{\"name\":\"test\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"amountAde\": -1,\"status\":0};"
-      + "\\{\"amountAde\":\"amountAde value must be positive\"\\}",
-
-  "{\"name\":\"test\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"amountRtd\": -1,\"status\":0};"
-      + "\\{\"amountRtd\":\"amountRtd value must be positive\"\\}",
-
-  "{\"name\":\"test\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numChunks\": -1,\"status\":0};"
-      + "\\{\"numChunks\":\"numChunks value must be positive\"\\}",
-  }
-  , delimiter = ';')
-  void shouldNotPostConstraintViolation(String requestBody, String expectedResponseBody) throws Exception {
-    MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-            .post(BASE_URI + METADATA_ENDPOINT)
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .content(requestBody)
-            .accept(MediaType.APPLICATION_JSON_VALUE))
-        .andDo(print())
-        .andExpect(status().isBadRequest())
-        .andReturn();
-
-    org.junit.jupiter.api.Assertions.assertTrue(matchesPattern(expectedResponseBody).matches(result.getResponse().getContentAsString()));
-    BDDMockito.verify(fileMetadataService, Mockito.times(0)).updateFileMetadata(Mockito.any(FileMetadataDTO.class));
   }
 
   @Test
