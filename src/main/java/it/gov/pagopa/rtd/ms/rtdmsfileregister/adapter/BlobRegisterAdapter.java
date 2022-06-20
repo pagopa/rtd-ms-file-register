@@ -4,9 +4,6 @@ import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.EventGridEvent;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.FileMetadataService;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,20 +32,33 @@ public class BlobRegisterAdapter {
 
   public EventGridEvent evaluateEvent(EventGridEvent event) {
     LocalDateTime eventTimeinLocal = event.getEventTime();
-    ZonedDateTime zoned = eventTimeinLocal.atZone(ZoneId.of(timeZone));
-    OffsetDateTime eventTimeinOffset = zoned.toOffsetDateTime();
 
     String uri = event.getSubject();
     String[] parts = uri.split("/");
     String blobName = parts[6];
 
     FileMetadataDTO fileMetadata = new FileMetadataDTO();
-    fileMetadata.setName(blobName);
-    fileMetadata.setReceiveTimestamp(eventTimeinOffset);
+
+    fileMetadata.setName(cleanFilename(blobName));
+
+    fileMetadata.setReceiveTimestamp(eventTimeinLocal);
+    fileMetadata.setLastTransitionTimestamp(eventTimeinLocal);
+
+    fileMetadata.setStatus(0);
+
     fileMetadataService.storeFileMetadata(fileMetadata);
 
     log.info("Evaluated event: {}", event.getSubject());
     return event;
+  }
+
+  public String cleanFilename (String filename) {
+    return filename
+        .replace(".csv", "")
+        .replaceAll("\\.(\\d)+\\.decrypted", "")
+        .replace(".pgp", "")
+        .replace(".gpg", "");
+
   }
 
 }
