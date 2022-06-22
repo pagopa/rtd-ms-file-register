@@ -91,6 +91,8 @@ public class BlobRegisterAdapter {
       + senderADEACKContainer + "|"
       + adeAggregatesContainer;
 
+  private static final String EVENT_NOT_OF_INTEREST_MSG = "Event not of interest: ";
+
   @Autowired
   FileMetadataService fileMetadataService;
 
@@ -99,7 +101,11 @@ public class BlobRegisterAdapter {
     String[] parts = uri.split("/");
     String containerName = parts[4];
 
-    return containerName.matches(acceptedContainers);
+    boolean isEventOfInterest = containerName.matches(acceptedContainers);
+
+    if (!isEventOfInterest) log.info(EVENT_NOT_OF_INTEREST_MSG + event.getSubject());
+
+    return isEventOfInterest;
   }
 
   public EventGridEvent evaluateEvent(EventGridEvent event) {
@@ -117,10 +123,6 @@ public class BlobRegisterAdapter {
     fileMetadata.setLastTransitionTimestamp(eventTimeinLocal);
 
     STATUS newStatus = evaluateContainer(containerName);
-    if (newStatus == null) {
-      log.error("Container {} not recognized", containerName);
-      return null;
-    }
 
     fileMetadata.setStatus(evaluateContainer(containerName).getOrder());
 
@@ -137,9 +139,6 @@ public class BlobRegisterAdapter {
   }
 
   public STATUS evaluateContainer(String containerName) {
-    if (containerName.matches("(ade|rtd)-transactions-[a-z0-9]{44}")) {
-      return STATUS.RECEIVED;
-    }
     if (containerName.matches("(ade|rtd)-transactions-decrypted")) {
       return STATUS.DECRYPTEDANDSPLIT;
     }
@@ -149,7 +148,9 @@ public class BlobRegisterAdapter {
     if (containerName.matches("ade")) {
       return STATUS.DEPOSITED;
     }
-    return null;
+
+    // Default is the same as containerName.matches("(ade|rtd)-transactions-[a-z0-9]{44}"))
+    return STATUS.RECEIVED;
   }
 
 
