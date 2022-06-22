@@ -80,7 +80,16 @@ public class BlobRegisterAdapter {
     public abstract int getOrder();
   }
 
-  String timeZone = "Europe/Rome";
+  String encryptedTransactionsContainer = "((ade|rtd)-transactions-[a-z0-9]{44})";
+  String decryptedTransactionsContainer = "((ade|rtd)-transactions-decrypted)";
+  String adeAggregatesContainer = "(ade)";
+  String senderADEACKContainer = "(sender-ade-ack)";
+
+
+  String acceptedContainers = encryptedTransactionsContainer + "|"
+      + decryptedTransactionsContainer + "|"
+      + senderADEACKContainer + "|"
+      + adeAggregatesContainer;
 
   @Autowired
   FileMetadataService fileMetadataService;
@@ -90,13 +99,7 @@ public class BlobRegisterAdapter {
     String[] parts = uri.split("/");
     String containerName = parts[4];
 
-    return containerName.matches("(ade|rtd)-transactions-[a-z0-9]{44}")
-        ||
-        containerName.matches("(ade|rtd)-transactions-decrypted")
-        ||
-        containerName.matches("sender-ade-ack")
-        ||
-        containerName.matches("ade");
+    return containerName.matches(acceptedContainers);
   }
 
   public EventGridEvent evaluateEvent(EventGridEvent event) {
