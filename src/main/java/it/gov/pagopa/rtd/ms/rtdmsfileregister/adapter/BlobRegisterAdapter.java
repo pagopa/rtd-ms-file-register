@@ -114,7 +114,6 @@ public class BlobRegisterAdapter {
 
     fileMetadata.setName(cleanFilename(blobName));
 
-    fileMetadata.setReceiveTimestamp(eventTimeinLocal);
     fileMetadata.setLastTransitionTimestamp(eventTimeinLocal);
 
     STATUS newStatus = evaluateContainer(containerName);
