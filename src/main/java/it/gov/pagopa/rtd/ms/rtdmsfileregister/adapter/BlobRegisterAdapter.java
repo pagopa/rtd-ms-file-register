@@ -124,7 +124,7 @@ public class BlobRegisterAdapter {
 
     fileMetadata.setStatus(evaluateContainer(containerName).getOrder());
 
-    if(newStatus.equals(STATUS.RECEIVED)){
+    if(newStatus.equals(STATUS.RECEIVED) || newStatus.equals(STATUS.SENDERADEACKPRODUCED)){
       fileMetadata.setReceiveTimestamp(eventTimeinLocal);
       fileMetadataService.storeFileMetadata(fileMetadata);
     }
