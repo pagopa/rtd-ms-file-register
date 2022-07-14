@@ -14,66 +14,24 @@ public class BlobRegisterAdapter {
 
   public enum STATUS {
 
-    DECRYPTIONERROR {
-      @Override
-      public int getOrder() {
-        return -1;
-      }
-    },
-
-    MALFORMEDTRX {
-      @Override
-      public int getOrder() {
-        return -2;
-      }
-    },
-
-    RECEIVED {
+    SUCCESS {
       @Override
       public int getOrder() {
         return 0;
       }
     },
 
-    DECRYPTEDANDSPLIT {
+    FAILED {
       @Override
       public int getOrder() {
-        return 1;
+        return -2;
       }
     },
 
-    PROCESSED {
+    DOWNLOADED {
       @Override
       public int getOrder() {
-        return 10;
-      }
-    },
-
-    DEPOSITED {
-      @Override
-      public int getOrder() {
-        return 20;
-      }
-    },
-
-    ADEACKPRODUCED {
-      @Override
-      public int getOrder() {
-        return 21;
-      }
-    },
-
-    SENDERADEACKPRODUCED {
-      @Override
-      public int getOrder() {
-        return 22;
-      }
-    },
-
-    SENDERACKCONSUMED {
-      @Override
-      public int getOrder() {
-        return 23;
+        return 0;
       }
     };
 
