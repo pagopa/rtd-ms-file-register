@@ -46,13 +46,13 @@ class RestControllerTest {
 
   static String METADATA_ENDPOINT = "/file-status";
 
-  static String TEST_FILE_METADATA = "{\"name\":\"presentFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0}";
+  static String TEST_FILE_METADATA = "{\"name\":\"presentFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"application\":0,\"size\":0,\"type\":0}";
 
-  static String UPDATED_TEST_FILE_METADATA = "{\"name\":\"presentFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTransactions\":5,\"numAggregates\":2,\"amountAggregates\":900,\"amountTransactions\":700,\"chunksTotal\":5,\"status\":1}";
+  static String UPDATED_TEST_FILE_METADATA = "{\"name\":\"presentFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"status\":1}";
 
   static String UPDATE_FILE_METADATA = "{\"name\":\"presentFilename\",\"status\":5}";
 
-  static String MALFORMED_UPDATE_FILE_METADATA = "{\"name\":\"\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTransactions\":5,\"numAggregates\":2,\"amountAggregates\":900,\"amountTransactions\":700,\"chunksTotal\":5,\"status\":1}";
+  static String MALFORMED_UPDATE_FILE_METADATA = "{\"name\":\"\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"status\":1}";
 
   static FileMetadataDTO testFileMetadataDTO;
 
@@ -161,29 +161,21 @@ class RestControllerTest {
   @ParameterizedTest
   @ValueSource(strings = {
       "",
-      "{\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0}",
-      "{\"name\":\"\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"wrong value\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"wrong value\",\"status\":0}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":\"wrong value\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"sender\":\"1234\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"sender\":\"123456\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5a\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"chunksTotal\":\"wrong value\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"chunksTotal\":-1}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"chunksLeft\":\"wrong value\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"chunksLeft\":-1}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"numTransactions\":\"wrong value\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"numTransactions\":-1}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"amountTransactions\":\"wrong value\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"amountTransactions\":-1}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"numAggregates\":\"wrong value\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"numAggregates\":-1}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"amountAggregates\":\"wrong value\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"amountAggregates\":-1}",
-  })
+      "{\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":0}",
+      "{\"name\":,\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":0}",
+      "{\"name\":\"\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"wrong value\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"wrong value\",\"status\":0,\"type\":0,\"application\":0,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":,\"type\":0,\"application\":0,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":\"wrong value\",\"type\":0,\"application\":0,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":,\"application\":0,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":\"wrong value\",\"application\":0,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":\"wrong value\",\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":\"wrong value\"}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":0,\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5a\"}",
+        })
   void shouldNotPostWrongValue(String body) throws Exception {
     mockMvc.perform(MockMvcRequestBuilders
             .post(BASE_URI + METADATA_ENDPOINT)

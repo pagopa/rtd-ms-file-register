@@ -10,6 +10,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,13 +48,13 @@ class FileMetadataServiceTest {
   private FileMetadataEntity testFileMetadataEntity;
   private FileMetadataDTO newTestFileMetadataDTO;
 
-  static String testFileMetadataJSON = "{\"name\":\"presentFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTransactions\":5,\"numAggregates\":2,\"amountAggregates\":900,\"amountTransactions\":700,\"chunksTotal\":5,\"status\":0}";
+  static String testFileMetadataJSON = "{\"name\":\"presentFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"application\":0,\"size\":0,\"type\":0}";
 
-  static String newTestFileMetadataJSON = "{\"name\":\"newFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T12:19:16.500\",\"hash\":\"090ed8c1103eb1dc4bae0ac2aa608fa5c085648438b7d38cfc238b9a98eba545\",\"numTransactions\":15,\"numAggregates\":12,\"amountAggregates\":1900,\"amountTransactions\":1700,\"chunksTotal\":15,\"status\":1}";
+  static String newTestFileMetadataJSON = "{\"name\":\"newFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T12:19:16.500\",\"hash\":\"090ed8c1103eb1dc4bae0ac2aa608fa5c085648438b7d38cfc238b9a98eba545\",\"status\":1,\"application\":0,\"size\":5555,\"type\":0}";
 
-  private String metadataUpdatesJSON = "{\"name\":\"presentFilename\", \"status\":1}";
+  private String metadataUpdatesJSON = "{\"name\":\"presentFilename\",\"status\":1,\"application\":0,\"size\":0,\"type\":0}";
 
-  private String notPresentMetadataUpdatesJSON = "{\"name\":\"notPresentFilename\", \"status\":1}";
+  private String notPresentMetadataUpdatesJSON = "{\"name\":\"notPresentFilename\",\"status\":1,\"application\":0,\"size\":0,\"type\":0}";
 
   @BeforeEach
   public void setUpTest() throws JsonProcessingException {
@@ -160,26 +161,18 @@ class FileMetadataServiceTest {
 
   @ParameterizedTest
   @ValueSource(strings = {
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"wrong value\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"wrong value\",\"status\":0}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":\"wrong value\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"sender\":\"1234\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"sender\":\"123456\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5a\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"chunksTotal\":\"wrong value\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"chunksTotal\":-1}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"chunksLeft\":\"wrong value\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"chunksLeft\":-1}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"numTransactions\":\"wrong value\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"numTransactions\":-1}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"amountTransactions\":\"wrong value\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"amountTransactions\":-1}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"numAggregates\":\"wrong value\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"numAggregates\":-1}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"amountAggregates\":\"wrong value\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"amountAggregates\":-1}",
+      "{\"name\":,\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"wrong value\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"wrong value\",\"status\":0,\"type\":0,\"application\":0,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":,\"type\":0,\"application\":0,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":\"wrong value\",\"type\":0,\"application\":0,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":,\"application\":0,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":\"wrong value\",\"application\":0,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":\"wrong value\",\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":\"wrong value\"}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":0,\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5a\"}",
   })
   void updateKoNonValidDTO(String body) throws JsonProcessingException {
     ObjectMapper objectMapper = new ObjectMapper();
@@ -188,7 +181,7 @@ class FileMetadataServiceTest {
     FileMetadataDTO mapped;
     try {
       mapped = objectMapper.readValue(body, FileMetadataDTO.class);
-    } catch (JsonMappingException e) {
+    } catch (JsonMappingException | JsonParseException e) {
       Assertions.assertTrue(true);
       return;
     }
@@ -200,8 +193,8 @@ class FileMetadataServiceTest {
 
   @ParameterizedTest
   @ValueSource(strings = {
-      "{\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTransactions\":\"1\",\"numAggregates\":2,\"amountAggregates\":900,\"amountTransactions\":700,\"chunksTotal\":5,\"status\":0}",
-      "{\"name\":\"\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"numTransactions\":\"1\",\"numAggregates\":2,\"amountAggregates\":900,\"amountTransactions\":700,\"chunksTotal\":5,\"status\":0}",
+      "{\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"application\":0,\"size\":0,\"type\":0}",
+      "{\"name\":\"\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":0}",
   })
   void updateKoEmptyFilename(String body) throws JsonProcessingException {
     ObjectMapper objectMapper = new ObjectMapper();
