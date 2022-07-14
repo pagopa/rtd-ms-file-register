@@ -1,9 +1,9 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.event;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.adapter.BlobRegisterAdapter;
@@ -23,7 +23,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration;
@@ -69,6 +68,19 @@ class EventHandlerTest {
     myEvent.setId(myId);
     myEvent.setTopic(myTopic);
     myEvent.setEventType(myEventType);
+//    myEvent.setData("{\"api\": \"PutBlockList\",\n"
+//        + "    \"clientRequestId\": \"6d79dbfb-0e37-4fc4-981f-442c9ca65760\",\n"
+//        + "    \"requestId\": \"831e1650-001e-001b-66ab-eeb76e000000\",\n"
+//        + "    \"eTag\": \"\\\"0x8D4BCC2E4835CD0\\\"\",\n"
+//        + "    \"contentType\": \"text/plain\",\n"
+//        + "    \"contentLength\": 524288,\n"
+//        + "    \"blobType\": \"BlockBlob\",\n"
+//        + "    \"url\": \"https://my-storage-account.blob.core.windows.net/testcontainer/new-file.txt\",\n"
+//        + "    \"sequencer\": \"00000000000004420000000000028963\",\n"
+//        + "    \"storageDiagnostics\": {\n"
+//        + "       \"batchId\": \"b68529f3-68cd-4744-baa4-3c0498ec19f0\""
+//        + "     }"
+//        + "}");
 
     OffsetDateTime off = OffsetDateTime.parse("2020-08-06T12:19:16.500+03:00");
     ZonedDateTime zoned = off.atZoneSameInstant(ZoneId.of("Europe/Rome"));
@@ -84,7 +96,7 @@ class EventHandlerTest {
       "ade-transactions-32489876908u74bh781e2db57k098c5ad00000000000, ADE.99999.TRNLOG.20220503.172038.001.csv.pgp",
       "rtd-transactions-decrypted, CSTAR.99999.TRNLOG.20220419.121045.001.csv.pgp.0.decrypted",
       "ade-transactions-decrypted, ADE.99999.TRNLOG.20220503.172038.001.csv.pgp.0.decrypted"})
-  void consumeEvent(String container, String blob, CapturedOutput output) {
+  void consumeEvent(String container, String blob) {
     String uri = "/blobServices/default/containers/" + container+ "/blobs/" + blob;
 
     myEvent.setSubject(uri);
@@ -92,7 +104,8 @@ class EventHandlerTest {
     myList = List.of(myEvent);
 
     stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
-    assertThat(output.getOut(), containsString("Evaluated event: "+ uri));
+    verify(blobRegisterAdapter, times(1)).validateContainer(any());
+    verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
   }
 
   @ParameterizedTest
@@ -100,7 +113,7 @@ class EventHandlerTest {
       "cstar-exports, hashedPans.zip",
       "fa-terms-and-conditions, fa-tc.pdf",
       "info-privacy, info-privacy.pdf"})
-  void notConsumeEvent(String container, String blob, CapturedOutput output) {
+  void notConsumeEvent(String container, String blob) {
     String uri = "/blobServices/default/containers/" + container+ "/blobs/" + blob;
 
     myEvent.setSubject(uri);
@@ -108,7 +121,8 @@ class EventHandlerTest {
     myList = List.of(myEvent);
 
     stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
-    assertThat(output.getOut(), not(containsString("Evaluated event: "+ uri)));
+    verify(blobRegisterAdapter, times(1)).validateContainer(any());
+    verify(blobRegisterAdapter, never()).evaluateEvent(any());
   }
 
 }
