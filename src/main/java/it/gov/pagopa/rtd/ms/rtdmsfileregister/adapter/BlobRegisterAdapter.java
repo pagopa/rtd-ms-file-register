@@ -71,7 +71,6 @@ public class BlobRegisterAdapter {
 
     String uri = event.getSubject();
     String[] parts = uri.split("/");
-    String containerName = parts[4];
     String blobName = parts[6];
 
     FileMetadataDTO fileMetadata = new FileMetadataDTO();
@@ -80,37 +79,16 @@ public class BlobRegisterAdapter {
 
     fileMetadata.setLastTransitionTimestamp(eventTimeinLocal);
 
-    STATUS newStatus = evaluateContainer(containerName);
+    STATUS newStatus = STATUS.SUCCESS;
 
-    fileMetadata.setStatus(evaluateContainer(containerName).getOrder());
+    fileMetadata.setStatus(newStatus.getOrder());
 
-    if(newStatus.equals(STATUS.RECEIVED) || newStatus.equals(STATUS.SENDERADEACKPRODUCED)){
-      fileMetadata.setReceiveTimestamp(eventTimeinLocal);
-      fileMetadataService.storeFileMetadata(fileMetadata);
-    }
-    else {
-      fileMetadataService.updateFileMetadata(fileMetadata);
-    }
+    fileMetadata.setReceiveTimestamp(eventTimeinLocal);
+    fileMetadataService.storeFileMetadata(fileMetadata);
 
     log.info("Evaluated event: {}", event.getSubject());
     return event;
   }
-
-  public STATUS evaluateContainer(String containerName) {
-    if (containerName.matches("(ade|rtd)-transactions-decrypted")) {
-      return STATUS.DECRYPTEDANDSPLIT;
-    }
-    if (containerName.matches("sender-ade-ack")) {
-      return STATUS.SENDERADEACKPRODUCED;
-    }
-    if (containerName.matches("ade")) {
-      return STATUS.DEPOSITED;
-    }
-
-    // Default is the same as containerName.matches("(ade|rtd)-transactions-[a-z0-9]{44}"))
-    return STATUS.RECEIVED;
-  }
-
 
   public String cleanFilename(String filename) {
     return filename
