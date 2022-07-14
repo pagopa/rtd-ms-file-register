@@ -68,19 +68,6 @@ class EventHandlerTest {
     myEvent.setId(myId);
     myEvent.setTopic(myTopic);
     myEvent.setEventType(myEventType);
-//    myEvent.setData("{\"api\": \"PutBlockList\",\n"
-//        + "    \"clientRequestId\": \"6d79dbfb-0e37-4fc4-981f-442c9ca65760\",\n"
-//        + "    \"requestId\": \"831e1650-001e-001b-66ab-eeb76e000000\",\n"
-//        + "    \"eTag\": \"\\\"0x8D4BCC2E4835CD0\\\"\",\n"
-//        + "    \"contentType\": \"text/plain\",\n"
-//        + "    \"contentLength\": 524288,\n"
-//        + "    \"blobType\": \"BlockBlob\",\n"
-//        + "    \"url\": \"https://my-storage-account.blob.core.windows.net/testcontainer/new-file.txt\",\n"
-//        + "    \"sequencer\": \"00000000000004420000000000028963\",\n"
-//        + "    \"storageDiagnostics\": {\n"
-//        + "       \"batchId\": \"b68529f3-68cd-4744-baa4-3c0498ec19f0\""
-//        + "     }"
-//        + "}");
 
     OffsetDateTime off = OffsetDateTime.parse("2020-08-06T12:19:16.500+03:00");
     ZonedDateTime zoned = off.atZoneSameInstant(ZoneId.of("Europe/Rome"));
