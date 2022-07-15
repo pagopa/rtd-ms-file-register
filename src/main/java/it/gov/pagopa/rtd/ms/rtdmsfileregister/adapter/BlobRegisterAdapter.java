@@ -109,27 +109,17 @@ public class BlobRegisterAdapter {
 
   public FileApplication evaluateApplication(FileType fileType) {
     // RTD application
-    if (fileType == FileType.TRANSACTIONS_SOURCE) {
-      return FileApplication.RTD;
-    }
-    if (fileType == FileType.TRANSACTIONS_CHUNK) {
+    if (fileType == FileType.TRANSACTIONS_SOURCE
+        || fileType == FileType.TRANSACTIONS_CHUNK) {
       return FileApplication.RTD;
     }
 
     // ADE types
-    if (fileType == FileType.AGGREGATES_SOURCE) {
-      return FileApplication.ADE;
-    }
-    if (fileType == FileType.AGGREGATES_CHUNK) {
-      return FileApplication.ADE;
-    }
-    if (fileType == FileType.AGGREGATES_DESTINATION) {
-      return FileApplication.ADE;
-    }
-    if (fileType == FileType.ADE_ACK) {
-      return FileApplication.ADE;
-    }
-    if (fileType == FileType.SENDER_ADE_ACK) {
+    if (fileType == FileType.AGGREGATES_SOURCE
+        || fileType == FileType.AGGREGATES_CHUNK
+        || fileType == FileType.AGGREGATES_DESTINATION
+        || fileType == FileType.ADE_ACK
+        || fileType == FileType.SENDER_ADE_ACK) {
       return FileApplication.ADE;
     }
 
