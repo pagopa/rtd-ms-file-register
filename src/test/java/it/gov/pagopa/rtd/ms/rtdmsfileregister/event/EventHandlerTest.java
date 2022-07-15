@@ -96,6 +96,7 @@ class EventHandlerTest {
     stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
     verify(blobRegisterAdapter, times(1)).cleanFilename(any());
+    verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
   }
 
   @ParameterizedTest
@@ -113,6 +114,7 @@ class EventHandlerTest {
     stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
     verify(blobRegisterAdapter, never()).cleanFilename(any());
+    verify(blobRegisterAdapter, never()).evaluateApplication(any());
   }
 
 }
