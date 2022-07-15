@@ -37,7 +37,9 @@ public class BlobRegisterAdapter {
 
     boolean isEventOfInterest = containerName.matches(acceptedContainers);
 
-    if (!isEventOfInterest) log.info(EVENT_NOT_OF_INTEREST_MSG + event.getSubject());
+    if (!isEventOfInterest) {
+      log.info(EVENT_NOT_OF_INTEREST_MSG + event.getSubject());
+    }
 
     return isEventOfInterest;
   }
@@ -47,6 +49,7 @@ public class BlobRegisterAdapter {
 
     String uri = event.getSubject();
     String[] parts = uri.split("/");
+    String containerName = parts[4];
     String blobName = parts[6];
 
     FileMetadataDTO fileMetadata = new FileMetadataDTO();
@@ -55,9 +58,9 @@ public class BlobRegisterAdapter {
 
     fileMetadata.setLastTransitionTimestamp(eventTimeinLocal);
 
-    STATUS newStatus = STATUS.SUCCESS;
+    fileMetadata.setStatus(FileStatus.SUCCESS.getOrder());
 
-    fileMetadata.setStatus(newStatus.getOrder());
+    fileMetadata.setType(evaluateContainer(containerName).getOrder());
 
     fileMetadata.setReceiveTimestamp(eventTimeinLocal);
     fileMetadataService.storeFileMetadata(fileMetadata);
@@ -73,6 +76,35 @@ public class BlobRegisterAdapter {
         .replace(".pgp", "")
         .replace(".gpg", "");
 
+  }
+
+  public FileType evaluateContainer(String containerName) {
+    // RTD types
+    if (containerName.matches("rtd-transactions-[a-z0-9]{44}")) {
+      return FileType.TRANSACTIONS_SOURCE;
+    }
+    if (containerName.matches("rtd-transactions-decrypted")) {
+      return FileType.TRANSACTIONS_CHUNK;
+    }
+
+    // ADE types
+    if (containerName.matches("ade-transactions-[a-z0-9]{44}")) {
+      return FileType.AGGREGATES_SOURCE;
+    }
+    if (containerName.matches("ade-transactions-decrypted")) {
+      return FileType.AGGREGATES_CHUNK;
+    }
+    if (containerName.matches("ade/in")) {
+      return FileType.AGGREGATES_DESTINATION;
+    }
+    if (containerName.matches("ade/ack")) {
+      return FileType.ADE_ACK;
+    }
+    if (containerName.matches("sender-ade-ack")) {
+      return FileType.SENDER_ADE_ACK;
+    }
+
+    return FileType.UNKNOWN;
   }
 
 }
