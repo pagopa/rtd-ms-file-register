@@ -77,12 +77,15 @@ class EventHandlerTest {
   }
 
   @ParameterizedTest
-  @CsvSource({"sender-ade-ack, ADE.99999.TRNLOG.20220607.163518.001.csv",
-      "ade, ADE.99999.TRNLOG.20220503.172038.001.csv.pgp.0.decrypted",
+  @CsvSource({
       "rtd-transactions-32489876908u74bh781e2db57k098c5ad00000000000, CSTAR.99999.TRNLOG.20220419.121045.001.csv.pgp",
-      "ade-transactions-32489876908u74bh781e2db57k098c5ad00000000000, ADE.99999.TRNLOG.20220503.172038.001.csv.pgp",
       "rtd-transactions-decrypted, CSTAR.99999.TRNLOG.20220419.121045.001.csv.pgp.0.decrypted",
-      "ade-transactions-decrypted, ADE.99999.TRNLOG.20220503.172038.001.csv.pgp.0.decrypted"})
+      "ade-transactions-32489876908u74bh781e2db57k098c5ad00000000000, ADE.99999.TRNLOG.20220503.172038.001.csv.pgp",
+      "ade-transactions-decrypted, ADE.99999.TRNLOG.20220503.172038.001.csv.pgp.0.decrypted",
+      "ade/in, ADE.99999.TRNLOG.20220503.172038.001.csv.pgp.0.decrypted",
+      "ade/ack, CSTAR.ADEACK.20220503.172038.001.csv.pgp.0.decrypted",
+      "sender-ade-ack, ADE.99999.ADEACK.20220607.163518.001.csv",
+  })
   void consumeEvent(String container, String blob) {
     String uri = "/blobServices/default/containers/" + container+ "/blobs/" + blob;
 
