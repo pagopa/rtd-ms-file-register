@@ -12,49 +12,49 @@ public enum FileType {
   TRANSACTIONS_SOURCE {
     @Override
     public int getOrder() {
-      return 1;
+      return 0;
     }
   },
 
   TRANSACTIONS_CHUNK {
     @Override
     public int getOrder() {
-      return 2;
+      return 1;
     }
   },
 
   AGGREGATES_SOURCE {
     @Override
     public int getOrder() {
-      return 3;
+      return 2;
     }
   },
 
   AGGREGATES_CHUNK {
     @Override
     public int getOrder() {
-      return 4;
+      return 3;
     }
   },
 
   AGGREGATES_DESTINATION {
     @Override
     public int getOrder() {
-      return 5;
+      return 4;
     }
   },
 
   ADE_ACK {
     @Override
     public int getOrder() {
-      return 6;
+      return 5;
     }
   },
 
   SENDER_ADE_ACK {
     @Override
     public int getOrder() {
-      return 7;
+      return 6;
     }
   };
 

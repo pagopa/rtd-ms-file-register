@@ -1,17 +1,18 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.model;
 
 public enum FileStatus {
-  SUCCESS {
-    @Override
-    public int getOrder() {
-      return 0;
-    }
-  },
 
   FAILED {
     @Override
     public int getOrder() {
       return -1;
+    }
+  },
+
+  SUCCESS {
+    @Override
+    public int getOrder() {
+      return 0;
     }
   },
 
