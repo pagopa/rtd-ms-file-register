@@ -2,6 +2,8 @@ package it.gov.pagopa.rtd.ms.rtdmsfileregister.adapter;
 
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.EventGridEvent;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileStatus;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileType;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.FileMetadataService;
 import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
@@ -11,32 +13,6 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class BlobRegisterAdapter {
-
-  public enum STATUS {
-
-    SUCCESS {
-      @Override
-      public int getOrder() {
-        return 0;
-      }
-    },
-
-    FAILED {
-      @Override
-      public int getOrder() {
-        return -2;
-      }
-    },
-
-    DOWNLOADED {
-      @Override
-      public int getOrder() {
-        return 0;
-      }
-    };
-
-    public abstract int getOrder();
-  }
 
   String encryptedTransactionsContainer = "((ade|rtd)-transactions-[a-z0-9]{44})";
   String decryptedTransactionsContainer = "((ade|rtd)-transactions-decrypted)";
