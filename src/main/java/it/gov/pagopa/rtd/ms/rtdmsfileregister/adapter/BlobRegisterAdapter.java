@@ -50,6 +50,9 @@ public class BlobRegisterAdapter {
     String uri = event.getSubject();
     String[] parts = uri.split("/");
     String containerName = parts[4];
+    if (containerName.matches("ade")){
+      containerName = containerName + "/" + parts[5];
+    }
     String blobName = parts[6];
 
     FileMetadataDTO fileMetadata = new FileMetadataDTO();
