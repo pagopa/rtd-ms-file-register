@@ -28,7 +28,6 @@ public class EventHandler {
   public Consumer<Message<List<EventGridEvent>>> blobStorageConsumer(BlobRegisterAdapter blobRegisterAdapter) {
     return message -> message.getPayload().stream()
         .filter(e -> "Microsoft.Storage.BlobCreated".equals(e.getEventType()))
-        .filter(blobRegisterAdapter::validateContainer)
         .map(blobRegisterAdapter::evaluateEvent)
         .collect(Collectors.toList());
   }
