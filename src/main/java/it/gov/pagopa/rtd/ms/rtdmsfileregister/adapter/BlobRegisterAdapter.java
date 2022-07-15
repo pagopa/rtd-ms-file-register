@@ -1,6 +1,7 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.adapter;
 
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.EventGridEvent;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileApplication;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileStatus;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileType;
@@ -36,7 +37,7 @@ public class BlobRegisterAdapter {
     String uri = event.getSubject();
     String[] parts = uri.split("/");
     String containerName = parts[4];
-    if (containerName.matches("ade")){
+    if (containerName.matches("ade")) {
       containerName = containerName + "/" + parts[5];
     }
 
@@ -57,7 +58,9 @@ public class BlobRegisterAdapter {
 
     fileMetadata.setStatus(FileStatus.SUCCESS.getOrder());
 
-    fileMetadata.setType(evaluateContainer(containerName).getOrder());
+    fileMetadata.setType(fileType.getOrder());
+
+    fileMetadata.setApplication(evaluateApplication(fileType).getOrder());
 
     fileMetadata.setReceiveTimestamp(eventTimeinLocal);
     fileMetadataService.storeFileMetadata(fileMetadata);
@@ -102,6 +105,35 @@ public class BlobRegisterAdapter {
     }
 
     return FileType.UNKNOWN;
+  }
+
+  public FileApplication evaluateApplication(FileType fileType) {
+    // RTD application
+    if (fileType == FileType.TRANSACTIONS_SOURCE) {
+      return FileApplication.RTD;
+    }
+    if (fileType == FileType.TRANSACTIONS_CHUNK) {
+      return FileApplication.RTD;
+    }
+
+    // ADE types
+    if (fileType == FileType.AGGREGATES_SOURCE) {
+      return FileApplication.ADE;
+    }
+    if (fileType == FileType.AGGREGATES_CHUNK) {
+      return FileApplication.ADE;
+    }
+    if (fileType == FileType.AGGREGATES_DESTINATION) {
+      return FileApplication.ADE;
+    }
+    if (fileType == FileType.ADE_ACK) {
+      return FileApplication.ADE;
+    }
+    if (fileType == FileType.SENDER_ADE_ACK) {
+      return FileApplication.ADE;
+    }
+
+    return FileApplication.UNKNOWN;
   }
 
 }
