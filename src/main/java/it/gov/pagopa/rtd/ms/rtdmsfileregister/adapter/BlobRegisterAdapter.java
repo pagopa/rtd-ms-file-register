@@ -30,20 +30,6 @@ public class BlobRegisterAdapter {
   @Autowired
   FileMetadataService fileMetadataService;
 
-  public boolean validateContainer(EventGridEvent event) {
-    String uri = event.getSubject();
-    String[] parts = uri.split("/");
-    String containerName = parts[4];
-
-    boolean isEventOfInterest = containerName.matches(acceptedContainers);
-
-    if (!isEventOfInterest) {
-      log.info(EVENT_NOT_OF_INTEREST_MSG + event.getSubject());
-    }
-
-    return isEventOfInterest;
-  }
-
   public EventGridEvent evaluateEvent(EventGridEvent event) {
     LocalDateTime eventTimeinLocal = event.getEventTime();
 
@@ -53,6 +39,14 @@ public class BlobRegisterAdapter {
     if (containerName.matches("ade")){
       containerName = containerName + "/" + parts[5];
     }
+
+    FileType fileType = evaluateContainer(containerName);
+
+    if (fileType == FileType.UNKNOWN) {
+      log.info(EVENT_NOT_OF_INTEREST_MSG + event.getSubject());
+      return null;
+    }
+
     String blobName = parts[6];
 
     FileMetadataDTO fileMetadata = new FileMetadataDTO();
