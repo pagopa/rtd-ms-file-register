@@ -3,6 +3,7 @@ package it.gov.pagopa.rtd.ms.rtdmsfileregister.adapter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameAlreadyPresent;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.EventGridEvent;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileApplication;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
@@ -49,6 +50,8 @@ public class BlobRegisterAdapter {
     if (fileType == FileType.UNKNOWN) {
       log.info(EVENT_NOT_OF_INTEREST_MSG + event.getSubject());
       return null;
+    } else {
+      log.info("Received event: " + event.getSubject());
     }
 
     String blobName = parts[6];
@@ -70,7 +73,11 @@ public class BlobRegisterAdapter {
       log.warn("File size is "+ fileMetadata.getSize()+ " for event: " + event.getSubject());
     }
 
-    fileMetadataService.storeFileMetadata(fileMetadata);
+    try {
+      fileMetadataService.storeFileMetadata(fileMetadata);
+    } catch (FilenameAlreadyPresent e){
+      log.warn("File already present: " + fileMetadata.getName());
+    }
 
     log.info("Evaluated event: {}", event.getSubject());
     return event;
