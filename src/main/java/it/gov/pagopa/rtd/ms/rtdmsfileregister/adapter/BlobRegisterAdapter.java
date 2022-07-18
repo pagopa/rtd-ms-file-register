@@ -1,5 +1,8 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.adapter;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.EventGridEvent;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileApplication;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
