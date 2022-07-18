@@ -126,4 +126,19 @@ public class BlobRegisterAdapter {
     return FileApplication.UNKNOWN;
   }
 
+  public long extractFileSize(EventGridEvent event) {
+    ObjectMapper objectMapper = new ObjectMapper();
+    try {
+      JsonNode sizeNode = objectMapper.readTree(String.valueOf(event.getData()))
+          .get("contentLength");
+      if (sizeNode != null) {
+        return sizeNode.longValue();
+      } else {
+        log.warn("No contentLength in event: {}", event.getSubject());
+      }
+    } catch (JsonProcessingException e) {
+      log.warn("Failed to parse event: {}", event.getSubject());
+    }
+    return 0;
+  }
 }
