@@ -57,7 +57,7 @@ public class BlobRegisterAdapter {
 
     fileMetadata.setName(cleanFilename(blobName));
 
-    fileMetadata.setLastTransitionTimestamp(eventTimeinLocal);
+    fileMetadata.setReceiveTimestamp(eventTimeinLocal);
 
     fileMetadata.setStatus(FileStatus.SUCCESS.getOrder());
 
@@ -65,7 +65,11 @@ public class BlobRegisterAdapter {
 
     fileMetadata.setApplication(evaluateApplication(fileType).getOrder());
 
-    fileMetadata.setReceiveTimestamp(eventTimeinLocal);
+    fileMetadata.setSize(extractFileSize(event));
+    if (fileMetadata.getSize() <= 0) {
+      log.warn("File size is "+ fileMetadata.getSize()+ " for event: " + event.getSubject());
+    }
+
     fileMetadataService.storeFileMetadata(fileMetadata);
 
     log.info("Evaluated event: {}", event.getSubject());
