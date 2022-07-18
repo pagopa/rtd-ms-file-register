@@ -15,6 +15,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -68,6 +69,19 @@ class EventHandlerTest {
     myEvent.setId(myId);
     myEvent.setTopic(myTopic);
     myEvent.setEventType(myEventType);
+    myEvent.setData("{\"api\": \"PutBlockList\",\n"
+        + "    \"clientRequestId\": \"6d79dbfb-0e37-4fc4-981f-442c9ca65760\",\n"
+        + "    \"requestId\": \"831e1650-001e-001b-66ab-eeb76e000000\",\n"
+        + "    \"eTag\": \"\\\"0x8D4BCC2E4835CD0\\\"\",\n"
+        + "    \"contentType\": \"text/plain\",\n"
+        + "    \"contentLength\": 524288,\n"
+        + "    \"blobType\": \"BlockBlob\",\n"
+        + "    \"url\": \"https://my-storage-account.blob.core.windows.net/testcontainer/new-file.txt\",\n"
+        + "    \"sequencer\": \"00000000000004420000000000028963\",\n"
+        + "    \"storageDiagnostics\": {\n"
+        + "       \"batchId\": \"b68529f3-68cd-4744-baa4-3c0498ec19f0\""
+        + "     }"
+        + "}");
 
     OffsetDateTime off = OffsetDateTime.parse("2020-08-06T12:19:16.500+03:00");
     ZonedDateTime zoned = off.atZoneSameInstant(ZoneId.of("Europe/Rome"));
@@ -87,7 +101,7 @@ class EventHandlerTest {
       "sender-ade-ack, ADE.99999.ADEACK.20220607.163518.001.csv",
   })
   void consumeEvent(String container, String blob) {
-    String uri = "/blobServices/default/containers/" + container+ "/blobs/" + blob;
+    String uri = "/blobServices/default/containers/" + container + "/blobs/" + blob;
 
     myEvent.setSubject(uri);
 
@@ -99,13 +113,97 @@ class EventHandlerTest {
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
   }
 
+  @Test
+  void consumeEventNoSize() {
+    String uri = "/blobServices/default/containers/rtd-transactions-32489876908u74bh781e2db57k098c5ad00000000000/blobs/CSTAR.99999.TRNLOG.20220419.121045.001.csv.pgp";
+
+    myEvent.setData("{\"api\": \"PutBlockList\",\n"
+        + "    \"clientRequestId\": \"6d79dbfb-0e37-4fc4-981f-442c9ca65760\",\n"
+        + "    \"requestId\": \"831e1650-001e-001b-66ab-eeb76e000000\",\n"
+        + "    \"eTag\": \"\\\"0x8D4BCC2E4835CD0\\\"\",\n"
+        + "    \"contentType\": \"text/plain\",\n"
+        + "    \"blobType\": \"BlockBlob\",\n"
+        + "    \"url\": \"https://my-storage-account.blob.core.windows.net/testcontainer/new-file.txt\",\n"
+        + "    \"sequencer\": \"00000000000004420000000000028963\",\n"
+        + "    \"storageDiagnostics\": {\n"
+        + "       \"batchId\": \"b68529f3-68cd-4744-baa4-3c0498ec19f0\""
+        + "     }"
+        + "}");
+    myEvent.setSubject(uri);
+
+    myList = List.of(myEvent);
+
+    stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
+    verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
+    verify(blobRegisterAdapter, times(1)).cleanFilename(any());
+    verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
+    verify(blobRegisterAdapter, times(1)).extractFileSize(any());
+
+  }
+
+  @Test
+  void consumeEventNegativeSize() {
+    String uri = "/blobServices/default/containers/rtd-transactions-32489876908u74bh781e2db57k098c5ad00000000000/blobs/CSTAR.99999.TRNLOG.20220419.121045.001.csv.pgp";
+
+    myEvent.setData("{\"api\": \"PutBlockList\",\n"
+        + "    \"clientRequestId\": \"6d79dbfb-0e37-4fc4-981f-442c9ca65760\",\n"
+        + "    \"requestId\": \"831e1650-001e-001b-66ab-eeb76e000000\",\n"
+        + "    \"eTag\": \"\\\"0x8D4BCC2E4835CD0\\\"\",\n"
+        + "    \"contentType\": \"text/plain\",\n"
+        + "    \"blobType\": \"BlockBlob\",\n"
+        + "    \"contentLength\": -1,\n"
+        + "    \"url\": \"https://my-storage-account.blob.core.windows.net/testcontainer/new-file.txt\",\n"
+        + "    \"sequencer\": \"00000000000004420000000000028963\",\n"
+        + "    \"storageDiagnostics\": {\n"
+        + "       \"batchId\": \"b68529f3-68cd-4744-baa4-3c0498ec19f0\""
+        + "     }"
+        + "}");
+    myEvent.setSubject(uri);
+
+    myList = List.of(myEvent);
+
+    stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
+    verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
+    verify(blobRegisterAdapter, times(1)).cleanFilename(any());
+    verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
+    verify(blobRegisterAdapter, times(1)).extractFileSize(any());
+
+  }
+
+  @Test
+  void consumeEventMalformedData() {
+    String uri = "/blobServices/default/containers/rtd-transactions-32489876908u74bh781e2db57k098c5ad00000000000/blobs/CSTAR.99999.TRNLOG.20220419.121045.001.csv.pgp";
+
+    myEvent.setData("{\"api\": \"PutBlockList\",\n"
+        + "    \"clientRequestId\": \"6d79dbfb-0e37-4fc4-981f-442c9ca65760\",\n"
+        + "    \"requestId\": \"831e1650-001e-001b-66ab-eeb76e000000\",\n"
+        + "    \"eTag\": \"\\\"0x8D4BCC2E4835CD0\\\"\",\n"
+        + "    \"contentType\": \"text/plain\",\n"
+        + "    \"blobType\": \"BlockBlob\",\n"
+        + "    \"contentLength\": 524288,\n"
+        + "    \"url\": \"https://my-storage-account.blob.core.windows.net/testcontainer/new-file.txt\",\n"
+        + "    \"sequencer\": \"00000000000004420000000000028963\",\n"
+        + "    \"storageDiagnostics\": {\n"
+        + "       \"batchId\": \"b68529f3-68cd-4744-baa4-3c0498ec19f0\""
+        + "     }");
+    myEvent.setSubject(uri);
+
+    myList = List.of(myEvent);
+
+    stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
+    verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
+    verify(blobRegisterAdapter, times(1)).cleanFilename(any());
+    verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
+    verify(blobRegisterAdapter, times(1)).extractFileSize(any());
+  }
+
   @ParameterizedTest
   @CsvSource({"bpd-terms-and-conditions, bpd-tc.pdf",
       "cstar-exports, hashedPans.zip",
       "fa-terms-and-conditions, fa-tc.pdf",
       "info-privacy, info-privacy.pdf"})
   void notConsumeEvent(String container, String blob) {
-    String uri = "/blobServices/default/containers/" + container+ "/blobs/" + blob;
+    String uri = "/blobServices/default/containers/" + container + "/blobs/" + blob;
 
     myEvent.setSubject(uri);
 
@@ -115,6 +213,8 @@ class EventHandlerTest {
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
     verify(blobRegisterAdapter, never()).cleanFilename(any());
     verify(blobRegisterAdapter, never()).evaluateApplication(any());
+    verify(blobRegisterAdapter, never()).extractFileSize(any());
+
   }
 
 }
