@@ -54,11 +54,16 @@ public class BlobRegisterAdapter {
       log.info("Received event: " + event.getSubject());
     }
 
-    String blobName = parts[6];
+    String blobName;
+    if (fileType == FileType.AGGREGATES_DESTINATION || fileType == FileType.ADE_ACK) {
+      blobName = parts[7];
+    } else {
+      blobName = parts[6];
+    }
 
     FileMetadataDTO fileMetadata = new FileMetadataDTO();
 
-    fileMetadata.setName(cleanFilename(blobName));
+    fileMetadata.setName(blobName);
 
     fileMetadata.setReceiveTimestamp(eventTimeinLocal);
 
@@ -70,12 +75,14 @@ public class BlobRegisterAdapter {
 
     fileMetadata.setSize(extractFileSize(event));
     if (fileMetadata.getSize() <= 0) {
-      log.warn("File size is "+ fileMetadata.getSize()+ " for event: " + event.getSubject());
+      log.warn("File size is " + fileMetadata.getSize() + " for event: " + event.getSubject());
     }
+
+    fileMetadata.setParent(extractParent(blobName, fileType));
 
     try {
       fileMetadataService.storeFileMetadata(fileMetadata);
-    } catch (FilenameAlreadyPresent e){
+    } catch (FilenameAlreadyPresent e) {
       log.warn("File already present: " + fileMetadata.getName());
     }
 
