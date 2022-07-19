@@ -83,15 +83,6 @@ public class BlobRegisterAdapter {
     return event;
   }
 
-  public String cleanFilename(String filename) {
-    return filename
-        .replace(".csv", "")
-        .replaceAll("\\.(\\d)+\\.decrypted", "")
-        .replace(".pgp", "")
-        .replace(".gpg", "");
-
-  }
-
   public FileType evaluateContainer(String containerName) {
     // RTD types
     if (containerName.matches("rtd-transactions-[a-z0-9]{44}")) {
