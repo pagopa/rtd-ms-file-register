@@ -155,4 +155,26 @@ public class BlobRegisterAdapter {
     }
     return 0;
   }
+
+  public String extractParent(String filename, FileType fileType) {
+    if (fileType == FileType.TRANSACTIONS_SOURCE
+        || fileType == FileType.AGGREGATES_SOURCE
+        || fileType == FileType.ADE_ACK
+    ) {
+      return filename;
+    }
+    if (fileType == FileType.TRANSACTIONS_CHUNK || fileType == FileType.AGGREGATES_CHUNK) {
+      return filename.replaceAll("\\.(\\d)+\\.decrypted", "");
+    }
+    if (fileType == FileType.AGGREGATES_DESTINATION) {
+      return filename.replaceAll("\\.(\\d)+\\.decrypted", "")
+          .replace(".gz", "");
+    }
+    if (fileType == FileType.SENDER_ADE_ACK) {
+      return filename.replaceFirst(filename.split("\\.")[1], "")
+          .replaceFirst("\\.", "");
+    }
+    return null;
+  }
+
 }
