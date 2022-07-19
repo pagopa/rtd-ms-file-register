@@ -96,8 +96,8 @@ class EventHandlerTest {
       "rtd-transactions-decrypted, CSTAR.99999.TRNLOG.20220419.121045.001.csv.pgp.0.decrypted",
       "ade-transactions-32489876908u74bh781e2db57k098c5ad00000000000, ADE.99999.TRNLOG.20220503.172038.001.csv.pgp",
       "ade-transactions-decrypted, ADE.99999.TRNLOG.20220503.172038.001.csv.pgp.0.decrypted",
-      "ade/in, ADE.99999.TRNLOG.20220503.172038.001.csv.pgp.0.decrypted",
-      "ade/ack, CSTAR.ADEACK.20220503.172038.001.csv.pgp.0.decrypted",
+      "ade/in, ADE.99999.TRNLOG.20220503.172038.001.csv.pgp.0.decrypted.gz",
+      "ade/ack, CSTAR.ADEACK.20220503.172038.001.csv",
       "sender-ade-ack, ADE.99999.ADEACK.20220607.163518.001.csv",
   })
   void consumeEvent(String container, String blob) {
@@ -109,8 +109,10 @@ class EventHandlerTest {
 
     stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
-    verify(blobRegisterAdapter, times(1)).cleanFilename(any());
+    verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
+    verify(blobRegisterAdapter, times(1)).extractFileSize(any());
+    verify(blobRegisterAdapter, times(1)).extractParent(any(), any());
   }
 
   @Test
@@ -135,9 +137,10 @@ class EventHandlerTest {
 
     stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
-    verify(blobRegisterAdapter, times(1)).cleanFilename(any());
+    verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
     verify(blobRegisterAdapter, times(1)).extractFileSize(any());
+    verify(blobRegisterAdapter, times(1)).extractParent(any(), any());
 
   }
 
@@ -164,14 +167,15 @@ class EventHandlerTest {
 
     stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
-    verify(blobRegisterAdapter, times(1)).cleanFilename(any());
+    verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
     verify(blobRegisterAdapter, times(1)).extractFileSize(any());
+    verify(blobRegisterAdapter, times(1)).extractParent(any(), any());
 
   }
 
   @Test
-  void consumeEventMalformedData() {
+  void consumeEventMalformedEventData() {
     String uri = "/blobServices/default/containers/rtd-transactions-32489876908u74bh781e2db57k098c5ad00000000000/blobs/CSTAR.99999.TRNLOG.20220419.121045.001.csv.pgp";
 
     myEvent.setData("{\"api\": \"PutBlockList\",\n"
@@ -192,9 +196,10 @@ class EventHandlerTest {
 
     stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
-    verify(blobRegisterAdapter, times(1)).cleanFilename(any());
+    verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
     verify(blobRegisterAdapter, times(1)).extractFileSize(any());
+    verify(blobRegisterAdapter, times(1)).extractParent(any(), any());
   }
 
   @ParameterizedTest
@@ -211,9 +216,10 @@ class EventHandlerTest {
 
     stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
-    verify(blobRegisterAdapter, never()).cleanFilename(any());
+    verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, never()).evaluateApplication(any());
     verify(blobRegisterAdapter, never()).extractFileSize(any());
+    verify(blobRegisterAdapter, never()).extractParent(any(), any());
 
   }
 
