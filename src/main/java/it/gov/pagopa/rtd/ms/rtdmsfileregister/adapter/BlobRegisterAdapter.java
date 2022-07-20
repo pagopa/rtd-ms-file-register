@@ -73,6 +73,8 @@ public class BlobRegisterAdapter {
 
     fileMetadata.setApplication(evaluateApplication(fileType).getOrder());
 
+    fileMetadata.setSender(extractSender(blobName, fileType));
+
     fileMetadata.setSize(extractFileSize(event));
     if (fileMetadata.getSize() <= 0) {
       log.warn("File size is " + fileMetadata.getSize() + " for event: " + event.getSubject());
@@ -175,4 +177,13 @@ public class BlobRegisterAdapter {
     return null;
   }
 
+  public String extractSender(String filename, FileType fileType) {
+    if (fileType == FileType.UNKNOWN) {
+      return null;
+    }
+    if (fileType == FileType.ADE_ACK) {
+      return "ADE";
+    }
+    return filename.split("\\.")[1];
+  }
 }
