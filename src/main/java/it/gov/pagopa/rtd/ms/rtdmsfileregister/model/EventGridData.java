@@ -49,7 +49,7 @@ public class EventGridData {
   /**
    * The type of blob. Valid values are either "BlockBlob" or "PageBlob".
    */
-  @JsonProperty(value = "contentType", required = true)
+  @JsonProperty(value = "blobType", required = true)
   private String blobType;
 
   /**
