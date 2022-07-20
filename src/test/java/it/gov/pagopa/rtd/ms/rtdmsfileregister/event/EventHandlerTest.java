@@ -6,7 +6,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.adapter.BlobRegisterAdapter;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.EventGridData;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.EventGridEvent;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.FileMetadataService;
 import java.time.LocalDateTime;
@@ -61,6 +64,62 @@ class EventHandlerTest {
   List<EventGridEvent> myList;
   EventGridEvent myEvent;
 
+  ObjectMapper mapper = new ObjectMapper();
+
+  String eventGridDataJson = "{\"api\": \"PutBlockList\",\n"
+      + "    \"clientRequestId\": \"6d79dbfb-0e37-4fc4-981f-442c9ca65760\",\n"
+      + "    \"requestId\": \"831e1650-001e-001b-66ab-eeb76e000000\",\n"
+      + "    \"eTag\": \"\\\"0x8D4BCC2E4835CD0\\\"\",\n"
+      + "    \"contentType\": \"text/plain\",\n"
+      + "    \"contentLength\": 524288,\n"
+      + "    \"blobType\": \"BlockBlob\",\n"
+      + "    \"url\": \"https://my-storage-account.blob.core.windows.net/testcontainer/new-file.txt\",\n"
+      + "    \"sequencer\": \"00000000000004420000000000028963\",\n"
+      + "    \"storageDiagnostics\": {\n"
+      + "       \"batchId\": \"b68529f3-68cd-4744-baa4-3c0498ec19f0\""
+      + "     }"
+      + "}";
+
+  String eventGridDataJsonNoContentLength = "{\"api\": \"PutBlockList\",\n"
+      + "    \"clientRequestId\": \"6d79dbfb-0e37-4fc4-981f-442c9ca65760\",\n"
+      + "    \"requestId\": \"831e1650-001e-001b-66ab-eeb76e000000\",\n"
+      + "    \"eTag\": \"\\\"0x8D4BCC2E4835CD0\\\"\",\n"
+      + "    \"contentType\": \"text/plain\",\n"
+      + "    \"blobType\": \"BlockBlob\",\n"
+      + "    \"url\": \"https://my-storage-account.blob.core.windows.net/testcontainer/new-file.txt\",\n"
+      + "    \"sequencer\": \"00000000000004420000000000028963\",\n"
+      + "    \"storageDiagnostics\": {\n"
+      + "       \"batchId\": \"b68529f3-68cd-4744-baa4-3c0498ec19f0\""
+      + "     }"
+      + "}";
+
+  String eventGridDataJsonNegativeContentLength = "{\"api\": \"PutBlockList\",\n"
+      + "    \"clientRequestId\": \"6d79dbfb-0e37-4fc4-981f-442c9ca65760\",\n"
+      + "    \"requestId\": \"831e1650-001e-001b-66ab-eeb76e000000\",\n"
+      + "    \"eTag\": \"\\\"0x8D4BCC2E4835CD0\\\"\",\n"
+      + "    \"contentType\": \"text/plain\",\n"
+      + "    \"contentLength\": -1,\n"
+      + "    \"blobType\": \"BlockBlob\",\n"
+      + "    \"url\": \"https://my-storage-account.blob.core.windows.net/testcontainer/new-file.txt\",\n"
+      + "    \"sequencer\": \"00000000000004420000000000028963\",\n"
+      + "    \"storageDiagnostics\": {\n"
+      + "       \"batchId\": \"b68529f3-68cd-4744-baa4-3c0498ec19f0\""
+      + "     }"
+      + "}";
+
+  String eventGridDataJsonMalformedContent = "{\"api\": \"PutBlockList\",\n"
+      + "    \"clientRequestId\": \"6d79dbfb-0e37-4fc4-981f-442c9ca65760\",\n"
+      + "    \"requestId\": \"831e1650-001e-001b-66ab-eeb76e000000\",\n"
+      + "    \"eTag\": \"\\\"0x8D4BCC2E4835CD0\\\"\",\n"
+      + "    \"contentType\": \"text/plain\",\n"
+      + "    \"blobType\": \"BlockBlob\",\n"
+      + "    \"url\": \"https://my-storage-account.blob.core.windows.net/testcontainer/new-file.txt\",\n"
+      + "    \"sequencer\": \"00000000000004420000000000028963\",\n"
+      + "    \"storageDiagnostics\": {\n"
+      + "       \"batchId\": \"b68529f3-68cd-4744-baa4-3c0498ec19f0\""
+      + "     }"
+      + "}";
+
   @BeforeEach
   void setUp() {
     when(fileMetadataService.storeFileMetadata(any())).thenAnswer(i -> i.getArguments()[0]);
@@ -69,26 +128,22 @@ class EventHandlerTest {
     myEvent.setId(myId);
     myEvent.setTopic(myTopic);
     myEvent.setEventType(myEventType);
-    myEvent.setData("{\"api\": \"PutBlockList\",\n"
-        + "    \"clientRequestId\": \"6d79dbfb-0e37-4fc4-981f-442c9ca65760\",\n"
-        + "    \"requestId\": \"831e1650-001e-001b-66ab-eeb76e000000\",\n"
-        + "    \"eTag\": \"\\\"0x8D4BCC2E4835CD0\\\"\",\n"
-        + "    \"contentType\": \"text/plain\",\n"
-        + "    \"contentLength\": 524288,\n"
-        + "    \"blobType\": \"BlockBlob\",\n"
-        + "    \"url\": \"https://my-storage-account.blob.core.windows.net/testcontainer/new-file.txt\",\n"
-        + "    \"sequencer\": \"00000000000004420000000000028963\",\n"
-        + "    \"storageDiagnostics\": {\n"
-        + "       \"batchId\": \"b68529f3-68cd-4744-baa4-3c0498ec19f0\""
-        + "     }"
-        + "}");
 
-    OffsetDateTime off = OffsetDateTime.parse("2020-08-06T12:19:16.500+03:00");
-    ZonedDateTime zoned = off.atZoneSameInstant(ZoneId.of("Europe/Rome"));
-    LocalDateTime localDateTime = zoned.toLocalDateTime();
+    EventGridData eventGridData = null;
+    try {
+      eventGridData = mapper.readValue(eventGridDataJson, EventGridData.class);
+    } catch (JsonProcessingException ex) {
+      ex.printStackTrace();
+    }
+    myEvent.setData(eventGridData);
+
+
+  OffsetDateTime off = OffsetDateTime.parse("2020-08-06T12:19:16.500+03:00");
+  ZonedDateTime zoned = off.atZoneSameInstant(ZoneId.of("Europe/Rome"));
+  LocalDateTime localDateTime = zoned.toLocalDateTime();
     myEvent.setEventTime(localDateTime);
 
-  }
+}
 
   @ParameterizedTest
   @CsvSource({
@@ -104,7 +159,7 @@ class EventHandlerTest {
     String uri = "/blobServices/default/containers/" + container + "/blobs/" + blob;
 
     myEvent.setSubject(uri);
-
+System.err.println(myEvent.getData().getContentLength());
     myList = List.of(myEvent);
 
     stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
@@ -120,18 +175,14 @@ class EventHandlerTest {
   void consumeEventNoSize() {
     String uri = "/blobServices/default/containers/rtd-transactions-32489876908u74bh781e2db57k098c5ad00000000000/blobs/CSTAR.99999.TRNLOG.20220419.121045.001.csv.pgp";
 
-    myEvent.setData("{\"api\": \"PutBlockList\",\n"
-        + "    \"clientRequestId\": \"6d79dbfb-0e37-4fc4-981f-442c9ca65760\",\n"
-        + "    \"requestId\": \"831e1650-001e-001b-66ab-eeb76e000000\",\n"
-        + "    \"eTag\": \"\\\"0x8D4BCC2E4835CD0\\\"\",\n"
-        + "    \"contentType\": \"text/plain\",\n"
-        + "    \"blobType\": \"BlockBlob\",\n"
-        + "    \"url\": \"https://my-storage-account.blob.core.windows.net/testcontainer/new-file.txt\",\n"
-        + "    \"sequencer\": \"00000000000004420000000000028963\",\n"
-        + "    \"storageDiagnostics\": {\n"
-        + "       \"batchId\": \"b68529f3-68cd-4744-baa4-3c0498ec19f0\""
-        + "     }"
-        + "}");
+    EventGridData eventGridData = null;
+    try {
+      eventGridData = mapper.readValue(eventGridDataJsonNoContentLength, EventGridData.class);
+    } catch (JsonProcessingException ex) {
+      ex.printStackTrace();
+    }
+    myEvent.setData(eventGridData);
+
     myEvent.setSubject(uri);
 
     myList = List.of(myEvent);
@@ -150,19 +201,14 @@ class EventHandlerTest {
   void consumeEventNegativeSize() {
     String uri = "/blobServices/default/containers/rtd-transactions-32489876908u74bh781e2db57k098c5ad00000000000/blobs/CSTAR.99999.TRNLOG.20220419.121045.001.csv.pgp";
 
-    myEvent.setData("{\"api\": \"PutBlockList\",\n"
-        + "    \"clientRequestId\": \"6d79dbfb-0e37-4fc4-981f-442c9ca65760\",\n"
-        + "    \"requestId\": \"831e1650-001e-001b-66ab-eeb76e000000\",\n"
-        + "    \"eTag\": \"\\\"0x8D4BCC2E4835CD0\\\"\",\n"
-        + "    \"contentType\": \"text/plain\",\n"
-        + "    \"blobType\": \"BlockBlob\",\n"
-        + "    \"contentLength\": -1,\n"
-        + "    \"url\": \"https://my-storage-account.blob.core.windows.net/testcontainer/new-file.txt\",\n"
-        + "    \"sequencer\": \"00000000000004420000000000028963\",\n"
-        + "    \"storageDiagnostics\": {\n"
-        + "       \"batchId\": \"b68529f3-68cd-4744-baa4-3c0498ec19f0\""
-        + "     }"
-        + "}");
+    EventGridData eventGridData = null;
+    try {
+      eventGridData = mapper.readValue(eventGridDataJsonNegativeContentLength, EventGridData.class);
+    } catch (JsonProcessingException ex) {
+      ex.printStackTrace();
+    }
+    myEvent.setData(eventGridData);
+
     myEvent.setSubject(uri);
 
     myList = List.of(myEvent);
@@ -181,18 +227,14 @@ class EventHandlerTest {
   void consumeEventMalformedEventData() {
     String uri = "/blobServices/default/containers/rtd-transactions-32489876908u74bh781e2db57k098c5ad00000000000/blobs/CSTAR.99999.TRNLOG.20220419.121045.001.csv.pgp";
 
-    myEvent.setData("{\"api\": \"PutBlockList\",\n"
-        + "    \"clientRequestId\": \"6d79dbfb-0e37-4fc4-981f-442c9ca65760\",\n"
-        + "    \"requestId\": \"831e1650-001e-001b-66ab-eeb76e000000\",\n"
-        + "    \"eTag\": \"\\\"0x8D4BCC2E4835CD0\\\"\",\n"
-        + "    \"contentType\": \"text/plain\",\n"
-        + "    \"blobType\": \"BlockBlob\",\n"
-        + "    \"contentLength\": 524288,\n"
-        + "    \"url\": \"https://my-storage-account.blob.core.windows.net/testcontainer/new-file.txt\",\n"
-        + "    \"sequencer\": \"00000000000004420000000000028963\",\n"
-        + "    \"storageDiagnostics\": {\n"
-        + "       \"batchId\": \"b68529f3-68cd-4744-baa4-3c0498ec19f0\""
-        + "     }");
+    EventGridData eventGridData = null;
+    try {
+      eventGridData = mapper.readValue(eventGridDataJsonMalformedContent, EventGridData.class);
+    } catch (JsonProcessingException ex) {
+      ex.printStackTrace();
+    }
+    myEvent.setData(eventGridData);
+
     myEvent.setSubject(uri);
 
     myList = List.of(myEvent);
