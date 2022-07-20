@@ -1,8 +1,5 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.adapter;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameAlreadyPresent;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.EventGridEvent;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileApplication;
@@ -75,7 +72,7 @@ public class BlobRegisterAdapter {
 
     fileMetadata.setSender(extractSender(blobName, fileType));
 
-    fileMetadata.setSize(extractFileSize(event));
+    fileMetadata.setSize(event.getData().getContentLength());
     if (fileMetadata.getSize() <= 0) {
       log.warn("File size is " + fileMetadata.getSize() + " for event: " + event.getSubject());
     }
@@ -138,24 +135,6 @@ public class BlobRegisterAdapter {
     }
 
     return FileApplication.UNKNOWN;
-  }
-
-  public long extractFileSize(EventGridEvent event) {
-    ObjectMapper objectMapper = new ObjectMapper();
-    try {
-      log.info("Event: {}", event.getData());
-      log.info("Content length: {}", event.getData().getContentLength());
-      JsonNode sizeNode = objectMapper.readTree(String.valueOf(event.getData()))
-          .get("contentLength");
-      if (sizeNode != null) {
-        return sizeNode.longValue();
-      } else {
-        log.warn("No contentLength in event: {}", event.getSubject());
-      }
-    } catch (JsonProcessingException e) {
-      log.warn("Failed to parse event: {}", event.getSubject());
-    }
-    return 0;
   }
 
   public String extractParent(String filename, FileType fileType) {
