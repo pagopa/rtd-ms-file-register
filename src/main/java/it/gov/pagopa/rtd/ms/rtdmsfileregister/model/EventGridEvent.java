@@ -42,7 +42,7 @@ public class EventGridEvent {
    * Event data specific to the event type.
    */
   @JsonProperty(value = "data", required = true)
-  private Object data;
+  private EventGridData data;
 
   /**
    * The type of the event that occurred.
