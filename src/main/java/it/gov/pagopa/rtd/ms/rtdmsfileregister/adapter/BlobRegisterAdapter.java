@@ -72,9 +72,15 @@ public class BlobRegisterAdapter {
 
     fileMetadata.setSender(extractSender(blobName, fileType));
 
-    fileMetadata.setSize(event.getData().getContentLength());
-    if (fileMetadata.getSize() <= 0) {
-      log.warn("File size is " + fileMetadata.getSize() + " for event: " + event.getSubject());
+    if (event.getData() == null) {
+      log.warn("No metedata found for event: " + event.getSubject());
+    } else if (event.getData().getContentLength() == null){
+      log.warn("No content length found for event: " + event.getSubject());
+    } else {
+      fileMetadata.setSize(event.getData().getContentLength());
+      if (fileMetadata.getSize() <= 0) {
+        log.warn("File size is " + fileMetadata.getSize() + " for event: " + event.getSubject());
+      }
     }
 
     fileMetadata.setParent(extractParent(blobName, fileType));
