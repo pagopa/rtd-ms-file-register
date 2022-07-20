@@ -113,6 +113,7 @@ class EventHandlerTest {
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
     verify(blobRegisterAdapter, times(1)).extractFileSize(any());
     verify(blobRegisterAdapter, times(1)).extractParent(any(), any());
+    verify(blobRegisterAdapter, times(1)).extractSender(any(), any());
   }
 
   @Test
@@ -141,6 +142,7 @@ class EventHandlerTest {
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
     verify(blobRegisterAdapter, times(1)).extractFileSize(any());
     verify(blobRegisterAdapter, times(1)).extractParent(any(), any());
+    verify(blobRegisterAdapter, times(1)).extractSender(any(), any());
 
   }
 
@@ -171,6 +173,7 @@ class EventHandlerTest {
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
     verify(blobRegisterAdapter, times(1)).extractFileSize(any());
     verify(blobRegisterAdapter, times(1)).extractParent(any(), any());
+    verify(blobRegisterAdapter, times(1)).extractSender(any(), any());
 
   }
 
@@ -200,6 +203,7 @@ class EventHandlerTest {
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
     verify(blobRegisterAdapter, times(1)).extractFileSize(any());
     verify(blobRegisterAdapter, times(1)).extractParent(any(), any());
+    verify(blobRegisterAdapter, times(1)).extractSender(any(), any());
   }
 
   @ParameterizedTest
@@ -220,6 +224,7 @@ class EventHandlerTest {
     verify(blobRegisterAdapter, never()).evaluateApplication(any());
     verify(blobRegisterAdapter, never()).extractFileSize(any());
     verify(blobRegisterAdapter, never()).extractParent(any(), any());
+    verify(blobRegisterAdapter, never()).extractSender(any(), any());
 
   }
 
