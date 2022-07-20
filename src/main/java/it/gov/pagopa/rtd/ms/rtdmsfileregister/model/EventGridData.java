@@ -44,7 +44,7 @@ public class EventGridData {
    * The size of the blob in bytes.
    */
   @JsonProperty(value = "contentLength", required = true)
-  private int contentLength;
+  private Long contentLength;
 
   /**
    * The type of blob. Valid values are either "BlockBlob" or "PageBlob".
