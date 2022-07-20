@@ -144,6 +144,7 @@ public class BlobRegisterAdapter {
     ObjectMapper objectMapper = new ObjectMapper();
     try {
       log.info("Event: {}", event.getData());
+      log.info("Content length: {}", event.getData().getContentLength());
       JsonNode sizeNode = objectMapper.readTree(String.valueOf(event.getData()))
           .get("contentLength");
       if (sizeNode != null) {
