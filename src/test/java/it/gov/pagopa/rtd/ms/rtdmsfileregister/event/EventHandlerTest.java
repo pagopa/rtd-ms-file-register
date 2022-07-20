@@ -244,6 +244,25 @@ System.err.println(myEvent.getData().getContentLength());
     verify(blobRegisterAdapter, times(1)).extractSender(any(), any());
   }
 
+  @Test
+  void consumeEventNoEventData() {
+    String uri = "/blobServices/default/containers/rtd-transactions-32489876908u74bh781e2db57k098c5ad00000000000/blobs/CSTAR.99999.TRNLOG.20220419.121045.001.csv.pgp";
+
+    EventGridData eventGridData = null;
+    myEvent.setData(eventGridData);
+
+    myEvent.setSubject(uri);
+
+    myList = List.of(myEvent);
+
+    stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
+    verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
+    verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
+    verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
+    verify(blobRegisterAdapter, times(1)).extractParent(any(), any());
+    verify(blobRegisterAdapter, times(1)).extractSender(any(), any());
+  }
+
   @ParameterizedTest
   @CsvSource({"bpd-terms-and-conditions, bpd-tc.pdf",
       "cstar-exports, hashedPans.zip",
