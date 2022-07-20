@@ -8,7 +8,7 @@ spring:
             on-profile: default
     data:
         mongodb:
-            uri: ${MONGODB_CONNECTION_URI:mongodb://cstar-d-cosmos-mongo-db-account:${MONGODB_KEY}@cstar-d-cosmos-mongo-db-account.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@cstar-d-cosmos-mongo-db-account@}
+            uri: ${MONGODB_CONNECTION_URI:mongodb://localhost:27017}
             database: ${MONGODB_NAME:fileregister}
     cloud:
         stream:
