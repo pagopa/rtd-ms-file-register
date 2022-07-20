@@ -143,6 +143,7 @@ public class BlobRegisterAdapter {
   public long extractFileSize(EventGridEvent event) {
     ObjectMapper objectMapper = new ObjectMapper();
     try {
+      log.info("Event: {}", event.getData());
       JsonNode sizeNode = objectMapper.readTree(String.valueOf(event.getData()))
           .get("contentLength");
       if (sizeNode != null) {
