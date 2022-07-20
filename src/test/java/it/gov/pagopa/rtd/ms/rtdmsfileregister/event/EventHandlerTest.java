@@ -166,7 +166,6 @@ System.err.println(myEvent.getData().getContentLength());
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
     verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
-    verify(blobRegisterAdapter, times(1)).extractFileSize(any());
     verify(blobRegisterAdapter, times(1)).extractParent(any(), any());
     verify(blobRegisterAdapter, times(1)).extractSender(any(), any());
   }
@@ -191,7 +190,6 @@ System.err.println(myEvent.getData().getContentLength());
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
     verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
-    verify(blobRegisterAdapter, times(1)).extractFileSize(any());
     verify(blobRegisterAdapter, times(1)).extractParent(any(), any());
     verify(blobRegisterAdapter, times(1)).extractSender(any(), any());
 
@@ -217,7 +215,6 @@ System.err.println(myEvent.getData().getContentLength());
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
     verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
-    verify(blobRegisterAdapter, times(1)).extractFileSize(any());
     verify(blobRegisterAdapter, times(1)).extractParent(any(), any());
     verify(blobRegisterAdapter, times(1)).extractSender(any(), any());
 
@@ -243,7 +240,6 @@ System.err.println(myEvent.getData().getContentLength());
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
     verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
-    verify(blobRegisterAdapter, times(1)).extractFileSize(any());
     verify(blobRegisterAdapter, times(1)).extractParent(any(), any());
     verify(blobRegisterAdapter, times(1)).extractSender(any(), any());
   }
@@ -264,7 +260,6 @@ System.err.println(myEvent.getData().getContentLength());
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
     verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, never()).evaluateApplication(any());
-    verify(blobRegisterAdapter, never()).extractFileSize(any());
     verify(blobRegisterAdapter, never()).extractParent(any(), any());
     verify(blobRegisterAdapter, never()).extractSender(any(), any());
 
