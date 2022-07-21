@@ -48,9 +48,9 @@ class FileMetadataServiceTest {
   private FileMetadataEntity testFileMetadataEntity;
   private FileMetadataDTO newTestFileMetadataDTO;
 
-  static String testFileMetadataJSON = "{\"name\":\"presentFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"application\":0,\"size\":0,\"type\":0}";
+  static String testFileMetadataJSON = "{\"name\":\"presentFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"application\":0,\"size\":0,\"type\":0}";
 
-  static String newTestFileMetadataJSON = "{\"name\":\"newFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T12:19:16.500\",\"hash\":\"090ed8c1103eb1dc4bae0ac2aa608fa5c085648438b7d38cfc238b9a98eba545\",\"status\":1,\"application\":0,\"size\":5555,\"type\":0}";
+  static String newTestFileMetadataJSON = "{\"name\":\"newFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"hash\":\"090ed8c1103eb1dc4bae0ac2aa608fa5c085648438b7d38cfc238b9a98eba545\",\"status\":1,\"application\":0,\"size\":5555,\"type\":0}";
 
   private String metadataUpdatesJSON = "{\"name\":\"presentFilename\",\"status\":1,\"application\":0,\"size\":0,\"type\":0}";
 
@@ -161,18 +161,17 @@ class FileMetadataServiceTest {
 
   @ParameterizedTest
   @ValueSource(strings = {
-      "{\"name\":,\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":0}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"wrong value\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":0}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"wrong value\",\"status\":0,\"type\":0,\"application\":0,\"size\":0}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":,\"type\":0,\"application\":0,\"size\":0}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":\"wrong value\",\"type\":0,\"application\":0,\"size\":0}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":,\"application\":0,\"size\":0}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":\"wrong value\",\"application\":0,\"size\":0}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":,\"size\":0}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":\"wrong value\",\"size\":0}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":\"wrong value\"}",
-      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":0,\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5a\"}",
+      "{\"name\":,\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"wrong value\",\"status\":0,\"type\":0,\"application\":0,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":,\"type\":0,\"application\":0,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":\"wrong value\",\"type\":0,\"application\":0,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":,\"application\":0,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":\"wrong value\",\"application\":0,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":,\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":\"wrong value\",\"size\":0}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":\"wrong value\"}",
+      "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":0,\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5a\"}",
   })
   void updateKoNonValidDTO(String body) throws JsonProcessingException {
     ObjectMapper objectMapper = new ObjectMapper();
@@ -193,8 +192,8 @@ class FileMetadataServiceTest {
 
   @ParameterizedTest
   @ValueSource(strings = {
-      "{\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"application\":0,\"size\":0,\"type\":0}",
-      "{\"name\":\"\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"lastTransitionTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":0}",
+      "{\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"application\":0,\"size\":0,\"type\":0}",
+      "{\"name\":\"\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":0}",
   })
   void updateKoEmptyFilename(String body) throws JsonProcessingException {
     ObjectMapper objectMapper = new ObjectMapper();
