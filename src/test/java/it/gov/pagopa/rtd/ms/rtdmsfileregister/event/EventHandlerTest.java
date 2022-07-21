@@ -19,7 +19,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration;
 import org.springframework.integration.support.MessageBuilder;
@@ -45,7 +43,6 @@ import org.springframework.test.context.TestPropertySource;
 @ContextConfiguration(classes = {EventHandler.class})
 @TestPropertySource(value = {"classpath:application-test.yml"}, inheritProperties = false)
 @DirtiesContext
-@ExtendWith(OutputCaptureExtension.class)
 class EventHandlerTest {
 
   @Autowired
@@ -159,7 +156,6 @@ class EventHandlerTest {
     String uri = "/blobServices/default/containers/" + container + "/blobs/" + blob;
 
     myEvent.setSubject(uri);
-System.err.println(myEvent.getData().getContentLength());
     myList = List.of(myEvent);
 
     stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
