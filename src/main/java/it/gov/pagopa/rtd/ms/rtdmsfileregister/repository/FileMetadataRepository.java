@@ -2,6 +2,7 @@ package it.gov.pagopa.rtd.ms.rtdmsfileregister.repository;
 
 import com.mongodb.lang.NonNull;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataEntity;
+import java.util.List;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 /**
@@ -18,4 +19,6 @@ public interface FileMetadataRepository extends MongoRepository<FileMetadataEnti
   FileMetadataEntity findFirstByName(String filename);
 
   FileMetadataEntity removeByName(String filename);
+
+  List<FileMetadataEntity> findNamesBySenderAndTypeAndStatus(String sender, int type, int status);
 }
