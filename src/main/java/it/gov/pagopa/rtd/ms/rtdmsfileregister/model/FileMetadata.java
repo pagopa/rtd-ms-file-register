@@ -27,11 +27,6 @@ public class FileMetadata {
   @JsonDeserialize(using = LocalDateTimeDeserializer.class)
   private LocalDateTime receiveTimestamp;
 
-  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  @JsonSerialize(using = LocalDateTimeSerializer.class)
-  @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-  private LocalDateTime lastTransitionTimestamp;
-
   @NotNull
   private Integer status;
 
