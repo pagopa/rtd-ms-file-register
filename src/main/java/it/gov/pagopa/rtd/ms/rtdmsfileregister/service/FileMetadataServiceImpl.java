@@ -6,6 +6,7 @@ import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.Filename
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataEntity;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.repository.FileMetadataRepository;
+import java.util.List;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -91,5 +92,11 @@ public class FileMetadataServiceImpl implements FileMetadataService {
     modelMapper.map(metadata, toBeUpdated, String.valueOf(FileMetadataEntity.class));
 
     return modelMapper.map(repository.save(toBeUpdated), FileMetadataDTO.class);
+  }
+
+  @Override
+  public List<String> getSenderAdeAckList(String sender) {
+    List<FileMetadataEntity> retrieved = repository.findNamesBySenderAndTypeAndStatus(sender, 6, 0);
+    return retrieved.stream().map(FileMetadataEntity::getName).collect(java.util.stream.Collectors.toList());
   }
 }
