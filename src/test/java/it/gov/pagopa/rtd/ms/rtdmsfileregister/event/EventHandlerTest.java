@@ -19,7 +19,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration;
 import org.springframework.integration.support.MessageBuilder;
@@ -45,7 +43,6 @@ import org.springframework.test.context.TestPropertySource;
 @ContextConfiguration(classes = {EventHandler.class})
 @TestPropertySource(value = {"classpath:application-test.yml"}, inheritProperties = false)
 @DirtiesContext
-@ExtendWith(OutputCaptureExtension.class)
 class EventHandlerTest {
 
   @Autowired
@@ -151,15 +148,14 @@ class EventHandlerTest {
       "rtd-transactions-decrypted, CSTAR.99999.TRNLOG.20220419.121045.001.csv.pgp.0.decrypted",
       "ade-transactions-32489876908u74bh781e2db57k098c5ad00000000000, ADE.99999.TRNLOG.20220503.172038.001.csv.pgp",
       "ade-transactions-decrypted, ADE.99999.TRNLOG.20220503.172038.001.csv.pgp.0.decrypted",
-      "ade/in, ADE.99999.TRNLOG.20220503.172038.001.csv.pgp.0.decrypted.gz",
-      "ade/ack, CSTAR.ADEACK.20220503.172038.001.csv",
+      "ade, in/ADE.99999.TRNLOG.20220503.172038.001.csv.pgp.0.decrypted.gz",
+      "ade, ack/CSTAR.ADEACK.20220503.172038.001.csv",
       "sender-ade-ack, ADE.99999.ADEACK.20220607.163518.001.csv",
   })
   void consumeEvent(String container, String blob) {
     String uri = "/blobServices/default/containers/" + container + "/blobs/" + blob;
 
     myEvent.setSubject(uri);
-System.err.println(myEvent.getData().getContentLength());
     myList = List.of(myEvent);
 
     stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());

@@ -39,7 +39,7 @@ public class BlobRegisterAdapter {
     String[] parts = uri.split("/");
     String containerName = parts[4];
     if (containerName.matches("ade")) {
-      containerName = containerName + "/" + parts[5];
+      containerName = containerName + "/" + parts[6];
     }
 
     FileType fileType = evaluateContainer(containerName);
@@ -174,3 +174,5 @@ public class BlobRegisterAdapter {
     return filename.split("\\.")[1];
   }
 }
+
+///blobServices/default/containers/ade/blobs/ack/CSTAR.99999.ADEACK.20220720.164559.001.csv
