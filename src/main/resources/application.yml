@@ -11,7 +11,7 @@ spring:
     data:
         mongodb:
             uri: ${MONGODB_CONNECTION_URI:mongodb://localhost:27017}
-            database: ${MONGODB_NAME:fileregister}
+            database: ${MONGODB_NAME:rtd}
     cloud:
         stream:
             bindings:
