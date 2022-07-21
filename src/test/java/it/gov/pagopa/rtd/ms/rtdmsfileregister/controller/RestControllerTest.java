@@ -7,7 +7,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataEntity;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.FileMetadataService;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -46,6 +48,8 @@ class RestControllerTest {
 
   static String METADATA_ENDPOINT = "/file-status";
 
+  static String SENDER_ADE_ACK_ENDPOINT = "/sender-ade-ack";
+
   static String TEST_FILE_METADATA = "{\"name\":\"presentFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"application\":0,\"size\":0,\"type\":0}";
 
   static String UPDATED_TEST_FILE_METADATA = "{\"name\":\"presentFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"status\":1}";
@@ -54,11 +58,19 @@ class RestControllerTest {
 
   static String MALFORMED_UPDATE_FILE_METADATA = "{\"name\":\"\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"status\":1}";
 
+  static String senderAdeACKFileMetadataJSON1 = "{\"name\":\"CSTAR.99999.ADEACK.20220721.135913.001.csv\",\"receiveTimestamp\":\"2020-08-06T12:19:16.500\",\"status\":0,\"application\":1,\"size\":0,\"type\":6,\"sender\":99999}";
+
+  static String senderAdeACKFileMetadataJSON2 = "{\"name\":\"CSTAR.99999.ADEACK.20220721.135913.002.csv\",\"receiveTimestamp\":\"2020-08-06T12:19:16.500\",\"status\":0,\"application\":1,\"size\":0,\"type\":6,\"sender\":99999}";
+
   static FileMetadataDTO testFileMetadataDTO;
 
   static FileMetadataDTO updateFileMetadataDTO;
   static FileMetadataDTO updatedTestFileMetadataDTO;
   static FileMetadataDTO malformedUpdateTestFileMetadataDTO;
+
+  private FileMetadataEntity senderAdeACKFileMetadataDTO1;
+
+  private FileMetadataEntity senderAdeACKFileMetadataDTO2;
 
   @PostConstruct
   public void configureTest() throws JsonProcessingException {
@@ -72,6 +84,15 @@ class RestControllerTest {
 
     malformedUpdateTestFileMetadataDTO = objectMapper.readValue(MALFORMED_UPDATE_FILE_METADATA,
         FileMetadataDTO.class);
+
+    senderAdeACKFileMetadataDTO1 = objectMapper.readValue(senderAdeACKFileMetadataJSON1,
+        FileMetadataEntity.class);
+
+    senderAdeACKFileMetadataDTO2 = objectMapper.readValue(senderAdeACKFileMetadataJSON2,
+        FileMetadataEntity.class);
+
+    List<String> senderAdeACKList = List.of(senderAdeACKFileMetadataDTO1.getName(),
+        senderAdeACKFileMetadataDTO2.getName());
 
     BDDMockito.doReturn(testFileMetadataDTO).when(fileMetadataService)
         .retrieveFileMetadata("presentFilename");
@@ -93,6 +114,9 @@ class RestControllerTest {
 
     BDDMockito.doReturn(updatedTestFileMetadataDTO).when(fileMetadataService)
         .updateFileMetadata(updateFileMetadataDTO);
+
+    BDDMockito.doReturn(senderAdeACKList).when(fileMetadataService)
+        .getSenderAdeAckList("99999");
   }
 
   @Test
@@ -174,7 +198,7 @@ class RestControllerTest {
       "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":}",
       "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":\"wrong value\"}",
       "{\"name\":\"test0\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":0,\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5a\"}",
-        })
+  })
   void shouldNotPostWrongValue(String body) throws Exception {
     mockMvc.perform(MockMvcRequestBuilders
             .post(BASE_URI + METADATA_ENDPOINT)
@@ -277,6 +301,25 @@ class RestControllerTest {
             .accept(MediaType.APPLICATION_JSON_VALUE))
         .andDo(print())
         .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void shouldGetSenderAdeAck() throws Exception {
+    MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+            .get(BASE_URI + SENDER_ADE_ACK_ENDPOINT)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .param("sender", "99999")
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andReturn();
+
+    assertEquals(
+        "[\"CSTAR.99999.ADEACK.20220721.135913.001.csv\",\"CSTAR.99999.ADEACK.20220721.135913.002.csv\"]",
+        result.getResponse().getContentAsString());
+
+    BDDMockito.verify(fileMetadataService, Mockito.times(1))
+        .getSenderAdeAckList(Mockito.any(String.class));
   }
 
 }
