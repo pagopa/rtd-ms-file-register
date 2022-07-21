@@ -174,5 +174,3 @@ public class BlobRegisterAdapter {
     return filename.split("\\.")[1];
   }
 }
-
-///blobServices/default/containers/ade/blobs/ack/CSTAR.99999.ADEACK.20220720.164559.001.csv
