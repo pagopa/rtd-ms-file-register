@@ -150,7 +150,7 @@ class EventHandlerTest {
       "ade-transactions-decrypted, ADE.99999.TRNLOG.20220503.172038.001.csv.pgp.0.decrypted",
       "ade, in/ADE.99999.TRNLOG.20220503.172038.001.csv.pgp.0.decrypted.gz",
       "ade, ack/CSTAR.ADEACK.20220503.172038.001.csv",
-      "sender-ade-ack, ADE.99999.ADEACK.20220607.163518.001.csv",
+      "sender-ade-ack, 99999/ADEACK.99999.12345.20220715.165744.001.csv",
   })
   void consumeEvent(String container, String blob) {
     String uri = "/blobServices/default/containers/" + container + "/blobs/" + blob;
@@ -263,7 +263,9 @@ class EventHandlerTest {
   @CsvSource({"bpd-terms-and-conditions, bpd-tc.pdf",
       "cstar-exports, hashedPans.zip",
       "fa-terms-and-conditions, fa-tc.pdf",
-      "info-privacy, info-privacy.pdf"})
+      "info-privacy, info-privacy.pdf",
+      "sender-ade-ack, 1234/ADEACK.12345.99999.20220715.165744.001.csv",
+  })
   void notConsumeEvent(String container, String blob) {
     String uri = "/blobServices/default/containers/" + container + "/blobs/" + blob;
 
