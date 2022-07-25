@@ -38,7 +38,7 @@ public class BlobRegisterAdapter {
     String uri = event.getSubject();
     String[] parts = uri.split("/");
     String containerName = parts[4];
-    if (containerName.matches("ade")) {
+    if (containerName.matches("ade") || containerName.matches("sender-ade-ack")) {
       containerName = containerName + "/" + parts[6];
     }
 
@@ -52,7 +52,8 @@ public class BlobRegisterAdapter {
     }
 
     String blobName;
-    if (fileType == FileType.AGGREGATES_DESTINATION || fileType == FileType.ADE_ACK) {
+    if (fileType == FileType.AGGREGATES_DESTINATION || fileType == FileType.ADE_ACK
+        || fileType == FileType.SENDER_ADE_ACK) {
       blobName = parts[7];
     } else {
       blobName = parts[6];
@@ -74,7 +75,7 @@ public class BlobRegisterAdapter {
 
     if (event.getData() == null) {
       log.warn("No metedata found for event: " + event.getSubject());
-    } else if (event.getData().getContentLength() == null){
+    } else if (event.getData().getContentLength() == null) {
       log.warn("No content length found for event: " + event.getSubject());
     } else {
       fileMetadata.setSize(event.getData().getContentLength());
@@ -117,7 +118,7 @@ public class BlobRegisterAdapter {
     if (containerName.matches("ade/ack")) {
       return FileType.ADE_ACK;
     }
-    if (containerName.matches("sender-ade-ack")) {
+    if (containerName.matches("sender-ade-ack/[A-Z0-9]{5}")) {
       return FileType.SENDER_ADE_ACK;
     }
 
@@ -158,8 +159,10 @@ public class BlobRegisterAdapter {
           .replace(".gz", "");
     }
     if (fileType == FileType.SENDER_ADE_ACK) {
-      return filename.replaceFirst(filename.split("\\.")[1], "")
-          .replaceFirst("\\.", "");
+      String originalAdeAck =filename.replaceFirst(filename.split("\\.")[1], "")
+          .replaceFirst(filename.split("\\.")[2], "")
+          .replaceFirst("\\.", "").replaceFirst("\\.", "");
+      return "CSTAR.".concat(originalAdeAck);
     }
     return null;
   }
