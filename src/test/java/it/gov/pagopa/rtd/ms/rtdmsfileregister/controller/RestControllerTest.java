@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataEntity;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.SenderAdeAckListDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.FileMetadataService;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -91,8 +92,8 @@ class RestControllerTest {
     senderAdeACKFileMetadataDTO2 = objectMapper.readValue(senderAdeACKFileMetadataJSON2,
         FileMetadataEntity.class);
 
-    List<String> senderAdeACKList = List.of(senderAdeACKFileMetadataDTO1.getName(),
-        senderAdeACKFileMetadataDTO2.getName());
+    SenderAdeAckListDTO senderAdeACKList = new SenderAdeAckListDTO(List.of(senderAdeACKFileMetadataDTO1.getName(),
+        senderAdeACKFileMetadataDTO2.getName()));
 
     BDDMockito.doReturn(testFileMetadataDTO).when(fileMetadataService)
         .retrieveFileMetadata("presentFilename");
@@ -315,7 +316,7 @@ class RestControllerTest {
         .andReturn();
 
     assertEquals(
-        "[\"CSTAR.99999.ADEACK.20220721.135913.001.csv\",\"CSTAR.99999.ADEACK.20220721.135913.002.csv\"]",
+        "{\"fileNameList\":[\"CSTAR.99999.ADEACK.20220721.135913.001.csv\",\"CSTAR.99999.ADEACK.20220721.135913.002.csv\"]}",
         result.getResponse().getContentAsString());
 
     BDDMockito.verify(fileMetadataService, Mockito.times(1))
