@@ -5,7 +5,9 @@ import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.EmptyFil
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameAlreadyPresent;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataEntity;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.SenderAdeAckListDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.repository.FileMetadataRepository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
@@ -73,7 +75,9 @@ public class FileMetadataServiceImpl implements FileMetadataService {
               .equals("must not be blank")) {
             throw new EmptyFilenameException();
           }
-        } else throw new DTOViolationException();
+        } else {
+          throw new DTOViolationException();
+        }
       }
     }
 
@@ -95,8 +99,13 @@ public class FileMetadataServiceImpl implements FileMetadataService {
   }
 
   @Override
-  public List<String> getSenderAdeAckList(String sender) {
+  public SenderAdeAckListDTO getSenderAdeAckList(String sender) {
     List<FileMetadataEntity> retrieved = repository.findNamesBySenderAndTypeAndStatus(sender, 6, 0);
-    return retrieved.stream().map(FileMetadataEntity::getName).collect(java.util.stream.Collectors.toList());
+    List<String> fileNameList = new ArrayList<>();
+    for (FileMetadataEntity f : retrieved) {
+      log.info("Found file {}", f.getName());
+      fileNameList.add(f.getSender()+"/"+f.getName());
+    }
+    return new SenderAdeAckListDTO(fileNameList);
   }
 }
