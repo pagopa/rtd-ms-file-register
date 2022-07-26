@@ -2,7 +2,7 @@ package it.gov.pagopa.rtd.ms.rtdmsfileregister.controller;
 
 import io.swagger.annotations.Api;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
-import java.util.List;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.SenderAdeAckListDTO;
 import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -47,7 +47,7 @@ public interface RestController {
 
   @GetMapping(value = "/sender-ade-ack", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
-  List<String> senderAdeACKList(@NotNull @RequestParam String sender);
+  SenderAdeAckListDTO senderAdeACKList(@NotNull @RequestParam String sender);
 
   @ResponseStatus(HttpStatus.NOT_FOUND)
   class FilenameNotPresent extends RuntimeException {
