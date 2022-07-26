@@ -22,6 +22,7 @@ import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.EmptyFil
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameAlreadyPresent;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataEntity;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.SenderAdeAckListDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.repository.FileMetadataRepository;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -231,10 +232,9 @@ class FileMetadataServiceTest {
 
   @Test
   void getSenderAdeACK() {
-    List<String> retrieved = service.getSenderAdeAckList("presentFilename");
-
+    SenderAdeAckListDTO retrieved = service.getSenderAdeAckList("presentFilename");
     assertNotNull(retrieved);
-    assertEquals(2, retrieved.size());
+    assertEquals(2, retrieved.getFileNameList().size());
     verify(fileMetadataRepository, times(1)).findNamesBySenderAndTypeAndStatus(anyString(), anyInt(), anyInt());
   }
 }
