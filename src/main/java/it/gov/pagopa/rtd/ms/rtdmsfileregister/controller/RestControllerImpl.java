@@ -1,9 +1,9 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.controller;
 
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.SenderAdeAckListDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.FileMetadataService;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -68,7 +68,7 @@ class RestControllerImpl implements
   }
 
   @Override
-  public List<String> senderAdeACKList(@NotNull String sender) {
+  public SenderAdeAckListDTO senderAdeACKList(@NotNull String sender) {
     log.info("Received GET sender AdE ACK List for sender {}", sender);
 
     return fileMetadataService.getSenderAdeAckList(sender);
