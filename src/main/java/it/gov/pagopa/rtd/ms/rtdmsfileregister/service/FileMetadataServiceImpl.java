@@ -103,8 +103,7 @@ public class FileMetadataServiceImpl implements FileMetadataService {
     List<FileMetadataEntity> retrieved = repository.findNamesBySenderAndTypeAndStatus(sender, 6, 0);
     List<String> fileNameList = new ArrayList<>();
     for (FileMetadataEntity f : retrieved) {
-      log.info("Found file {}", f.getName());
-      fileNameList.add(f.getSender()+"/"+f.getName());
+      fileNameList.add(f.getName());
     }
     return new SenderAdeAckListDTO(fileNameList);
   }
