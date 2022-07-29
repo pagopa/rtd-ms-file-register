@@ -1,0 +1,80 @@
+logging:
+    level:
+        root: INFO
+
+---
+
+spring:
+    config:
+        activate:
+            on-profile: default
+    data:
+        mongodb:
+            uri: ${MONGODB_CONNECTION_URI:mongodb://localhost:27017}
+            database: ${MONGODB_NAME:rtd}
+    cloud:
+        stream:
+            bindings:
+                blobStorageConsumer-in-0: # name must match [handler name]-in-0
+                    destination: rtd-platform-events
+                    group: rtd-file-register-consumer-group
+                    content-type: application/json
+                    binder: blob-storage
+            binders:
+                blob-storage:
+                    type: kafka
+                    environment:
+                        spring:
+                            cloud:
+                                stream:
+                                    kafka:
+                                        binder:
+                                            auto-create-topics: false
+                                            brokers: ${KAFKA_BROKER:localhost:29095}
+                                            configuration:
+                                                sasl:
+                                                    jaas:
+                                                        config: ${KAFKA_SASL_JAAS_CONFIG_CONSUMER_BLOB_STORAGE_EVENTS}
+                                                    mechanism: PLAIN
+                                                security:
+                                                    protocol: SASL_SSL
+                                            consumerProperties:
+                                                key:
+                                                    deserializer: org.apache.kafka.common.serialization.StringDeserializer
+                                                value:
+                                                    deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+---
+
+spring:
+    config:
+        activate:
+            on-profile: dev
+    data:
+        mongodb:
+            uri: ${MONGODB_CONNECTION_URI:mongodb://localhost:27017}
+            database: ${MONGODB_NAME:fileregister}
+    cloud:
+        stream:
+            bindings:
+                blobStorageConsumer-in-0: # name must match [handler name]-in-0
+                    destination: rtd-platform-events
+                    group: rtd-file-register-consumer-group
+                    content-type: application/json
+                    binder: blob-storage
+            binders:
+                blob-storage:
+                    type: kafka
+                    environment:
+                        spring:
+                            cloud:
+                                stream:
+                                    kafka:
+                                        binder:
+                                            auto-create-topics: false
+                                            brokers: ${KAFKA_BROKER:localhost:29095}
+                                            consumerProperties:
+                                                key:
+                                                    deserializer: org.apache.kafka.common.serialization.StringDeserializer
+                                                value:
+                                                    deserializer: org.apache.kafka.common.serialization.StringDeserializer
