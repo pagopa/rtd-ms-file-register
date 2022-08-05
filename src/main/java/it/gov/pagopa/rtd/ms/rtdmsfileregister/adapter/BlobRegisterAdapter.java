@@ -33,6 +33,7 @@ public class BlobRegisterAdapter {
   FileMetadataService fileMetadataService;
 
   public EventGridEvent evaluateEvent(EventGridEvent event) {
+    log.info(event.toString());
     LocalDateTime eventTimeinLocal = event.getEventTime();
 
     String uri = event.getSubject();
@@ -158,11 +159,15 @@ public class BlobRegisterAdapter {
       return filename.replaceAll("\\.(\\d)+\\.decrypted", "")
           .replace(".gz", "");
     }
-    if (fileType == FileType.SENDER_ADE_ACK) {
-      String originalAdeAck =filename.replaceFirst(filename.split("\\.")[1], "")
-          .replaceFirst(filename.split("\\.")[2], "")
-          .replaceFirst("\\.", "").replaceFirst("\\.", "");
-      return "CSTAR.".concat(originalAdeAck);
+    try {
+      if (fileType == FileType.SENDER_ADE_ACK) {
+        String originalAdeAck = filename.replaceFirst(filename.split("\\.")[1], "")
+            .replaceFirst(filename.split("\\.")[2], "")
+            .replaceFirst("\\.", "").replaceFirst("\\.", "");
+        return "CSTAR.".concat(originalAdeAck);
+      }
+    } catch (ArrayIndexOutOfBoundsException e) {
+      log.warn("Exception while extracting parent: " + e.getMessage());
     }
     return null;
   }
