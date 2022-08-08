@@ -35,6 +35,7 @@ public class BlobRegisterAdapter {
   public EventGridEvent evaluateEvent(EventGridEvent event) {
     if (event.getData() != null) {
       log.info(event.getData().getUrl());
+      log.info(event.getEventType());
     }
     LocalDateTime eventTimeinLocal = event.getEventTime();
 
