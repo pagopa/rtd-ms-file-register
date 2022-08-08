@@ -150,7 +150,7 @@ class EventHandlerTest {
       "ade-transactions-decrypted, ADE.99999.TRNLOG.20220503.172038.001.csv.pgp.0.decrypted",
       "ade, in/ADE.99999.TRNLOG.20220503.172038.001.csv.pgp.0.decrypted.gz",
       "ade, ack/CSTAR.ADEACK.20220503.172038.001.csv",
-      "sender-ade-ack, 99999/ADEACK.99999.12345.20220715.165744.001.csv",
+      "ade, 99999/ADEACK.99999.12345.20220715.165744.001.csv",
   })
   void consumeEvent(String container, String blob) {
     String uri = "/blobServices/default/containers/" + container + "/blobs/" + blob;
