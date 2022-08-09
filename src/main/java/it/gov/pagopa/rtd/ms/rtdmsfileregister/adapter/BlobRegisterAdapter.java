@@ -33,10 +33,6 @@ public class BlobRegisterAdapter {
   FileMetadataService fileMetadataService;
 
   public EventGridEvent evaluateEvent(EventGridEvent event) {
-    if (event.getData() != null) {
-      log.info(event.getData().getUrl());
-      log.info(event.getEventType());
-    }
     LocalDateTime eventTimeinLocal = event.getEventTime();
 
     String uri = event.getSubject();
