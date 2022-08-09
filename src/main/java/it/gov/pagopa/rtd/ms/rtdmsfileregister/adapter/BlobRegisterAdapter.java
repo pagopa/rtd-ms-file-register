@@ -122,7 +122,7 @@ public class BlobRegisterAdapter {
     if (containerName.matches("ade/ack")) {
       return FileType.ADE_ACK;
     }
-    if (containerName.matches("ade/[A-Z0-9]{5}")) {
+    if (containerName.matches("sender-ade-ack/[A-Z0-9]{5}")) {
       return FileType.SENDER_ADE_ACK;
     }
 
