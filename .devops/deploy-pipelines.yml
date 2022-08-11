@@ -124,7 +124,7 @@ stages:
                     buildType: 'current'
                     artifactName: 'manifests'
                     targetPath: '$(Pipeline.Workspace)/manifests'
-        
+
                 - task: Bash@3
                   displayName: Generate Kustomization
                   name: generateKustomization

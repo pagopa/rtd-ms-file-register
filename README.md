@@ -17,5 +17,5 @@ newman run postman/local_file_register_integration_test.postman_collection.json
 > You need to have [newman](https://learning.postman.com/docs/running-collections/using-newman-cli/command-line-integration-with-newman/) installed.
 
 > The environment is inside the collection.
-> 
+>
 > It is fully customizable both inside the JSON or after importing it in Postman.

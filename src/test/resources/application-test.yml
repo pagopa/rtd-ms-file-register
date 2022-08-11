@@ -27,8 +27,7 @@ spring:
                       auto-create-topics: false
                       brokers: ${spring.embedded.kafka.brokers}
                       consumerProperties:
-                        key: 
+                        key:
                           deserializer: org.apache.kafka.common.serialization.StringDeserializer
                         value:
                           deserializer: org.apache.kafka.common.serialization.StringDeserializer
-  
