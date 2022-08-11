@@ -21,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -265,8 +266,9 @@ class EventHandlerTest {
       "fa-terms-and-conditions, fa-tc.pdf",
       "info-privacy, info-privacy.pdf",
       "sender-ade-ack, 1234/ADEACK.12345.99999.20220715.165744.001.csv",
+      "sender-ade-ack, 1234",
   })
-  void notConsumeEvent(String container, String blob) {
+  void notConsumeEventWrongSubject(String container, String blob) {
     String uri = "/blobServices/default/containers/" + container + "/blobs/" + blob;
 
     myEvent.setSubject(uri);
@@ -279,7 +281,29 @@ class EventHandlerTest {
     verify(blobRegisterAdapter, never()).evaluateApplication(any());
     verify(blobRegisterAdapter, never()).extractParent(any(), any());
     verify(blobRegisterAdapter, never()).extractSender(any(), any());
+  }
 
+  @ParameterizedTest
+  @ValueSource(strings = {"Microsoft.Storage.BlobDeleted",
+      "Microsoft.Storage.BlobRenamed",
+      "Microsoft.Storage.DirectoryCreated",
+      "Microsoft.Storage.DirectoryRenamed",
+      "Microsoft.Storage.DirectoryDeleted"
+  })
+  void notConsumeEventWrongEventType(String eventType) {
+    String uri = "/blobServices/default/containers/rtd-transactions-32489876908u74bh781e2db57k098c5ad00000000000/blobs/CSTAR.99999.TRNLOG.20220419.121045.001.csv.pgp";
+
+    myEvent.setSubject(uri);
+    myEvent.setEventType(eventType);
+
+    myList = List.of(myEvent);
+
+    stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
+    verify(blobRegisterAdapter, never()).evaluateEvent(any());
+    verify(blobRegisterAdapter, never()).evaluateContainer(any());
+    verify(blobRegisterAdapter, never()).evaluateApplication(any());
+    verify(blobRegisterAdapter, never()).extractParent(any(), any());
+    verify(blobRegisterAdapter, never()).extractSender(any(), any());
   }
 
 }
