@@ -38,4 +38,3 @@ services:
       KAFKA_GROUP_MIN_SESSION_TIMEOUT_MS: 3000
     depends_on:
       - zookeeper
-
