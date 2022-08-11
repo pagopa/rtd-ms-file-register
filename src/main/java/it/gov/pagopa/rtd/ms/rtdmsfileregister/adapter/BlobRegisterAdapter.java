@@ -52,8 +52,13 @@ public class BlobRegisterAdapter {
     }
 
     String blobName;
-    if (fileType == FileType.AGGREGATES_DESTINATION || fileType == FileType.ADE_ACK
+    if (fileType == FileType.AGGREGATES_DESTINATION
+        || fileType == FileType.ADE_ACK
         || fileType == FileType.SENDER_ADE_ACK) {
+      if (parts.length < 8) {
+        log.info(EVENT_NOT_OF_INTEREST_MSG + event.getSubject());
+        return null;
+      }
       blobName = parts[7];
     } else {
       blobName = parts[6];
