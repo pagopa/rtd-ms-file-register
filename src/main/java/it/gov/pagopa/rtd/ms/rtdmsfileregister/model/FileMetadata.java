@@ -40,7 +40,6 @@ public class FileMetadata {
       message = "Sender code must be 5 alphanumeric char")
   private String sender;
 
-  @NotNull
   private Long size;
 
   @Pattern(regexp = "[a-zA-Z0-9]{64}",

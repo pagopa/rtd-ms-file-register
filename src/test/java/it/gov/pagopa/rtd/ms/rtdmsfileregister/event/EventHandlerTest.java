@@ -148,9 +148,9 @@ class EventHandlerTest {
       "rtd-transactions-32489876908u74bh781e2db57k098c5ad00000000000, CSTAR.99999.TRNLOG.20220419.121045.001.csv.pgp",
       "rtd-transactions-decrypted, CSTAR.99999.TRNLOG.20220419.121045.001.csv.pgp.0.decrypted",
       "ade-transactions-32489876908u74bh781e2db57k098c5ad00000000000, ADE.99999.TRNLOG.20220503.172038.001.csv.pgp",
-      "ade-transactions-decrypted, ADE.99999.TRNLOG.20220503.172038.001.csv.pgp.0.decrypted",
-      "ade, in/ADE.99999.TRNLOG.20220503.172038.001.csv.pgp.0.decrypted.gz",
-      "ade, ack/CSTAR.ADEACK.20220503.172038.001.csv",
+      "ade-transactions-decrypted, AGGADE.99999.20220503.172038.001.0",
+      "ade, in/AGGADE.99999.20220503.172038.001.0.gz",
+      "ade, ack/CSTAR.ADEACK.20220503.172038.001.csv.gz",
       "sender-ade-ack, 99999/ADEACK.99999.12345.20220715.165744.001.csv",
   })
   void consumeEvent(String container, String blob) {
