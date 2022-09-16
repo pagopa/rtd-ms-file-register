@@ -232,9 +232,17 @@ class FileMetadataServiceTest {
 
   @Test
   void getSenderAdeACK() {
-    SenderAdeAckListDTO retrieved = service.getSenderAdeAckList("presentFilename");
+    SenderAdeAckListDTO retrieved = service.getSenderAdeAckList(List.of("presentFilename"));
     assertNotNull(retrieved);
     assertEquals(2, retrieved.getFileNameList().size());
     verify(fileMetadataRepository, times(1)).findNamesBySenderAndTypeAndStatus(anyString(), anyInt(), anyInt());
+  }
+
+  @Test
+  void getSenderAdeACKWithNullSender() {
+    SenderAdeAckListDTO retrieved = service.getSenderAdeAckList(List.of());
+    assertNotNull(retrieved);
+    assertEquals(0, retrieved.getFileNameList().size());
+    verify(fileMetadataRepository, times(0)).findNamesBySenderAndTypeAndStatus(anyString(), anyInt(), anyInt());
   }
 }

@@ -156,19 +156,20 @@ public class BlobRegisterAdapter {
     ) {
       return filename;
     }
-    if (fileType == FileType.AGGREGATES_CHUNK){
+    if (fileType == FileType.AGGREGATES_CHUNK) {
       String[] parts = filename.split("\\.");
-      return "ADE." + parts[1] + ".TRNLOG." + parts[2] + "." + parts[3] + "." + parts[4] + ".csv.pgp";
+      return "ADE." + parts[1] + ".TRNLOG." + parts[2] + "." + parts[3] + "." + parts[4]
+          + ".csv.pgp";
     }
     if (fileType == FileType.TRANSACTIONS_CHUNK) {
       return filename.replaceAll("\\.(\\d)+\\.decrypted", "");
     }
     if (fileType == FileType.AGGREGATES_DESTINATION) {
       String[] parts = filename.replace(".gz", "").split("\\.");
-      return "ADE." + parts[1] + ".TRNLOG." + parts[2] + "." + parts[3] + "." + parts[4] + ".csv.pgp";
+      return "AGGADE." + parts[1] + "." + parts[2] + "." + parts[3] + "." + parts[4] + ".csv.pgp";
     }
     if (fileType == FileType.SENDER_ADE_ACK) {
-      String originalAdeAck =filename.replaceFirst(filename.split("\\.")[1], "")
+      String originalAdeAck = filename.replaceFirst(filename.split("\\.")[1], "")
           .replaceFirst(filename.split("\\.")[2], "")
           .replaceFirst("\\.", "").replaceFirst("\\.", "") + ".gz";
       return "CSTAR.".concat(originalAdeAck);

@@ -10,6 +10,7 @@ import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataEntity;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.SenderAdeAckListDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.FileMetadataService;
+import java.util.Arrays;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -59,9 +60,12 @@ class RestControllerTest {
 
   static String MALFORMED_UPDATE_FILE_METADATA = "{\"name\":\"\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"status\":1}";
 
-  static String senderAdeACKFileMetadataJSON1 = "{\"name\":\"CSTAR.99999.ADEACK.20220721.135913.001.csv\",\"receiveTimestamp\":\"2020-08-06T12:19:16.500\",\"status\":0,\"application\":1,\"size\":0,\"type\":6,\"sender\":99999}";
+  static String senderAdeAckFileName1 = "ADEACK.99999.12345.2022-09-13.709f29ed-2a34-4c73-9a23-397e2e768ecf.csv";
 
-  static String senderAdeACKFileMetadataJSON2 = "{\"name\":\"CSTAR.99999.ADEACK.20220721.135913.002.csv\",\"receiveTimestamp\":\"2020-08-06T12:19:16.500\",\"status\":0,\"application\":1,\"size\":0,\"type\":6,\"sender\":99999}";
+  static String senderAdeAckFileName2 = "ADEACK.55555.12345.2022-09-13.709f29ed-2a34-4c73-9a23-397e2e768ecf.csv";
+  static String senderAdeACKFileMetadataJSON1 = "{\"name\":\""+senderAdeAckFileName1+"\",\"receiveTimestamp\":\"2020-08-06T12:19:16.500\",\"status\":0,\"application\":1,\"size\":0,\"type\":6,\"sender\":99999}";
+
+  static String senderAdeACKFileMetadataJSON2 = "{\"name\":\""+senderAdeAckFileName2+"\",\"receiveTimestamp\":\"2020-08-06T12:19:16.500\",\"status\":0,\"application\":1,\"size\":0,\"type\":6,\"sender\":55555}";
 
   static FileMetadataDTO testFileMetadataDTO;
 
@@ -92,8 +96,9 @@ class RestControllerTest {
     senderAdeACKFileMetadataDTO2 = objectMapper.readValue(senderAdeACKFileMetadataJSON2,
         FileMetadataEntity.class);
 
-    SenderAdeAckListDTO senderAdeACKList = new SenderAdeAckListDTO(List.of(senderAdeACKFileMetadataDTO1.getName(),
-        senderAdeACKFileMetadataDTO2.getName()));
+    SenderAdeAckListDTO senderAdeACKList = new SenderAdeAckListDTO(
+        List.of(senderAdeACKFileMetadataDTO1.getName(),
+            senderAdeACKFileMetadataDTO2.getName()));
 
     BDDMockito.doReturn(testFileMetadataDTO).when(fileMetadataService)
         .retrieveFileMetadata("presentFilename");
@@ -117,7 +122,7 @@ class RestControllerTest {
         .updateFileMetadata(updateFileMetadataDTO);
 
     BDDMockito.doReturn(senderAdeACKList).when(fileMetadataService)
-        .getSenderAdeAckList("99999");
+        .getSenderAdeAckList(Arrays.asList("99999", "11111"));
   }
 
   @Test
@@ -309,18 +314,18 @@ class RestControllerTest {
     MvcResult result = mockMvc.perform(MockMvcRequestBuilders
             .get(BASE_URI + SENDER_ADE_ACK_ENDPOINT)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .param("sender", "99999")
+            .param("senders", "99999", "11111")
             .accept(MediaType.APPLICATION_JSON_VALUE))
         .andDo(print())
         .andExpect(status().isOk())
         .andReturn();
 
     assertEquals(
-        "{\"fileNameList\":[\"CSTAR.99999.ADEACK.20220721.135913.001.csv\",\"CSTAR.99999.ADEACK.20220721.135913.002.csv\"]}",
+        "{\"fileNameList\":[\""+senderAdeAckFileName1+"\",\""+senderAdeAckFileName2+"\"]}",
         result.getResponse().getContentAsString());
 
     BDDMockito.verify(fileMetadataService, Mockito.times(1))
-        .getSenderAdeAckList(Mockito.any(String.class));
+        .getSenderAdeAckList(Mockito.any(List.class));
   }
 
 }

@@ -64,6 +64,7 @@ public class FileMetadataServiceImpl implements FileMetadataService {
   public FileMetadataDTO updateFileMetadata(FileMetadataDTO metadata) {
     ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     Validator validator = factory.getValidator();
+    factory.close();
 
     // Blocks the request if the name is null or empty, then blocks if there are constraint violations
     // other than null. In this way only valid and non-null fields are mapped to the entity.
@@ -99,12 +100,19 @@ public class FileMetadataServiceImpl implements FileMetadataService {
   }
 
   @Override
-  public SenderAdeAckListDTO getSenderAdeAckList(String sender) {
-    List<FileMetadataEntity> retrieved = repository.findNamesBySenderAndTypeAndStatus(sender, 6, 0);
+  public SenderAdeAckListDTO getSenderAdeAckList(List<String> senders) {
     List<String> fileNameList = new ArrayList<>();
-    for (FileMetadataEntity f : retrieved) {
-      fileNameList.add(f.getName());
+
+    for (String sender : senders) {
+      if (sender != null) {
+        List<FileMetadataEntity> retrieved = repository.findNamesBySenderAndTypeAndStatus(sender, 6,
+            0);
+        for (FileMetadataEntity f : retrieved) {
+          fileNameList.add(f.getName());
+        }
+      }
     }
+
     return new SenderAdeAckListDTO(fileNameList);
   }
 }
