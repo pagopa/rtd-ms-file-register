@@ -115,4 +115,20 @@ public class FileMetadataServiceImpl implements FileMetadataService {
 
     return new SenderAdeAckListDTO(fileNameList);
   }
+
+  @Override
+  public FileMetadataDTO updateStatus(String filename, int status) {
+    FileMetadataEntity toBeUpdated = repository.findFirstByName(filename);
+
+    if (toBeUpdated == null) {
+      throw new EmptyFilenameException();
+    }
+
+    toBeUpdated.setStatus(status);
+
+    repository.removeByName(filename);
+
+    return modelMapper.map(repository.save(modelMapper.map(toBeUpdated, FileMetadataEntity.class)),
+        FileMetadataDTO.class);
+  }
 }
