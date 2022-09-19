@@ -76,6 +76,18 @@ class RestControllerImpl implements
   }
 
   @Override
+  public FileMetadataDTO setDownloadedSenderAdeAck(String filename) {
+    FileMetadataDTO updated = fileMetadataService.updateStatus(filename, 1);
+    if (updated == null) {
+      throw new FilenameNotPresent();
+    }
+    if (updated.getStatus() != 1) {
+      throw new FileNotUpdated();
+    }
+    return updated;
+  }
+
+  @Override
   public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
     Map<String, String> errors = new HashMap<>();
     ex.getBindingResult().getAllErrors().forEach(error -> {
