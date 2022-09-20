@@ -2,7 +2,9 @@ package it.gov.pagopa.rtd.ms.rtdmsfileregister.service;
 
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.DTOViolationException;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.EmptyFilenameException;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.StatusAlreadySet;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameAlreadyPresent;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameNotPresent;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataEntity;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.SenderAdeAckListDTO;
@@ -114,5 +116,25 @@ public class FileMetadataServiceImpl implements FileMetadataService {
     }
 
     return new SenderAdeAckListDTO(fileNameList);
+  }
+
+  @Override
+  public FileMetadataDTO updateStatus(String filename, int status) {
+    FileMetadataEntity toBeUpdated = repository.findFirstByName(filename);
+
+    if (toBeUpdated == null) {
+      throw new FilenameNotPresent();
+    }
+
+    if (toBeUpdated.getStatus() == status) {
+      throw new StatusAlreadySet();
+    }
+
+    toBeUpdated.setStatus(status);
+
+    repository.removeByName(filename);
+
+    return modelMapper.map(repository.save(modelMapper.map(toBeUpdated, FileMetadataEntity.class)),
+        FileMetadataDTO.class);
   }
 }
