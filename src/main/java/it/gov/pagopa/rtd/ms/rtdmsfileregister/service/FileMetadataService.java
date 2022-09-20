@@ -18,4 +18,6 @@ public interface FileMetadataService {
 
   SenderAdeAckListDTO getSenderAdeAckList(List<String> senders);
 
+  FileMetadataDTO updateStatus (String filename, int status);
+
 }
