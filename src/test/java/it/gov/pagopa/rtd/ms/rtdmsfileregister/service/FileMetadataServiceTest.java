@@ -58,8 +58,6 @@ class FileMetadataServiceTest {
 
   private FileMetadataEntity senderAdeACKFileMetadataDTO2;
 
-//  private FileMetadataEntity senderAdeACKFileMetadataDTO3;
-
   static String testFileMetadataJSON = "{\"name\":\"presentFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"application\":0,\"size\":0,\"type\":0}";
 
   static String senderAdeACKFileMetadataJSON1 = "{\"name\":\"presentSenderADEACK1\",\"receiveTimestamp\":\"2020-08-06T12:19:16.500\",\"status\":0,\"application\":1,\"size\":0,\"type\":6}";
