@@ -134,7 +134,6 @@ public class FileMetadataServiceImpl implements FileMetadataService {
 
     repository.removeByName(filename);
 
-    return modelMapper.map(repository.save(modelMapper.map(toBeUpdated, FileMetadataEntity.class)),
-        FileMetadataDTO.class);
+    return modelMapper.map(repository.save(toBeUpdated), FileMetadataDTO.class);
   }
 }
