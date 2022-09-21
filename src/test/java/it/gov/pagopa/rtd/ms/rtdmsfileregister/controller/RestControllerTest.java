@@ -10,6 +10,7 @@ import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.Filename
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.StatusAlreadySet;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataEntity;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileStatus;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.SenderAdeAckListDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.FileMetadataService;
 import java.util.Arrays;
@@ -365,7 +366,7 @@ class RestControllerTest {
     FileMetadataDTO acked = objectMapper.readValue(result.getResponse().getContentAsString(),
         FileMetadataDTO.class);
 
-    assertEquals(1, acked.getStatus());
+    assertEquals(FileStatus.DOWNLOADED.getOrder(), acked.getStatus());
     assertEquals(ackedTestFileMetadataDTO, acked);
     BDDMockito.verify(fileMetadataService)
         .updateStatus(Mockito.any(String.class), Mockito.any(Integer.class));
