@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -20,12 +21,13 @@ import it.gov.pagopa.rtd.ms.rtdmsfileregister.RtdMsFileRegisterApplication;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.DTOViolationException;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.EmptyFilenameException;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameAlreadyPresent;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameNotPresent;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.StatusAlreadySet;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataEntity;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.SenderAdeAckListDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.repository.FileMetadataRepository;
 import java.util.List;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -81,9 +83,11 @@ class FileMetadataServiceTest {
 
     newTestFileMetadataDTO = objectMapper.readValue(newTestFileMetadataJSON, FileMetadataDTO.class);
 
-    senderAdeACKFileMetadataDTO1 = objectMapper.readValue(senderAdeACKFileMetadataJSON1, FileMetadataEntity.class);
+    senderAdeACKFileMetadataDTO1 = objectMapper.readValue(senderAdeACKFileMetadataJSON1,
+        FileMetadataEntity.class);
 
-    senderAdeACKFileMetadataDTO2 = objectMapper.readValue(senderAdeACKFileMetadataJSON2, FileMetadataEntity.class);
+    senderAdeACKFileMetadataDTO2 = objectMapper.readValue(senderAdeACKFileMetadataJSON2,
+        FileMetadataEntity.class);
 
     List<FileMetadataEntity> senderAdeACKList = List.of(senderAdeACKFileMetadataDTO1,
         senderAdeACKFileMetadataDTO2);
@@ -206,7 +210,7 @@ class FileMetadataServiceTest {
     try {
       mapped = objectMapper.readValue(body, FileMetadataDTO.class);
     } catch (JsonMappingException | JsonParseException e) {
-      Assertions.assertTrue(true);
+      assertTrue(true);
       return;
     }
 
@@ -235,7 +239,8 @@ class FileMetadataServiceTest {
     SenderAdeAckListDTO retrieved = service.getSenderAdeAckList(List.of("presentFilename"));
     assertNotNull(retrieved);
     assertEquals(2, retrieved.getFileNameList().size());
-    verify(fileMetadataRepository, times(1)).findNamesBySenderAndTypeAndStatus(anyString(), anyInt(), anyInt());
+    verify(fileMetadataRepository, times(1)).findNamesBySenderAndTypeAndStatus(anyString(),
+        anyInt(), anyInt());
   }
 
   @Test
@@ -243,6 +248,23 @@ class FileMetadataServiceTest {
     SenderAdeAckListDTO retrieved = service.getSenderAdeAckList(List.of());
     assertNotNull(retrieved);
     assertEquals(0, retrieved.getFileNameList().size());
-    verify(fileMetadataRepository, times(0)).findNamesBySenderAndTypeAndStatus(anyString(), anyInt(), anyInt());
+    verify(fileMetadataRepository, times(0)).findNamesBySenderAndTypeAndStatus(anyString(),
+        anyInt(), anyInt());
+  }
+
+  @Test
+  void updateAfterSenderAdeAckDownload() {
+    FileMetadataDTO result = service.updateStatus("presentFilename", 1);
+    assertNotNull(result);
+  }
+
+  @Test
+  void updateAfterSenderAdeAckDownloadNullFilename() {
+    assertThrows(FilenameNotPresent.class, () -> service.updateStatus("missingFilename", 1));
+  }
+
+  @Test
+  void updateAfterSenderAdeAckAlreadyDownloaded() {
+    assertThrows(StatusAlreadySet.class, () -> service.updateStatus("presentFilename", 0));
   }
 }

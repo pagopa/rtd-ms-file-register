@@ -65,6 +65,11 @@ public interface RestController {
 
   }
 
+  @ResponseStatus(HttpStatus.CONFLICT)
+  class StatusAlreadySet extends RuntimeException {
+
+  }
+
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   class EmptyFilenameException extends RuntimeException {
 
