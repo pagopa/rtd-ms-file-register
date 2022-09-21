@@ -15,7 +15,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,7 +50,7 @@ public interface RestController {
   @ResponseStatus(HttpStatus.OK)
   SenderAdeAckListDTO senderAdeACKList(@NotNull @RequestParam List<String> senders);
 
-  @PatchMapping(value = "/sender-ade-ack", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PutMapping(value = "/sender-ade-ack", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   FileMetadataDTO setDownloadedSenderAdeAck(@NotNull @NotBlank @RequestParam String filename);
 
