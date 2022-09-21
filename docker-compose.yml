@@ -6,6 +6,7 @@ services:
       - "27017:27017"
   fileregister:
     build: .
+    image: rtd-ms-file-register-fileregister:latest
     ports:
       - "8080:8080"
     environment:
