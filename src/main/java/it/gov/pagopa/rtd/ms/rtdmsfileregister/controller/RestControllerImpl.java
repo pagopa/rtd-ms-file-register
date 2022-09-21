@@ -80,9 +80,7 @@ class RestControllerImpl implements
     log.info("Received PUT set downloaded SenderAdeAck for file {}", filename);
 
     FileMetadataDTO updated = fileMetadataService.updateStatus(filename, 1);
-    if (updated == null) {
-      throw new FilenameNotPresent();
-    }
+
     if (updated.getStatus() != 1) {
       throw new FileNotUpdated();
     }
