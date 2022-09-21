@@ -1,6 +1,7 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.controller;
 
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileStatus;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.SenderAdeAckListDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.FileMetadataService;
 import java.util.HashMap;
@@ -81,7 +82,7 @@ class RestControllerImpl implements
 
     FileMetadataDTO updated = fileMetadataService.updateStatus(filename, 1);
 
-    if (updated.getStatus() != 1) {
+    if (updated.getStatus() != FileStatus.DOWNLOADED.getOrder()) {
       throw new FileNotUpdated();
     }
     return updated;
