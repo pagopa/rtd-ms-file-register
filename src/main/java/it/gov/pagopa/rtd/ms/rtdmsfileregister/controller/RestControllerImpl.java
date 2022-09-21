@@ -77,6 +77,8 @@ class RestControllerImpl implements
 
   @Override
   public FileMetadataDTO setDownloadedSenderAdeAck(String filename) {
+    log.info("Received PUT set downloaded SenderAdeAck for file {}", filename);
+
     FileMetadataDTO updated = fileMetadataService.updateStatus(filename, 1);
     if (updated == null) {
       throw new FilenameNotPresent();
