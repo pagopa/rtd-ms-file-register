@@ -25,6 +25,7 @@ import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.Filename
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.StatusAlreadySet;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataEntity;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileStatus;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.SenderAdeAckListDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.repository.FileMetadataRepository;
 import java.util.List;
@@ -254,17 +255,21 @@ class FileMetadataServiceTest {
 
   @Test
   void updateAfterSenderAdeAckDownload() {
-    FileMetadataDTO result = service.updateStatus("presentFilename", 1);
+    FileMetadataDTO result = service.updateStatus("presentFilename",
+        FileStatus.DOWNLOAD_ENDED.getOrder());
     assertNotNull(result);
+    assertEquals(FileStatus.DOWNLOAD_ENDED.getOrder(), result.getStatus());
   }
 
   @Test
   void updateAfterSenderAdeAckDownloadNullFilename() {
-    assertThrows(FilenameNotPresent.class, () -> service.updateStatus("missingFilename", 1));
+    assertThrows(FilenameNotPresent.class,
+        () -> service.updateStatus("missingFilename", FileStatus.DOWNLOAD_ENDED.getOrder()));
   }
 
   @Test
   void updateAfterSenderAdeAckAlreadyDownloaded() {
-    assertThrows(StatusAlreadySet.class, () -> service.updateStatus("presentFilename", 0));
+    assertThrows(StatusAlreadySet.class,
+        () -> service.updateStatus("presentFilename", FileStatus.SUCCESS.getOrder()));
   }
 }
