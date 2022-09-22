@@ -6,8 +6,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameNotPresent;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.StatusAlreadySet;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataEntity;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileStatus;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.SenderAdeAckListDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.FileMetadataService;
 import java.util.Arrays;
@@ -56,6 +59,8 @@ class RestControllerTest {
 
   static String UPDATED_TEST_FILE_METADATA = "{\"name\":\"presentFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"status\":1}";
 
+  static String ACKED_TEST_FILE_METADATA = "{\"name\":\"presentFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"status\":1}";
+
   static String UPDATE_FILE_METADATA = "{\"name\":\"presentFilename\",\"status\":5}";
 
   static String MALFORMED_UPDATE_FILE_METADATA = "{\"name\":\"\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"status\":1}";
@@ -63,19 +68,23 @@ class RestControllerTest {
   static String senderAdeAckFileName1 = "ADEACK.99999.12345.2022-09-13.709f29ed-2a34-4c73-9a23-397e2e768ecf.csv";
 
   static String senderAdeAckFileName2 = "ADEACK.55555.12345.2022-09-13.709f29ed-2a34-4c73-9a23-397e2e768ecf.csv";
-  static String senderAdeACKFileMetadataJSON1 = "{\"name\":\""+senderAdeAckFileName1+"\",\"receiveTimestamp\":\"2020-08-06T12:19:16.500\",\"status\":0,\"application\":1,\"size\":0,\"type\":6,\"sender\":99999}";
 
-  static String senderAdeACKFileMetadataJSON2 = "{\"name\":\""+senderAdeAckFileName2+"\",\"receiveTimestamp\":\"2020-08-06T12:19:16.500\",\"status\":0,\"application\":1,\"size\":0,\"type\":6,\"sender\":55555}";
+  static String senderAdeACKFileMetadataJSON1 = "{\"name\":\"" + senderAdeAckFileName1
+      + "\",\"receiveTimestamp\":\"2020-08-06T12:19:16.500\",\"status\":0,\"application\":1,\"size\":0,\"type\":6,\"sender\":99999}";
+
+  static String senderAdeACKFileMetadataJSON2 = "{\"name\":\"" + senderAdeAckFileName2
+      + "\",\"receiveTimestamp\":\"2020-08-06T12:19:16.500\",\"status\":0,\"application\":1,\"size\":0,\"type\":6,\"sender\":55555}";
 
   static FileMetadataDTO testFileMetadataDTO;
 
   static FileMetadataDTO updateFileMetadataDTO;
   static FileMetadataDTO updatedTestFileMetadataDTO;
+  static FileMetadataDTO ackedTestFileMetadataDTO;
   static FileMetadataDTO malformedUpdateTestFileMetadataDTO;
 
-  private FileMetadataEntity senderAdeACKFileMetadataDTO1;
+  private FileMetadataEntity senderAdeACKFileMetadataEntity1;
 
-  private FileMetadataEntity senderAdeACKFileMetadataDTO2;
+  private FileMetadataEntity senderAdeACKFileMetadataEntity2;
 
   @PostConstruct
   public void configureTest() throws JsonProcessingException {
@@ -87,18 +96,21 @@ class RestControllerTest {
     updatedTestFileMetadataDTO = objectMapper.readValue(UPDATED_TEST_FILE_METADATA,
         FileMetadataDTO.class);
 
+    ackedTestFileMetadataDTO = objectMapper.readValue(ACKED_TEST_FILE_METADATA,
+        FileMetadataDTO.class);
+
     malformedUpdateTestFileMetadataDTO = objectMapper.readValue(MALFORMED_UPDATE_FILE_METADATA,
         FileMetadataDTO.class);
 
-    senderAdeACKFileMetadataDTO1 = objectMapper.readValue(senderAdeACKFileMetadataJSON1,
+    senderAdeACKFileMetadataEntity1 = objectMapper.readValue(senderAdeACKFileMetadataJSON1,
         FileMetadataEntity.class);
 
-    senderAdeACKFileMetadataDTO2 = objectMapper.readValue(senderAdeACKFileMetadataJSON2,
+    senderAdeACKFileMetadataEntity2 = objectMapper.readValue(senderAdeACKFileMetadataJSON2,
         FileMetadataEntity.class);
 
     SenderAdeAckListDTO senderAdeACKList = new SenderAdeAckListDTO(
-        List.of(senderAdeACKFileMetadataDTO1.getName(),
-            senderAdeACKFileMetadataDTO2.getName()));
+        List.of(senderAdeACKFileMetadataEntity1.getName(),
+            senderAdeACKFileMetadataEntity2.getName()));
 
     BDDMockito.doReturn(testFileMetadataDTO).when(fileMetadataService)
         .retrieveFileMetadata("presentFilename");
@@ -123,6 +135,19 @@ class RestControllerTest {
 
     BDDMockito.doReturn(senderAdeACKList).when(fileMetadataService)
         .getSenderAdeAckList(Arrays.asList("99999", "11111"));
+
+    BDDMockito.doReturn(ackedTestFileMetadataDTO).when(fileMetadataService)
+        .updateStatus("presentFilename", 1);
+
+    BDDMockito.doThrow(FilenameNotPresent.class).when(fileMetadataService)
+        .updateStatus("notPresentFilename", 1);
+
+    BDDMockito.doThrow(StatusAlreadySet.class).when(fileMetadataService)
+        .updateStatus("alreadyDownloadedFilename", 1);
+
+    BDDMockito.doReturn(modelMapper.map(senderAdeACKFileMetadataEntity1, FileMetadataDTO.class))
+        .when(fileMetadataService)
+        .updateStatus("notUpdatedFilename", 1);
   }
 
   @Test
@@ -321,11 +346,50 @@ class RestControllerTest {
         .andReturn();
 
     assertEquals(
-        "{\"fileNameList\":[\""+senderAdeAckFileName1+"\",\""+senderAdeAckFileName2+"\"]}",
+        "{\"fileNameList\":[\"" + senderAdeAckFileName1 + "\",\"" + senderAdeAckFileName2 + "\"]}",
         result.getResponse().getContentAsString());
 
     BDDMockito.verify(fileMetadataService, Mockito.times(1))
         .getSenderAdeAckList(Mockito.any(List.class));
+  }
+
+  @Test
+  void shouldAckSenderAdEAck() throws Exception {
+    MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+            .put(BASE_URI + SENDER_ADE_ACK_ENDPOINT)
+            .param("filename", "presentFilename")
+            .accept(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andReturn();
+
+    FileMetadataDTO acked = objectMapper.readValue(result.getResponse().getContentAsString(),
+        FileMetadataDTO.class);
+
+    assertEquals(FileStatus.DOWNLOADED.getOrder(), acked.getStatus());
+    assertEquals(ackedTestFileMetadataDTO, acked);
+    BDDMockito.verify(fileMetadataService)
+        .updateStatus(Mockito.any(String.class), Mockito.any(Integer.class));
+  }
+
+  @Test
+  void shouldNotAckSenderAdEAckMissingFilename() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders
+            .put(BASE_URI + SENDER_ADE_ACK_ENDPOINT)
+            .param("filename", "notPresentFilename")
+            .accept(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void shouldNotAckSenderAdEAckStatusAlreadyDownloaded() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders
+            .put(BASE_URI + SENDER_ADE_ACK_ENDPOINT)
+            .param("filename", "notUpdatedFilename")
+            .accept(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().is5xxServerError());
   }
 
 }
