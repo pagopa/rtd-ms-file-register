@@ -263,13 +263,15 @@ class FileMetadataServiceTest {
 
   @Test
   void updateAfterSenderAdeAckDownloadNullFilename() {
+    int newStatus = FileStatus.DOWNLOAD_ENDED.getOrder();
     assertThrows(FilenameNotPresent.class,
-        () -> service.updateStatus("missingFilename", FileStatus.DOWNLOAD_ENDED.getOrder()));
+        () -> service.updateStatus("missingFilename", newStatus));
   }
 
   @Test
   void updateAfterSenderAdeAckAlreadyDownloaded() {
+    int newStatus = FileStatus.SUCCESS.getOrder();
     assertThrows(StatusAlreadySet.class,
-        () -> service.updateStatus("presentFilename", FileStatus.SUCCESS.getOrder()));
+        () -> service.updateStatus("presentFilename", newStatus));
   }
 }
