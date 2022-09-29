@@ -80,9 +80,10 @@ class RestControllerImpl implements
   public FileMetadataDTO setDownloadedSenderAdeAck(String filename) {
     log.info("Received PUT set downloaded SenderAdeAck for file {}", filename);
 
-    FileMetadataDTO updated = fileMetadataService.updateStatus(filename, 1);
+    FileMetadataDTO updated = fileMetadataService.updateStatus(filename,
+        FileStatus.DOWNLOAD_ENDED.getOrder());
 
-    if (updated.getStatus() != FileStatus.DOWNLOADED.getOrder()) {
+    if (updated.getStatus() != FileStatus.DOWNLOAD_ENDED.getOrder()) {
       throw new FileNotUpdated();
     }
     return updated;

@@ -59,7 +59,9 @@ class RestControllerTest {
 
   static String UPDATED_TEST_FILE_METADATA = "{\"name\":\"presentFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"status\":1}";
 
-  static String ACKED_TEST_FILE_METADATA = "{\"name\":\"presentFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"status\":1}";
+  static String ACKED_TEST_FILE_METADATA =
+      "{\"name\":\"presentFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"status\":"
+          + FileStatus.DOWNLOAD_ENDED.getOrder() + "}";
 
   static String UPDATE_FILE_METADATA = "{\"name\":\"presentFilename\",\"status\":5}";
 
@@ -137,17 +139,17 @@ class RestControllerTest {
         .getSenderAdeAckList(Arrays.asList("99999", "11111"));
 
     BDDMockito.doReturn(ackedTestFileMetadataDTO).when(fileMetadataService)
-        .updateStatus("presentFilename", 1);
+        .updateStatus("presentFilename", FileStatus.DOWNLOAD_ENDED.getOrder());
 
     BDDMockito.doThrow(FilenameNotPresent.class).when(fileMetadataService)
-        .updateStatus("notPresentFilename", 1);
+        .updateStatus("notPresentFilename", FileStatus.DOWNLOAD_ENDED.getOrder());
 
     BDDMockito.doThrow(StatusAlreadySet.class).when(fileMetadataService)
-        .updateStatus("alreadyDownloadedFilename", 1);
+        .updateStatus("alreadyDownloadedFilename", FileStatus.DOWNLOAD_ENDED.getOrder());
 
     BDDMockito.doReturn(modelMapper.map(senderAdeACKFileMetadataEntity1, FileMetadataDTO.class))
         .when(fileMetadataService)
-        .updateStatus("notUpdatedFilename", 1);
+        .updateStatus("notUpdatedFilename", FileStatus.DOWNLOAD_ENDED.getOrder());
   }
 
   @Test
@@ -366,7 +368,7 @@ class RestControllerTest {
     FileMetadataDTO acked = objectMapper.readValue(result.getResponse().getContentAsString(),
         FileMetadataDTO.class);
 
-    assertEquals(FileStatus.DOWNLOADED.getOrder(), acked.getStatus());
+    assertEquals(FileStatus.DOWNLOAD_ENDED.getOrder(), acked.getStatus());
     assertEquals(ackedTestFileMetadataDTO, acked);
     BDDMockito.verify(fileMetadataService)
         .updateStatus(Mockito.any(String.class), Mockito.any(Integer.class));

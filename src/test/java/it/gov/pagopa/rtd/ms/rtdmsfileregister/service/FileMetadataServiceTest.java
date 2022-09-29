@@ -25,6 +25,7 @@ import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.Filename
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.StatusAlreadySet;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataEntity;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileStatus;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.SenderAdeAckListDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.repository.FileMetadataRepository;
 import java.util.List;
@@ -169,7 +170,7 @@ class FileMetadataServiceTest {
         objectMapper.readValue(metadataUpdatesJSON, FileMetadataDTO.class));
 
     assertNotNull(updated);
-    assertEquals(1, (int) updated.getStatus());
+    assertEquals(FileStatus.DOWNLOAD_STARTED.getOrder(), (int) updated.getStatus());
     verify(fileMetadataRepository).findFirstByName(anyString());
     verify(fileMetadataRepository).removeByName(anyString());
     verify(fileMetadataRepository).save(any(FileMetadataEntity.class));
@@ -254,17 +255,23 @@ class FileMetadataServiceTest {
 
   @Test
   void updateAfterSenderAdeAckDownload() {
-    FileMetadataDTO result = service.updateStatus("presentFilename", 1);
+    FileMetadataDTO result = service.updateStatus("presentFilename",
+        FileStatus.DOWNLOAD_ENDED.getOrder());
     assertNotNull(result);
+    assertEquals(FileStatus.DOWNLOAD_ENDED.getOrder(), result.getStatus());
   }
 
   @Test
   void updateAfterSenderAdeAckDownloadNullFilename() {
-    assertThrows(FilenameNotPresent.class, () -> service.updateStatus("missingFilename", 1));
+    int newStatus = FileStatus.DOWNLOAD_ENDED.getOrder();
+    assertThrows(FilenameNotPresent.class,
+        () -> service.updateStatus("missingFilename", newStatus));
   }
 
   @Test
   void updateAfterSenderAdeAckAlreadyDownloaded() {
-    assertThrows(StatusAlreadySet.class, () -> service.updateStatus("presentFilename", 0));
+    int newStatus = FileStatus.SUCCESS.getOrder();
+    assertThrows(StatusAlreadySet.class,
+        () -> service.updateStatus("presentFilename", newStatus));
   }
 }
