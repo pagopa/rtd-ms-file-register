@@ -170,7 +170,7 @@ class FileMetadataServiceTest {
         objectMapper.readValue(metadataUpdatesJSON, FileMetadataDTO.class));
 
     assertNotNull(updated);
-    assertEquals(1, (int) updated.getStatus());
+    assertEquals(FileStatus.DOWNLOAD_STARTED.getOrder(), (int) updated.getStatus());
     verify(fileMetadataRepository).findFirstByName(anyString());
     verify(fileMetadataRepository).removeByName(anyString());
     verify(fileMetadataRepository).save(any(FileMetadataEntity.class));
