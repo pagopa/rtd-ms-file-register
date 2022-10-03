@@ -1,745 +1,1969 @@
 {
-	"info": {
-		"_postman_id": "8c4474ce-5afa-425c-958a-74f1dadb460a",
-		"name": "Local File Register Micro-service Integration test",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "20034811"
-	},
-	"item": [
-		{
-			"name": "000 - Healthcheck",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('000 - Healthcheck', () => {",
-							"    pm.response.to.have.status(200);",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.status).to.eql(pm.variables.get(\"up_actuator_message\"));",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{file_register_url}}{{actuator_healthcheck_path}}",
-					"host": [
-						"{{file_register_url}}{{actuator_healthcheck_path}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "001a - Fail POST new metadata missing filename",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('001a - Fail POST new metadata missing filename', () => {",
-							"    pm.response.to.have.status(400);",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.name).to.be.oneOf([\"must not be null\", \"must not be blank\"]);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"hash\": \"{{test_hash}}\",\n    \"status\": 1\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{file_register_url}}{{file_metadata_path}}",
-					"host": [
-						"{{file_register_url}}{{file_metadata_path}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "001b - Fail POST new metadata missing hash",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('001b - Fail POST new metadata missing hash', () => {",
-							"    pm.response.to.have.status(400);",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.hash).to.be.oneOf([\"must not be null\", \"must not be blank\"]);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"status\": 1\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{file_register_url}}{{file_metadata_path}}",
-					"host": [
-						"{{file_register_url}}{{file_metadata_path}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "001c - Fail POST new metadata missing status",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('001c - Fail POST new metadata missing status', () => {",
-							"    pm.response.to.have.status(400);",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.status).to.be.eql(\"must not be null\");",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"hash\": \"{{test_hash}}\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{file_register_url}}{{file_metadata_path}}",
-					"host": [
-						"{{file_register_url}}{{file_metadata_path}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "001d - Fail POST malformed hash",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('001d - Fail POST malformed hash', () => {",
-							"    pm.response.to.have.status(400);",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.hash).to.be.eql(\"Hash length must be 64 alphanumeric char\");",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"hash\": \"{{test_hash}}A\",\n    \"status\": 1\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{file_register_url}}{{file_metadata_path}}",
-					"host": [
-						"{{file_register_url}}{{file_metadata_path}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "001 - POST file metadata",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('001 - POST new metadata', () => {",
-							"    pm.response.to.have.status(200);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"hash\": \"{{test_hash}}\",\n    \"status\": 1\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{file_register_url}}{{file_metadata_path}}",
-					"host": [
-						"{{file_register_url}}{{file_metadata_path}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "001e - Fail POST duplicate metadata",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('001e - Fail POST duplicate metadata', () => {",
-							"    pm.response.to.have.status(409);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"hash\": \"{{test_hash}}\",\n    \"status\": 1\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{file_register_url}}{{file_metadata_path}}",
-					"host": [
-						"{{file_register_url}}{{file_metadata_path}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "002a - Fail GET missing filename parameter",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('002a - Fail GET missing filename parameter', () => {",
-							"    pm.response.to.have.status(400);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{file_register_url}}{{file_metadata_path}}",
-					"host": [
-						"{{file_register_url}}{{file_metadata_path}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "002b - Fail GET not existing filename",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('002b - Fail GET not existing filename', () => {",
-							"    pm.response.to.have.status(404);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{file_register_url}}{{file_metadata_path}}?{{filename_parameter}}={{not_existing_filename}}",
-					"host": [
-						"{{file_register_url}}{{file_metadata_path}}"
-					],
-					"query": [
-						{
-							"key": "{{filename_parameter}}",
-							"value": "{{not_existing_filename}}"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "002 - GET file metadata",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('002 - GET file metadata', () => {",
-							"    pm.response.to.have.status(200);",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.name).to.be.eql(pm.variables.get('test_filename'));",
-							"    pm.expect(jsonData.hash).to.be.eql(\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\");",
-							"    pm.expect(jsonData.numTransactions).to.be.null;",
-							"    pm.expect(jsonData.numAggregates).to.be.null;",
-							"    pm.expect(jsonData.amountAggregates).to.be.null;",
-							"    pm.expect(jsonData.amountTransactions).to.be.null;",
-							"    pm.expect(jsonData.chunksTotal).to.be.null;",
-							"    pm.expect(jsonData.status).to.be.eql(1);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{file_register_url}}{{file_metadata_path}}?{{filename_parameter}}={{test_filename}}",
-					"host": [
-						"{{file_register_url}}{{file_metadata_path}}"
-					],
-					"query": [
-						{
-							"key": "{{filename_parameter}}",
-							"value": "{{test_filename}}"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "003a - Fail PUT missing filename",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('003a - Fail PUT missing filename', () => {",
-							"    pm.response.to.have.status(400);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"status\": 5\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{file_register_url}}{{file_metadata_path}}",
-					"host": [
-						"{{file_register_url}}{{file_metadata_path}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "003b - Fail PUT not existing filename",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('003b - Fail PUT not existing filename', () => {",
-							"    pm.response.to.have.status(404);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"{{not_existing_filename}}\",\n    \"status\": 5\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{file_register_url}}{{file_metadata_path}}",
-					"host": [
-						"{{file_register_url}}{{file_metadata_path}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "003c - Fail PUT malformed hash",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('003c - Fail PUT malformed hash', () => {",
-							"    pm.response.to.have.status(400);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"hash\": \"{{test_hash}}A\",\n    \"status\": 1\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{file_register_url}}{{file_metadata_path}}",
-					"host": [
-						"{{file_register_url}}{{file_metadata_path}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "003 - PUT  file metadata",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('003 - PUT  file metadata', () => {",
-							"    pm.response.to.have.status(200);",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.name).to.be.eql(pm.collectionVariables.get(\"test_filename\"));",
-							"    pm.expect(jsonData.hash).to.be.eql(pm.collectionVariables.get(\"test_hash\"));",
-							"    pm.expect(jsonData.numTransactions).to.be.null;",
-							"    pm.expect(jsonData.numAggregates).to.be.null;",
-							"    pm.expect(jsonData.amountAggregates).to.be.null;",
-							"    pm.expect(jsonData.amountTransactions).to.be.null;",
-							"    pm.expect(jsonData.chunksTotal).to.be.null;",
-							"    pm.expect(jsonData.status).to.be.eql(5);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"status\": 5\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{file_register_url}}{{file_metadata_path}}",
-					"host": [
-						"{{file_register_url}}{{file_metadata_path}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "004a - Fail DELETE filename not found",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('004a - Fail DELETE filename not found', () => {",
-							"    pm.response.to.have.status(404);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{file_register_url}}{{file_metadata_path}}?{{filename_parameter}}={{not_existing_filename}}",
-					"host": [
-						"{{file_register_url}}{{file_metadata_path}}"
-					],
-					"query": [
-						{
-							"key": "{{filename_parameter}}",
-							"value": "{{not_existing_filename}}"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "004b - Fail DELETE missing filename parameter",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('004b - Fail DELETE missing filename parameter', () => {",
-							"    pm.response.to.have.status(400);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{file_register_url}}{{file_metadata_path}}",
-					"host": [
-						"{{file_register_url}}{{file_metadata_path}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "004 - DELETE file metadata",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('004 - DELETE file metadata', () => {",
-							"    pm.response.to.have.status(200);",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.name).to.be.eql(pm.variables.get('test_filename'));",
-							"    pm.expect(jsonData.hash).to.be.eql(\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\");",
-							"    pm.expect(jsonData.numTransactions).to.be.null;",
-							"    pm.expect(jsonData.numAggregates).to.be.null;",
-							"    pm.expect(jsonData.amountAggregates).to.be.null;",
-							"    pm.expect(jsonData.amountTransactions).to.be.null;",
-							"    pm.expect(jsonData.chunksTotal).to.be.null;",
-							"    pm.expect(jsonData.status).to.be.eql(5);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{file_register_url}}{{file_metadata_path}}?{{filename_parameter}}={{test_filename}}",
-					"host": [
-						"{{file_register_url}}{{file_metadata_path}}"
-					],
-					"query": [
-						{
-							"key": "{{filename_parameter}}",
-							"value": "{{test_filename}}"
-						}
-					]
-				}
-			},
-			"response": []
-		}
-	],
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		}
-	],
-	"variable": [
-		{
-			"key": "file_register_url",
-			"value": "localhost:8080",
-			"type": "default"
-		},
-		{
-			"key": "file_metadata_path",
-			"value": "/file-status",
-			"type": "default"
-		},
-		{
-			"key": "actuator_healthcheck_path",
-			"value": "/actuator/health",
-			"type": "default"
-		},
-		{
-			"key": "filename_parameter",
-			"value": "filename",
-			"type": "default"
-		},
-		{
-			"key": "test_filename",
-			"value": "test",
-			"type": "default"
-		},
-		{
-			"key": "not_existing_filename",
-			"value": "notExisting",
-			"type": "default"
-		},
-		{
-			"key": "up_actuator_message",
-			"value": "UP",
-			"type": "default"
-		},
-		{
-			"key": "test_hash",
-			"value": "0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5",
-			"type": "string"
-		}
-	]
+  "info": {
+    "_postman_id": "8c4474ce-5afa-425c-958a-74f1dadb460a",
+    "name": "Local File Register Micro-service Integration test",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "20034811"
+  },
+  "item": [
+    {
+      "name": "000 - Healthcheck",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('000 - Healthcheck', () => {",
+              "    pm.response.to.have.status(200);",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.status).to.eql(pm.variables.get(\"up_actuator_message\"));",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{file_register_url}}{{actuator_healthcheck_path}}",
+          "host": [
+            "{{file_register_url}}{{actuator_healthcheck_path}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "001 - POST file metadata",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('001 - POST new metadata', () => {",
+              "    pm.response.to.have.status(200);",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.name).to.be.eql(pm.variables.get('test_filename'));",
+              "    pm.expect(jsonData.hash).to.be.eql(pm.variables.get(\"test_hash\"));",
+              "    pm.expect(jsonData.status).to.be.eql(parseInt(pm.variables.get(\"success_status\")));",
+              "    pm.expect(jsonData.sender).to.be.eql(pm.variables.get(\"sender1\"));",
+              "    pm.expect(jsonData.application).to.be.eql(parseInt(pm.variables.get(\"tae_application\")));",
+              "    pm.expect(jsonData.type).to.be.eql(parseInt(pm.variables.get(\"aggr_source_type\")));",
+              "});",
+              "",
+              "// Delete the created entry",
+              "pm.sendRequest({",
+              "        url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\")+\"?\"+ pm.variables.get(\"filename_parameter\") + \"=\"+ pm.variables.get('test_filename'),",
+              "        method: \"DELETE\"",
+              "    })"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"hash\": \"{{test_hash}}\",\n    \"status\": {{success_status}},\n    \"type\": {{aggr_source_type}},\n    \"application\": {{tae_application}},\n    \"sender\": \"{{sender1}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "001a - Fail POST new metadata missing filename",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('001a - Fail POST new metadata missing filename', () => {",
+              "    pm.response.to.have.status(400);",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.name).to.be.oneOf([\"must not be null\", \"must not be blank\"]);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"hash\": \"{{test_hash}}\",\n    \"status\": {{success_status}},\n    \"type\": {{aggr_source_type}},\n    \"application\": {{tae_application}},\n    \"sender\": \"{{test_sender}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "001b - Fail POST new metadata missing status",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('001b - Fail POST new metadata missing status', () => {",
+              "    pm.response.to.have.status(400);",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.status).to.be.eql(\"must not be null\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"hash\": \"{{test_hash}}\",\n    \"type\": {{aggr_source_type}},\n    \"application\": {{tae_application}}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "001c - Fail POST new metadata missing type",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('001c - Fail POST new metadata missing type', () => {",
+              "    pm.response.to.have.status(400);",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.type).to.be.eql(\"must not be null\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"status\": {{success_status}},\n    \"application\": {{tae_application}}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "001d - Fail POST new metadata missing application",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('001d - Fail POST new metadata missing application', () => {",
+              "    pm.response.to.have.status(400);",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.application).to.be.eql(\"must not be null\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"status\": {{success_status}},\n    \"type\": {{aggr_source_type}}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "001d - Fail POST malformed sender",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('001d - Fail POST malformed sender', () => {",
+              "    pm.response.to.have.status(400);",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.sender).to.be.eql(\"Sender code must be 5 alphanumeric char\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"hash\": \"{{test_hash}}\",\n    \"status\": {{success_status}},\n    \"type\": {{tae_application}},\n    \"application\": {{tae_application}},\n    \"sender\": \"1234\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "001e - Fail POST malformed hash",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('001e - Fail POST malformed hash', () => {",
+              "    pm.response.to.have.status(400);",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.hash).to.be.eql(\"Hash length must be 64 alphanumeric char\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"hash\": \"{{test_hash}}A\",\n    \"status\": {{success_status}},\n    \"type\": {{tae_application}},\n    \"application\": {{tae_application}}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "001f - Fail POST duplicate metadata",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('001f - Fail POST duplicate metadata', () => {",
+              "    pm.response.to.have.status(409);",
+              "});",
+              "",
+              "// Delete the created entry",
+              "pm.sendRequest({",
+              "    url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\")+\"?\"+ pm.variables.get(\"filename_parameter\") + \"=\"+ pm.variables.get('test_filename'),",
+              "    method: \"DELETE\"",
+              "})"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "var uuid = require('uuid');",
+              "let n = uuid.v4();",
+              "pm.variables.set('runid', n);",
+              "",
+              "pm.variables.set(\"fileNameSenderAdeAck1\", pm.variables.get(\"test_filename\"));",
+              "",
+              "pm.variables.set(\"senderAdeAckFileList\", [pm.variables.get(\"fileNameSenderAdeAck1\")])",
+              "",
+              "pm.variables.get(\"senderAdeAckFileList\").forEach(fileName => ",
+              "pm.sendRequest({",
+              "        url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\"),",
+              "        method: \"POST\",",
+              "        header: {",
+              "            \"Content-Type\": \"application/json\"",
+              "        },",
+              "        body: {",
+              "            mode: \"raw\",",
+              "            raw: JSON.stringify({",
+              "                \"name\": fileName,",
+              "                \"status\": pm.variables.get(\"success_status\"),",
+              "                \"type\": pm.variables.get(\"aggr_source_type\"),",
+              "                \"sender\": pm.variables.get(\"sender1\"),",
+              "                \"application\": pm.variables.get(\"tae_application\"),",
+              "                \"hash\": pm.variables.get(\"test_hash\")",
+              "            }),",
+              "        }",
+              "    })",
+              ");"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"hash\": \"{{test_hash}}\",\n    \"status\": {{success_status}},\n    \"type\": {{aggr_source_type}},\n    \"application\": {{tae_application}},\n    \"sender\": \"{{sender1}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "002 - GET file metadata",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('002 - GET file metadata', () => {",
+              "    pm.response.to.have.status(200);",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.name).to.be.eql(pm.variables.get('test_filename'));",
+              "    pm.expect(jsonData.hash).to.be.eql(pm.variables.get(\"test_hash\"));",
+              "    pm.expect(jsonData.status).to.be.eql(parseInt(pm.variables.get(\"success_status\")));",
+              "    pm.expect(jsonData.sender).to.be.eql(pm.variables.get(\"sender1\"));",
+              "    pm.expect(jsonData.application).to.be.eql(parseInt(pm.variables.get(\"tae_application\")));",
+              "    pm.expect(jsonData.type).to.be.eql(parseInt(pm.variables.get(\"aggr_source_type\")));",
+              "});",
+              "",
+              "// Delete the created entry",
+              "pm.sendRequest({",
+              "    url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\")+\"?\"+ pm.variables.get(\"filename_parameter\") + \"=\"+ pm.variables.get('test_filename'),",
+              "    method: \"DELETE\"",
+              "})"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "var uuid = require('uuid');",
+              "let n = uuid.v4();",
+              "pm.variables.set('runid', n);",
+              "",
+              "pm.variables.set(\"fileNameSenderAdeAck1\", pm.variables.get(\"test_filename\"));",
+              "",
+              "pm.variables.set(\"senderAdeAckFileList\", [pm.variables.get(\"fileNameSenderAdeAck1\")])",
+              "",
+              "pm.variables.get(\"senderAdeAckFileList\").forEach(fileName => ",
+              "pm.sendRequest({",
+              "        url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\"),",
+              "        method: \"POST\",",
+              "        header: {",
+              "            \"Content-Type\": \"application/json\"",
+              "        },",
+              "        body: {",
+              "            mode: \"raw\",",
+              "            raw: JSON.stringify({",
+              "                \"name\": fileName,",
+              "                \"status\": pm.variables.get(\"success_status\"),",
+              "                \"type\": pm.variables.get(\"aggr_source_type\"),",
+              "                \"sender\": pm.variables.get(\"sender1\"),",
+              "                \"application\": pm.variables.get(\"tae_application\"),",
+              "                \"hash\": pm.variables.get(\"test_hash\")",
+              "            }),",
+              "        }",
+              "    })",
+              ");"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}?{{filename_parameter}}={{test_filename}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ],
+          "query": [
+            {
+              "key": "{{filename_parameter}}",
+              "value": "{{test_filename}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "002a - Fail GET missing filename parameter",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('002a - Fail GET missing filename parameter', () => {",
+              "    pm.response.to.have.status(400);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "002b - Fail GET not existing filename",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('002b - Fail GET not existing filename', () => {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}?{{filename_parameter}}={{not_existing_filename}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ],
+          "query": [
+            {
+              "key": "{{filename_parameter}}",
+              "value": "{{not_existing_filename}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "003 - PUT  file metadata update application",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('003 - PUT  file metadata update application', () => {",
+              "    pm.response.to.have.status(200);",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.name).to.be.eql(pm.collectionVariables.get(\"test_filename\"));",
+              "    pm.expect(jsonData.application).to.be.eql(parseInt(pm.collectionVariables.get(\"tae_application\")));",
+              "});",
+              "",
+              "// Delete the created entry",
+              "pm.sendRequest({",
+              "        url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\")+\"?\"+ pm.variables.get(\"filename_parameter\") + \"=\"+ pm.variables.get('test_filename'),",
+              "        method: \"DELETE\"",
+              "    })"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "var uuid = require('uuid');",
+              "let n = uuid.v4();",
+              "pm.collectionVariables.set('runid', n);",
+              "",
+              "pm.collectionVariables.set(\"fileNameSenderAdeAck1\", pm.collectionVariables.get(\"test_filename\"));",
+              "",
+              "pm.collectionVariables.set(\"senderAdeAckFileList\", [pm.collectionVariables.get(\"fileNameSenderAdeAck1\")])",
+              "",
+              "pm.collectionVariables.get(\"senderAdeAckFileList\").forEach(fileName => ",
+              "pm.sendRequest({",
+              "        url: pm.collectionVariables.get(\"file_register_url\") + pm.collectionVariables.get(\"file_metadata_path\"),",
+              "        method: \"POST\",",
+              "        header: {",
+              "            \"Content-Type\": \"application/json\"",
+              "        },",
+              "        body: {",
+              "            mode: \"raw\",",
+              "            raw: JSON.stringify({",
+              "                \"name\": fileName,",
+              "                \"status\": pm.collectionVariables.get(\"success_status\"),",
+              "                \"type\": pm.collectionVariables.get(\"aggr_source_type\"),",
+              "                \"sender\": pm.collectionVariables.get(\"sender1\"),",
+              "                \"application\": pm.collectionVariables.get(\"rtd_application\"),",
+              "                \"hash\": pm.collectionVariables.get(\"test_hash\")",
+              "            }),",
+              "        }",
+              "    })",
+              ");"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"status\": {{success_status}},\n    \"type\": {{aggr_source_type}},\n    \"application\": {{tae_application}}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "003 - PUT  file metadata update type",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('003 - PUT  file metadata update type', () => {",
+              "    pm.response.to.have.status(200);",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.name).to.be.eql(pm.collectionVariables.get(\"test_filename\"));",
+              "    pm.expect(jsonData.type).to.be.eql(parseInt(pm.collectionVariables.get(\"aggr_destination_type\")));",
+              "});",
+              "",
+              "// Delete the created entry",
+              "pm.sendRequest({",
+              "        url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\")+\"?\"+ pm.variables.get(\"filename_parameter\") + \"=\"+ pm.variables.get('test_filename'),",
+              "        method: \"DELETE\"",
+              "    })"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "var uuid = require('uuid');",
+              "let n = uuid.v4();",
+              "pm.collectionVariables.set('runid', n);",
+              "",
+              "pm.collectionVariables.set(\"fileNameSenderAdeAck1\", pm.collectionVariables.get(\"test_filename\"));",
+              "",
+              "pm.collectionVariables.set(\"senderAdeAckFileList\", [pm.collectionVariables.get(\"fileNameSenderAdeAck1\")])",
+              "",
+              "pm.collectionVariables.get(\"senderAdeAckFileList\").forEach(fileName => ",
+              "pm.sendRequest({",
+              "        url: pm.collectionVariables.get(\"file_register_url\") + pm.collectionVariables.get(\"file_metadata_path\"),",
+              "        method: \"POST\",",
+              "        header: {",
+              "            \"Content-Type\": \"application/json\"",
+              "        },",
+              "        body: {",
+              "            mode: \"raw\",",
+              "            raw: JSON.stringify({",
+              "                \"name\": fileName,",
+              "                \"status\": pm.collectionVariables.get(\"success_status\"),",
+              "                \"type\": pm.collectionVariables.get(\"aggr_source_type\"),",
+              "                \"sender\": pm.collectionVariables.get(\"sender1\"),",
+              "                \"application\": pm.collectionVariables.get(\"rtd_application\"),",
+              "                \"hash\": pm.collectionVariables.get(\"test_hash\")",
+              "            }),",
+              "        }",
+              "    })",
+              ");"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"status\": {{success_status}},\n    \"type\": {{aggr_destination_type}},\n    \"application\": {{tae_application}}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "003 - PUT  file metadata update status",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('003 - PUT  file metadata update status', () => {",
+              "    pm.response.to.have.status(200);",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.name).to.be.eql(pm.collectionVariables.get(\"test_filename\"));",
+              "    pm.expect(jsonData.status).to.be.eql(parseInt(pm.collectionVariables.get(\"download_started_status\")));",
+              "});",
+              "",
+              "// Delete the created entry",
+              "pm.sendRequest({",
+              "        url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\")+\"?\"+ pm.variables.get(\"filename_parameter\") + \"=\"+ pm.variables.get('test_filename'),",
+              "        method: \"DELETE\"",
+              "    })"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "var uuid = require('uuid');",
+              "let n = uuid.v4();",
+              "pm.collectionVariables.set('runid', n);",
+              "",
+              "pm.collectionVariables.set(\"fileNameSenderAdeAck1\", pm.collectionVariables.get(\"test_filename\"));",
+              "",
+              "pm.collectionVariables.set(\"senderAdeAckFileList\", [pm.collectionVariables.get(\"fileNameSenderAdeAck1\")])",
+              "",
+              "pm.collectionVariables.get(\"senderAdeAckFileList\").forEach(fileName => ",
+              "pm.sendRequest({",
+              "        url: pm.collectionVariables.get(\"file_register_url\") + pm.collectionVariables.get(\"file_metadata_path\"),",
+              "        method: \"POST\",",
+              "        header: {",
+              "            \"Content-Type\": \"application/json\"",
+              "        },",
+              "        body: {",
+              "            mode: \"raw\",",
+              "            raw: JSON.stringify({",
+              "                \"name\": fileName,",
+              "                \"status\": pm.collectionVariables.get(\"success_status\"),",
+              "                \"type\": pm.collectionVariables.get(\"aggr_source_type\"),",
+              "                \"sender\": pm.collectionVariables.get(\"sender1\"),",
+              "                \"application\": pm.collectionVariables.get(\"rtd_application\"),",
+              "                \"hash\": pm.collectionVariables.get(\"test_hash\")",
+              "            }),",
+              "        }",
+              "    })",
+              ");"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"status\": {{download_started_status}},\n    \"type\": {{aggr_source_type}},\n    \"application\": {{tae_application}}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "003a - Fail PUT missing filename",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('003a - Fail PUT missing filename', () => {",
+              "    pm.response.to.have.status(400);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"status\": 1,\n    \"type\": 0,\n    \"application\": 0\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "003b - Fail PUT missing status",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('003b - Fail PUT missing status', () => {",
+              "    pm.response.to.have.status(400);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"type\": 0,\n    \"application\": 0\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "003c - Fail PUT missing type",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('003c - Fail PUT missing type', () => {",
+              "    pm.response.to.have.status(400);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"{{not_existing_filename}}\",\n    \"status\": 0,\n    \"application\": 0\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "003d - Fail PUT missing application",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('003d - Fail PUT missing application', () => {",
+              "    pm.response.to.have.status(400);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"{{not_existing_filename}}\",\n    \"status\": 0,\n    \"type\": 0\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "003e - Fail PUT not existing filename",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('003e - Fail PUT not existing filename', () => {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"{{not_existing_filename}}\",\n    \"status\": 0,\n    \"type\": 0,\n    \"application\": 0,\n    \"sender\": \"{{sender1}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "003f - Fail PUT malformed hash",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('003f - Fail PUT malformed hash', () => {",
+              "    pm.response.to.have.status(400);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"{{test_filename}}\",\n    \"hash\": \"{{test_hash}}A\",\n    \"status\": 0,\n    \"type\": 0,\n    \"application\": 0\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "004 - DELETE file metadata",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('004 - DELETE file metadata', () => {",
+              "    pm.response.to.have.status(200);",
+              "",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "var uuid = require('uuid');",
+              "let n = uuid.v4();",
+              "pm.variables.set('runid', n);",
+              "",
+              "pm.variables.set(\"fileNameSenderAdeAck1\", pm.variables.get(\"test_filename\"));",
+              "",
+              "pm.variables.set(\"senderAdeAckFileList\", [pm.variables.get(\"fileNameSenderAdeAck1\")])",
+              "",
+              "pm.variables.get(\"senderAdeAckFileList\").forEach(fileName => ",
+              "pm.sendRequest({",
+              "        url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\"),",
+              "        method: \"POST\",",
+              "        header: {",
+              "            \"Content-Type\": \"application/json\"",
+              "        },",
+              "        body: {",
+              "            mode: \"raw\",",
+              "            raw: JSON.stringify({",
+              "                \"name\": fileName,",
+              "                \"status\": pm.variables.get(\"success_status\"),",
+              "                \"type\": pm.variables.get(\"aggr_source_type\"),",
+              "                \"sender\": pm.variables.get(\"sender1\"),",
+              "                \"application\": pm.variables.get(\"tae_application\"),",
+              "                \"hash\": pm.variables.get(\"test_hash\")",
+              "            }),",
+              "        }",
+              "    })",
+              ");"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}?{{filename_parameter}}={{test_filename}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ],
+          "query": [
+            {
+              "key": "{{filename_parameter}}",
+              "value": "{{test_filename}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "004a - Fail DELETE missing  filename parameter",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('004a - Fail DELETE missing  filename parameter', () => {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "// Delete the created entry",
+              "pm.sendRequest({",
+              "    url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\")+\"?\"+ pm.variables.get(\"filename_parameter\") + \"=\"+ pm.variables.get('test_filename'),",
+              "    method: \"DELETE\"",
+              "})"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "var uuid = require('uuid');",
+              "let n = uuid.v4();",
+              "pm.variables.set('runid', n);",
+              "",
+              "pm.variables.set(\"fileNameSenderAdeAck1\", pm.variables.get(\"test_filename\"));",
+              "",
+              "pm.variables.set(\"senderAdeAckFileList\", [pm.variables.get(\"fileNameSenderAdeAck1\")])",
+              "",
+              "pm.variables.get(\"senderAdeAckFileList\").forEach(fileName => ",
+              "pm.sendRequest({",
+              "        url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\"),",
+              "        method: \"POST\",",
+              "        header: {",
+              "            \"Content-Type\": \"application/json\"",
+              "        },",
+              "        body: {",
+              "            mode: \"raw\",",
+              "            raw: JSON.stringify({",
+              "                \"name\": fileName,",
+              "                \"status\": pm.variables.get(\"success_status\"),",
+              "                \"type\": pm.variables.get(\"aggr_source_type\"),",
+              "                \"sender\": pm.variables.get(\"sender1\"),",
+              "                \"application\": pm.variables.get(\"tae_application\"),",
+              "                \"hash\": pm.variables.get(\"test_hash\")",
+              "            }),",
+              "        }",
+              "    })",
+              ");"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "004b - Fail DELETE filename not found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('004b - Fail DELETE filename not found', () => {",
+              "    pm.response.to.have.status(404);",
+              "});",
+              "",
+              "// Delete the created entry",
+              "pm.sendRequest({",
+              "    url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\")+\"?\"+ pm.variables.get(\"filename_parameter\") + \"=\"+ pm.variables.get('test_filename'),",
+              "    method: \"DELETE\"",
+              "})"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "var uuid = require('uuid');",
+              "let n = uuid.v4();",
+              "pm.variables.set('runid', n);",
+              "",
+              "pm.variables.set(\"fileName1\", pm.variables.get(\"test_filename\"));",
+              "",
+              "pm.variables.set(\"fileList\", [pm.variables.get(\"fileName1\")])",
+              "",
+              "pm.variables.get(\"fileList\").forEach(fileName => ",
+              "pm.sendRequest({",
+              "        url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\"),",
+              "        method: \"POST\",",
+              "        header: {",
+              "            \"Content-Type\": \"application/json\"",
+              "        },",
+              "        body: {",
+              "            mode: \"raw\",",
+              "            raw: JSON.stringify({",
+              "                \"name\": fileName,",
+              "                \"status\": pm.variables.get(\"success_status\"),",
+              "                \"type\": pm.variables.get(\"aggr_source_type\"),",
+              "                \"sender\": pm.variables.get(\"sender1\"),",
+              "                \"application\": pm.variables.get(\"tae_application\"),",
+              "                \"hash\": pm.variables.get(\"test_hash\")",
+              "            }),",
+              "        }",
+              "    })",
+              ");"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}{{file_metadata_path}}?{{filename_parameter}}={{not_existing_filename}}",
+          "host": [
+            "{{file_register_url}}{{file_metadata_path}}"
+          ],
+          "query": [
+            {
+              "key": "{{filename_parameter}}",
+              "value": "{{not_existing_filename}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "005a - GET sender ade ack",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('005a - GET sender ade ack', () => {",
+              "    pm.response.to.have.status(200);",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.fileNameList).contains(pm.variables.get(\"fileNameSenderAdeAck1\"), pm.variables.get(\"fileNameSenderAdeAck2\"))",
+              "    pm.expect(jsonData.fileNameList).not.contains(pm.variables.get(\"fileNameSenderAdeAck3\"), pm.variables.get(\"fileNameSenderAdeAck4\"))",
+              "});",
+              "",
+              "// Delete the created entries",
+              "pm.variables.get(\"senderAdeAckFileList\").forEach(fileName => ",
+              "    pm.sendRequest({",
+              "            url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\")+\"?\"+ pm.variables.get(\"filename_parameter\") + \"=\"+ fileName,",
+              "            method: \"DELETE\"",
+              "        })",
+              ");"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "var uuid = require('uuid');",
+              "let n = uuid.v4();",
+              "pm.variables.set('runid', n);",
+              "",
+              "pm.variables.set(\"fileNameSenderAdeAck1\", \"ADEACK.\"+ pm.variables.get(\"sender1\") +\".\"+ pm.variables.get(\"acquirer_code1\") +\".2022-09-08.\"+ n +\".csv\");",
+              "pm.variables.set(\"fileNameSenderAdeAck2\", \"ADEACK.\"+ pm.variables.get(\"sender1\") +\".\"+ pm.variables.get(\"acquirer_code2\") +\".2022-09-08.\"+ n +\".csv\");",
+              "pm.variables.set(\"fileNameSenderAdeAck3\", \"ADEACK.\"+ pm.variables.get(\"sender2\") +\".\"+ pm.variables.get(\"acquirer_code1\") +\".2022-09-08.\"+ n +\".csv\");",
+              "",
+              "pm.variables.set(\"fileNameSenderAdeAck4\", \"ADEACK.\"+ pm.variables.get(\"sender2\") +\".\"+ pm.variables.get(\"acquirer_code2\") +\".2022-09-08.\"+ n +\".csv\");",
+              "",
+              "pm.variables.set(\"senderAdeAckFileList\", [pm.variables.get(\"fileNameSenderAdeAck1\"), pm.variables.get(\"fileNameSenderAdeAck2\"),pm.variables.get(\"fileNameSenderAdeAck3\"),pm.variables.get(\"fileNameSenderAdeAck4\")])",
+              "",
+              "pm.variables.get(\"senderAdeAckFileList\").forEach(fileName => ",
+              "pm.sendRequest({",
+              "        url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\"),",
+              "        method: \"POST\",",
+              "        header: {",
+              "            \"Content-Type\": \"application/json\"",
+              "        },",
+              "        body: {",
+              "            mode: \"raw\",",
+              "            raw: JSON.stringify({",
+              "                \"name\": fileName,",
+              "                \"status\": pm.variables.get(\"success_status\"),",
+              "                \"type\": pm.variables.get(\"sender_ade_ack_type\"),",
+              "                \"sender\": fileName.split('.')[1],",
+              "                \"application\": pm.variables.get(\"tae_application\"),",
+              "            }),",
+              "        }",
+              "    })",
+              ");"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}/sender-ade-ack?senders={{sender1}}",
+          "host": [
+            "{{file_register_url}}"
+          ],
+          "path": [
+            "sender-ade-ack"
+          ],
+          "query": [
+            {
+              "key": "senders",
+              "value": "{{sender1}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "005b - GET sender ade ack for multiple senders",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('005b - GET sender ade ack for multiple senders', () => {",
+              "    pm.response.to.have.status(200);",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.fileNameList).contains(pm.variables.get(\"fileNameSenderAdeAck1\"), pm.variables.get(\"fileNameSenderAdeAck2\"))",
+              "    pm.expect(jsonData.fileNameList).contains(pm.variables.get(\"fileNameSenderAdeAck3\"), pm.variables.get(\"fileNameSenderAdeAck4\"))",
+              "});",
+              "",
+              "// Delete the created entries",
+              "pm.variables.get(\"senderAdeAckFileList\").forEach(fileName => ",
+              "    pm.sendRequest({",
+              "            url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\")+\"?\"+ pm.variables.get(\"filename_parameter\") + \"=\"+ fileName,",
+              "            method: \"DELETE\"",
+              "        })",
+              ");"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "var uuid = require('uuid');",
+              "let n = uuid.v4();",
+              "pm.variables.set('runid', n);",
+              "",
+              "pm.variables.set(\"fileNameSenderAdeAck1\", \"ADEACK.\"+ pm.variables.get(\"sender1\") +\".\"+ pm.variables.get(\"acquirer_code1\") +\".2022-09-08.\"+ n +\".csv\");",
+              "pm.variables.set(\"fileNameSenderAdeAck2\", \"ADEACK.\"+ pm.variables.get(\"sender1\") +\".\"+ pm.variables.get(\"acquirer_code2\") +\".2022-09-08.\"+ n +\".csv\");",
+              "pm.variables.set(\"fileNameSenderAdeAck3\", \"ADEACK.\"+ pm.variables.get(\"sender2\") +\".\"+ pm.variables.get(\"acquirer_code1\") +\".2022-09-08.\"+ n +\".csv\");",
+              "",
+              "pm.variables.set(\"fileNameSenderAdeAck4\", \"ADEACK.\"+ pm.variables.get(\"sender2\") +\".\"+ pm.variables.get(\"acquirer_code2\") +\".2022-09-08.\"+ n +\".csv\");",
+              "",
+              "pm.variables.set(\"senderAdeAckFileList\", [pm.variables.get(\"fileNameSenderAdeAck1\"), pm.variables.get(\"fileNameSenderAdeAck2\"),pm.variables.get(\"fileNameSenderAdeAck3\"),pm.variables.get(\"fileNameSenderAdeAck4\")])",
+              "",
+              "pm.variables.get(\"senderAdeAckFileList\").forEach(fileName => ",
+              "pm.sendRequest({",
+              "        url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\"),",
+              "        method: \"POST\",",
+              "        header: {",
+              "            \"Content-Type\": \"application/json\"",
+              "        },",
+              "        body: {",
+              "            mode: \"raw\",",
+              "            raw: JSON.stringify({",
+              "                \"name\": fileName,",
+              "                \"status\": pm.variables.get(\"success_status\"),",
+              "                \"type\": pm.variables.get(\"sender_ade_ack_type\"),",
+              "                \"sender\": fileName.split('.')[1],",
+              "                \"application\": pm.variables.get(\"tae_application\"),",
+              "            }),",
+              "        }",
+              "    })",
+              ");"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}/sender-ade-ack?senders={{sender1}},{{sender2}}",
+          "host": [
+            "{{file_register_url}}"
+          ],
+          "path": [
+            "sender-ade-ack"
+          ],
+          "query": [
+            {
+              "key": "senders",
+              "value": "{{sender1}},{{sender2}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "005c - Fail GET sender ade ack empty sender",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('005c - Fail GET sender ade ack empty sender', () => {",
+              "    pm.response.to.have.status(200);",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.fileNameList).empty;",
+              "});",
+              "",
+              "// Delete the created entries",
+              "pm.variables.get(\"senderAdeAckFileList\").forEach(fileName => ",
+              "    pm.sendRequest({",
+              "            url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\")+\"?\"+ pm.variables.get(\"filename_parameter\") + \"=\"+ fileName,",
+              "            method: \"DELETE\"",
+              "        })",
+              ");"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "var uuid = require('uuid');",
+              "let n = uuid.v4();",
+              "pm.variables.set('runid', n);",
+              "",
+              "pm.variables.set(\"fileNameSenderAdeAck1\", \"ADEACK.\"+ pm.variables.get(\"sender1\") +\".\"+ pm.variables.get(\"acquirer_code1\") +\".2022-09-08.\"+ n +\".csv\");",
+              "pm.variables.set(\"fileNameSenderAdeAck2\", \"ADEACK.\"+ pm.variables.get(\"sender1\") +\".\"+ pm.variables.get(\"acquirer_code2\") +\".2022-09-08.\"+ n +\".csv\");",
+              "pm.variables.set(\"fileNameSenderAdeAck3\", \"ADEACK.\"+ pm.variables.get(\"sender2\") +\".\"+ pm.variables.get(\"acquirer_code1\") +\".2022-09-08.\"+ n +\".csv\");",
+              "",
+              "pm.variables.set(\"fileNameSenderAdeAck4\", \"ADEACK.\"+ pm.variables.get(\"sender2\") +\".\"+ pm.variables.get(\"acquirer_code2\") +\".2022-09-08.\"+ n +\".csv\");",
+              "",
+              "pm.variables.set(\"senderAdeAckFileList\", [pm.variables.get(\"fileNameSenderAdeAck1\"), pm.variables.get(\"fileNameSenderAdeAck2\"),pm.variables.get(\"fileNameSenderAdeAck3\"),pm.variables.get(\"fileNameSenderAdeAck4\")])",
+              "",
+              "pm.variables.get(\"senderAdeAckFileList\").forEach(fileName => ",
+              "pm.sendRequest({",
+              "        url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\"),",
+              "        method: \"POST\",",
+              "        header: {",
+              "            \"Content-Type\": \"application/json\"",
+              "        },",
+              "        body: {",
+              "            mode: \"raw\",",
+              "            raw: JSON.stringify({",
+              "                \"name\": fileName,",
+              "                \"status\": pm.variables.get(\"success_status\"),",
+              "                \"type\": pm.variables.get(\"sender_ade_ack_type\"),",
+              "                \"sender\": fileName.split('.')[1],",
+              "                \"application\": pm.variables.get(\"tae_application\"),",
+              "            }),",
+              "        }",
+              "    })",
+              ");"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{file_register_url}}/sender-ade-ack?senders=",
+          "host": [
+            "{{file_register_url}}"
+          ],
+          "path": [
+            "sender-ade-ack"
+          ],
+          "query": [
+            {
+              "key": "senders",
+              "value": ""
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "006 - PUT Explicit ACK AdE error file",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "var uuid = require('uuid');",
+              "let n = uuid.v4();",
+              "pm.variables.set('runid', n);",
+              "",
+              "pm.variables.set(\"fileNameSenderAdeAck1\", \"ADEACK.\"+ pm.variables.get(\"sender1\") +\".\"+ pm.variables.get(\"acquirer_code1\") +\".2022-09-08.\"+ n +\".csv\");",
+              "pm.variables.set(\"fileNameSenderAdeAck2\", \"ADEACK.\"+ pm.variables.get(\"sender1\") +\".\"+ pm.variables.get(\"acquirer_code2\") +\".2022-09-08.\"+ n +\".csv\");",
+              "pm.variables.set(\"fileNameSenderAdeAck3\", \"ADEACK.\"+ pm.variables.get(\"sender2\") +\".\"+ pm.variables.get(\"acquirer_code1\") +\".2022-09-08.\"+ n +\".csv\");",
+              "",
+              "pm.variables.set(\"fileNameSenderAdeAck4\", \"ADEACK.\"+ pm.variables.get(\"sender2\") +\".\"+ pm.variables.get(\"acquirer_code2\") +\".2022-09-08.\"+ n +\".csv\");",
+              "",
+              "pm.variables.set(\"senderAdeAckFileList\", [pm.variables.get(\"fileNameSenderAdeAck1\"), pm.variables.get(\"fileNameSenderAdeAck2\"),pm.variables.get(\"fileNameSenderAdeAck3\"),pm.variables.get(\"fileNameSenderAdeAck4\")])",
+              "",
+              "pm.variables.get(\"senderAdeAckFileList\").forEach(fileName => ",
+              "pm.sendRequest({",
+              "        url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\"),",
+              "        method: \"POST\",",
+              "        header: {",
+              "            \"Content-Type\": \"application/json\"",
+              "        },",
+              "        body: {",
+              "            mode: \"raw\",",
+              "            raw: JSON.stringify({",
+              "                \"name\": fileName,",
+              "                \"status\": pm.variables.get(\"success_status\"),",
+              "                \"type\": pm.variables.get(\"sender_ade_ack_type\"),",
+              "                \"sender\": fileName.split('.')[1],",
+              "                \"application\": pm.variables.get(\"tae_application\"),",
+              "            }),",
+              "        }",
+              "    })",
+              ");"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('006 - PUT Explicit ACK AdE error file', () => {",
+              "    pm.response.to.have.status(200);",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.status).eq(parseInt(pm.variables.get(\"download_ended_status\")));",
+              "});",
+              "",
+              "// Delete the created entries",
+              "pm.variables.get(\"senderAdeAckFileList\").forEach(fileName => ",
+              "    pm.sendRequest({",
+              "            url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\")+\"?\"+ pm.variables.get(\"filename_parameter\") + \"=\"+ fileName,",
+              "            method: \"DELETE\"",
+              "        })",
+              ");"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "{{file_register_url}}/sender-ade-ack?{{filename_parameter}}={{fileNameSenderAdeAck1}}",
+          "host": [
+            "{{file_register_url}}"
+          ],
+          "path": [
+            "sender-ade-ack"
+          ],
+          "query": [
+            {
+              "key": "{{filename_parameter}}",
+              "value": "{{fileNameSenderAdeAck1}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "006a - Fail PUT Explicit ACK AdE error file already set",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "var uuid = require('uuid');",
+              "let n = uuid.v4();",
+              "pm.variables.set('runid', n);",
+              "",
+              "pm.variables.set(\"fileNameSenderAdeAck1\", \"ADEACK.\"+ pm.variables.get(\"sender1\") +\".\"+ pm.variables.get(\"acquirer_code1\") +\".2022-09-08.\"+ n +\".csv\");",
+              "pm.variables.set(\"fileNameSenderAdeAck2\", \"ADEACK.\"+ pm.variables.get(\"sender1\") +\".\"+ pm.variables.get(\"acquirer_code2\") +\".2022-09-08.\"+ n +\".csv\");",
+              "pm.variables.set(\"fileNameSenderAdeAck3\", \"ADEACK.\"+ pm.variables.get(\"sender2\") +\".\"+ pm.variables.get(\"acquirer_code1\") +\".2022-09-08.\"+ n +\".csv\");",
+              "",
+              "pm.variables.set(\"fileNameSenderAdeAck4\", \"ADEACK.\"+ pm.variables.get(\"sender2\") +\".\"+ pm.variables.get(\"acquirer_code2\") +\".2022-09-08.\"+ n +\".csv\");",
+              "",
+              "pm.variables.set(\"senderAdeAckFileList\", [pm.variables.get(\"fileNameSenderAdeAck1\"), pm.variables.get(\"fileNameSenderAdeAck2\"),pm.variables.get(\"fileNameSenderAdeAck3\"),pm.variables.get(\"fileNameSenderAdeAck4\")])",
+              "",
+              "pm.variables.get(\"senderAdeAckFileList\").forEach(fileName => ",
+              "pm.sendRequest({",
+              "        url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\"),",
+              "        method: \"POST\",",
+              "        header: {",
+              "            \"Content-Type\": \"application/json\"",
+              "        },",
+              "        body: {",
+              "            mode: \"raw\",",
+              "            raw: JSON.stringify({",
+              "                \"name\": fileName,",
+              "                \"status\": pm.variables.get(\"download_ended_status\"),",
+              "                \"type\": pm.variables.get(\"sender_ade_ack_type\"),",
+              "                \"sender\": fileName.split('.')[1],",
+              "                \"application\": pm.variables.get(\"tae_application\"),",
+              "            }),",
+              "        }",
+              "    })",
+              ");"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('006a - Fail PUT Explicit ACK AdE error file already set', () => {",
+              "    pm.response.to.have.status(409);",
+              "});",
+              "",
+              "// Delete the created entries",
+              "pm.variables.get(\"senderAdeAckFileList\").forEach(fileName => ",
+              "    pm.sendRequest({",
+              "            url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\")+\"?\"+ pm.variables.get(\"filename_parameter\") + \"=\"+ fileName,",
+              "            method: \"DELETE\"",
+              "        })",
+              ");"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "{{file_register_url}}/sender-ade-ack?{{filename_parameter}}={{fileNameSenderAdeAck1}}",
+          "host": [
+            "{{file_register_url}}"
+          ],
+          "path": [
+            "sender-ade-ack"
+          ],
+          "query": [
+            {
+              "key": "{{filename_parameter}}",
+              "value": "{{fileNameSenderAdeAck1}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "006b - Fail PUT Explicit ACK AdE error file missing filename",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "var uuid = require('uuid');",
+              "let n = uuid.v4();",
+              "pm.variables.set('runid', n);",
+              "",
+              "pm.variables.set(\"fileNameSenderAdeAck1\", \"ADEACK.\"+ pm.variables.get(\"sender1\") +\".\"+ pm.variables.get(\"acquirer_code1\") +\".2022-09-08.\"+ n +\".csv\");",
+              "pm.variables.set(\"fileNameSenderAdeAck2\", \"ADEACK.\"+ pm.variables.get(\"sender1\") +\".\"+ pm.variables.get(\"acquirer_code2\") +\".2022-09-08.\"+ n +\".csv\");",
+              "pm.variables.set(\"fileNameSenderAdeAck3\", \"ADEACK.\"+ pm.variables.get(\"sender2\") +\".\"+ pm.variables.get(\"acquirer_code1\") +\".2022-09-08.\"+ n +\".csv\");",
+              "",
+              "pm.variables.set(\"fileNameSenderAdeAck4\", \"ADEACK.\"+ pm.variables.get(\"sender2\") +\".\"+ pm.variables.get(\"acquirer_code2\") +\".2022-09-08.\"+ n +\".csv\");",
+              "",
+              "pm.variables.set(\"senderAdeAckFileList\", [pm.variables.get(\"fileNameSenderAdeAck1\"), pm.variables.get(\"fileNameSenderAdeAck2\"),pm.variables.get(\"fileNameSenderAdeAck3\"),pm.variables.get(\"fileNameSenderAdeAck4\")])",
+              "",
+              "pm.variables.get(\"senderAdeAckFileList\").forEach(fileName => ",
+              "pm.sendRequest({",
+              "        url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\"),",
+              "        method: \"POST\",",
+              "        header: {",
+              "            \"Content-Type\": \"application/json\"",
+              "        },",
+              "        body: {",
+              "            mode: \"raw\",",
+              "            raw: JSON.stringify({",
+              "                \"name\": fileName,",
+              "                \"status\": pm.variables.get(\"download_ended_status\"),",
+              "                \"type\": pm.variables.get(\"sender_ade_ack_type\"),",
+              "                \"sender\": fileName.split('.')[1],",
+              "                \"application\": pm.variables.get(\"tae_application\"),",
+              "            }),",
+              "        }",
+              "    })",
+              ");"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('006b - Fail PUT Explicit ACK AdE error file missing filename', () => {",
+              "    pm.response.to.have.status(404);",
+              "});",
+              "",
+              "// Delete the created entries",
+              "pm.variables.get(\"senderAdeAckFileList\").forEach(fileName => ",
+              "    pm.sendRequest({",
+              "            url: pm.variables.get(\"file_register_url\") + pm.variables.get(\"file_metadata_path\")+\"?\"+ pm.variables.get(\"filename_parameter\") + \"=\"+ fileName,",
+              "            method: \"DELETE\"",
+              "        })",
+              ");"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "{{file_register_url}}/sender-ade-ack?{{filename_parameter}}={{fileNameSenderAdeAck1}}A",
+          "host": [
+            "{{file_register_url}}"
+          ],
+          "path": [
+            "sender-ade-ack"
+          ],
+          "query": [
+            {
+              "key": "{{filename_parameter}}",
+              "value": "{{fileNameSenderAdeAck1}}A"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "file_register_url",
+      "value": "localhost:8080",
+      "type": "default"
+    },
+    {
+      "key": "file_metadata_path",
+      "value": "/file-status",
+      "type": "default"
+    },
+    {
+      "key": "actuator_healthcheck_path",
+      "value": "/actuator/health",
+      "type": "default"
+    },
+    {
+      "key": "filename_parameter",
+      "value": "filename",
+      "type": "default"
+    },
+    {
+      "key": "test_filename",
+      "value": "test",
+      "type": "default"
+    },
+    {
+      "key": "not_existing_filename",
+      "value": "notExisting",
+      "type": "default"
+    },
+    {
+      "key": "up_actuator_message",
+      "value": "UP",
+      "type": "default"
+    },
+    {
+      "key": "test_hash",
+      "value": "0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5",
+      "type": "string"
+    },
+    {
+      "key": "sender1",
+      "value": "T5555",
+      "type": "string"
+    },
+    {
+      "key": "sender2",
+      "value": "99999",
+      "type": "string"
+    },
+    {
+      "key": "acquirer_code1",
+      "value": "12345",
+      "type": "string"
+    },
+    {
+      "key": "acquirer_code2",
+      "value": "67890",
+      "type": "string"
+    },
+    {
+      "key": "rtd_application",
+      "value": "0",
+      "type": "string"
+    },
+    {
+      "key": "tae_application",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "aggr_source_type",
+      "value": "2",
+      "type": "string"
+    },
+    {
+      "key": "aggr_chunk_type",
+      "value": "3",
+      "type": "string"
+    },
+    {
+      "key": "aggr_destination_type",
+      "value": "4",
+      "type": "string"
+    },
+    {
+      "key": "ade_ack_type",
+      "value": "5",
+      "type": "string"
+    },
+    {
+      "key": "sender_ade_ack_type",
+      "value": "6",
+      "type": "string"
+    },
+    {
+      "key": "success_status",
+      "value": "0",
+      "type": "string"
+    },
+    {
+      "key": "download_started_status",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "download_ended_status",
+      "value": "2",
+      "type": "string"
+    },
+    {
+      "key": "runid",
+      "value": ""
+    },
+    {
+      "key": "fileNameSenderAdeAck1",
+      "value": ""
+    },
+    {
+      "key": "senderAdeAckFileList",
+      "value": ""
+    }
+  ]
 }
