@@ -20,4 +20,6 @@ public interface FileMetadataRepository extends MongoRepository<FileMetadataEnti
   FileMetadataEntity removeByName(String filename);
 
   List<FileMetadataEntity> findNamesBySenderAndTypeAndStatus(String sender, int type, int status);
+
+  List<FileMetadataEntity> findAllByNameAndType(String sender, int type);
 }
