@@ -26,8 +26,10 @@ import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.StatusAl
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataEntity;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileStatus;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileType;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.SenderAdeAckListDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.repository.FileMetadataRepository;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -110,6 +112,15 @@ class FileMetadataServiceTest {
       return senderAdeACKList;
     });
 
+    when(fileMetadataRepository.findAllByNameAndType("presentFilename",
+        FileType.TRANSACTIONS_SOURCE.getOrder())).thenAnswer(invocation -> {
+      return List.of(testFileMetadataEntity);
+    });
+
+    when(fileMetadataRepository.findAllByNameAndType("missingFilename",
+        FileType.TRANSACTIONS_SOURCE.getOrder())).thenAnswer(invocation -> {
+      return new ArrayList<>();
+    });
   }
 
   @Test
@@ -273,5 +284,19 @@ class FileMetadataServiceTest {
     int newStatus = FileStatus.SUCCESS.getOrder();
     assertThrows(StatusAlreadySet.class,
         () -> service.updateStatus("presentFilename", newStatus));
+  }
+
+  @Test
+  void retrieveFileMetadataFromFilenameAndType() {
+    List<FileMetadataDTO> result = service.retrieveFileMetadataByNameAndType("presentFilename",
+        FileType.TRANSACTIONS_SOURCE.getOrder());
+    assertEquals(1, result.size());
+  }
+
+  @Test
+  void failRetrieveFileMetadataFromFilenameAndTypeMissingFilename() {
+    List<FileMetadataDTO> result = service.retrieveFileMetadataByNameAndType("missingFilename",
+        FileType.TRANSACTIONS_SOURCE.getOrder());
+    assertEquals(0, result.size());
   }
 }

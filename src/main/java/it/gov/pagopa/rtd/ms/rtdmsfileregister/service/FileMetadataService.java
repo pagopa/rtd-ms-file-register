@@ -20,4 +20,6 @@ public interface FileMetadataService {
 
   FileMetadataDTO updateStatus (String filename, int status);
 
+  List<FileMetadataDTO> retrieveFileMetadataByNameAndType(String sender, int type);
+
 }

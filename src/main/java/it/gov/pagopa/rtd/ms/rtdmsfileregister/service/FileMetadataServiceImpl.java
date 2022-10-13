@@ -2,14 +2,15 @@ package it.gov.pagopa.rtd.ms.rtdmsfileregister.service;
 
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.DTOViolationException;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.EmptyFilenameException;
-import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.StatusAlreadySet;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameAlreadyPresent;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameNotPresent;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.StatusAlreadySet;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataEntity;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.SenderAdeAckListDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.repository.FileMetadataRepository;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
@@ -135,5 +136,14 @@ public class FileMetadataServiceImpl implements FileMetadataService {
     repository.removeByName(filename);
 
     return modelMapper.map(repository.save(toBeUpdated), FileMetadataDTO.class);
+  }
+
+  public List<FileMetadataDTO> retrieveFileMetadataByNameAndType(String filename, int type) {
+    List<FileMetadataEntity> retrieved = repository.findAllByNameAndType(filename, type);
+    if (!retrieved.isEmpty()) {
+      return Arrays.asList(modelMapper.map(retrieved, FileMetadataDTO[].class));
+    } else {
+      return new ArrayList<>();
+    }
   }
 }
