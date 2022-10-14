@@ -54,6 +54,11 @@ public interface RestController {
   @ResponseStatus(HttpStatus.OK)
   FileMetadataDTO setDownloadedSenderAdeAck(@NotNull @NotBlank @RequestParam String filename);
 
+  @GetMapping(value = "/unique-event", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  void uniqueEvent(@Valid @RequestParam @NotNull @NotBlank String filename,
+      @Valid @RequestParam @NotNull Integer eventType);
+
   @ResponseStatus(HttpStatus.NOT_FOUND)
   class FilenameNotPresent extends RuntimeException {
 

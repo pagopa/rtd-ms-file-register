@@ -90,6 +90,17 @@ class RestControllerImpl implements
   }
 
   @Override
+  public void uniqueEvent(String filename, Integer eventType) {
+    log.info("Received GET unique event for file {} of type {}", filename, eventType);
+
+    List<FileMetadataDTO> retrieved = fileMetadataService.retrieveFileMetadataByNameAndType(filename, eventType);
+
+    if (!retrieved.isEmpty()) {
+      throw new FilenameAlreadyPresent();
+    }
+  }
+
+  @Override
   public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
     Map<String, String> errors = new HashMap<>();
     ex.getBindingResult().getAllErrors().forEach(error -> {
