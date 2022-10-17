@@ -16,10 +16,17 @@ public enum FileStatus {
     }
   },
 
-  DOWNLOADED {
+  DOWNLOAD_STARTED {
     @Override
     public int getOrder() {
       return 1;
+    }
+  },
+
+  DOWNLOAD_ENDED {
+    @Override
+    public int getOrder() {
+      return 2;
     }
   };
 
