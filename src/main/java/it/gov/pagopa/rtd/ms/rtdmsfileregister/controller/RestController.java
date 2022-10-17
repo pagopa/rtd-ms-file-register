@@ -50,6 +50,10 @@ public interface RestController {
   @ResponseStatus(HttpStatus.OK)
   SenderAdeAckListDTO senderAdeACKList(@NotNull @RequestParam List<String> senders);
 
+  @PutMapping(value = "/sender-ade-ack", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  FileMetadataDTO setDownloadedSenderAdeAck(@NotNull @NotBlank @RequestParam String filename);
+
   @ResponseStatus(HttpStatus.NOT_FOUND)
   class FilenameNotPresent extends RuntimeException {
 
@@ -60,6 +64,11 @@ public interface RestController {
 
   }
 
+  @ResponseStatus(HttpStatus.CONFLICT)
+  class StatusAlreadySet extends RuntimeException {
+
+  }
+
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   class EmptyFilenameException extends RuntimeException {
 
@@ -67,6 +76,11 @@ public interface RestController {
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   class DTOViolationException extends RuntimeException {
+
+  }
+
+  @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+  class FileNotUpdated extends RuntimeException {
 
   }
 

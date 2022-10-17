@@ -1,6 +1,7 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.controller;
 
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileStatus;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.SenderAdeAckListDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.FileMetadataService;
 import java.util.HashMap;
@@ -73,6 +74,19 @@ class RestControllerImpl implements
     log.info("Received GET sender AdE ACK List for sender {}", senders);
 
     return fileMetadataService.getSenderAdeAckList(senders);
+  }
+
+  @Override
+  public FileMetadataDTO setDownloadedSenderAdeAck(String filename) {
+    log.info("Received PUT set downloaded SenderAdeAck for file {}", filename);
+
+    FileMetadataDTO updated = fileMetadataService.updateStatus(filename,
+        FileStatus.DOWNLOAD_ENDED.getOrder());
+
+    if (updated.getStatus() != FileStatus.DOWNLOAD_ENDED.getOrder()) {
+      throw new FileNotUpdated();
+    }
+    return updated;
   }
 
   @Override
