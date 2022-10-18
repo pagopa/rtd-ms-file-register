@@ -23,6 +23,8 @@ spec:
                 name: rtd-blob-storage-events
             - secretRef:
                 name: mongo-credentials
+            - secretRef:
+                name: application-insights
           resources:
             limits:
               cpu: 500m
