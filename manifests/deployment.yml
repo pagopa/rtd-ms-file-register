@@ -19,6 +19,8 @@ spec:
             - containerPort: 8080
           imagePullPolicy: Always
           envFrom:
+            - configMapRef:
+                  name: rtdfileregister
             - secretRef:
                 name: rtd-blob-storage-events
             - secretRef:
