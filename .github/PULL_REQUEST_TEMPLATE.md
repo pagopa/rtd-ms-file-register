@@ -14,17 +14,21 @@
 <!--- Please describe in detail how you tested your changes. -->
 <!--- Include details of your testing environment, tests ran to see how -->
 <!--- your change affects other areas of the code, etc. -->
-- [ ] Unit Test Suite
-- [ ] Integration Test Suite
-- [ ] Api Tests
-- [ ] Load Tests
+- Pre-Deploy Test
+        - [ ] Unit 
+        - [ ] Integration (Narrow)
+- Post-Deploy Test
+        - [ ] Isolated Microservice
+        - [ ] Broader Integration
+        - [ ] Acceptance
+        - [ ] Performance & Load
 
 #### Types of changes
 <!--- What types of changes does your code introduce? Put an `x` in all the boxes that apply: -->
 
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- [ ] PATCH - Bug fix (backwards compatible bug fixes)
+- [ ] MINOR - New feature (add functionality in a backwards compatible manner)
+- [ ] MAJOR - Breaking change (fix or feature that would cause existing functionality to not work as expected)
 
 #### Checklist:
 <!--- Go over all the following points, and put an `x` in all the boxes that apply. -->
