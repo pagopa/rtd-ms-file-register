@@ -15,13 +15,13 @@
 <!--- Include details of your testing environment, tests ran to see how -->
 <!--- your change affects other areas of the code, etc. -->
 - Pre-Deploy Test
-        - [ ] Unit 
-        - [ ] Integration (Narrow)
+  - [ ] Unit 
+  - [ ] Integration (Narrow)
 - Post-Deploy Test
-        - [ ] Isolated Microservice
-        - [ ] Broader Integration
-        - [ ] Acceptance
-        - [ ] Performance & Load
+  - [ ] Isolated Microservice
+  - [ ] Broader Integration
+  - [ ] Acceptance
+  - [ ] Performance & Load
 
 #### Types of changes
 <!--- What types of changes does your code introduce? Put an `x` in all the boxes that apply: -->
