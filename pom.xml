@@ -17,6 +17,7 @@
 		<java.version>11</java.version>
 		<spring-cloud.version>2021.0.0</spring-cloud.version>
 		<snakeyaml.version>1.33</snakeyaml.version>
+		<spring-core.version>5.3.23</spring-core.version>
 	</properties>
 	<dependencies>
 		<dependency>
