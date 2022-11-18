@@ -5,7 +5,7 @@ COPY . .
 
 RUN mvn clean package
 
-FROM openjdk:19-slim-buster as runtime
+FROM amazoncorretto:11 as runtime
 
 VOLUME /tmp
 WORKDIR /app
