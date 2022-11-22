@@ -76,6 +76,11 @@ spring:
                     group: rtd-file-register-consumer-group
                     content-type: application/json
                     binder: blob-storage
+                fileRegisterProjector-out-0:
+                    destination: ${KAFKA_RTD_PROJECTOR_TOPIC:rtd-file-register-projector}
+                    group: rtd-file-register-projector-consumer-group
+                    content-type: application/json
+                    binder: eventhub-projector
             binders:
                 eventhub-projector:
                     type: kafka
