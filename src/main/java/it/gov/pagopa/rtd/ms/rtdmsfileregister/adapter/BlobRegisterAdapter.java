@@ -4,6 +4,7 @@ import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.Filename
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.domain.NamingConventionPolicy;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.*;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.FileMetadataService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class BlobRegisterAdapter {
 
   String encryptedTransactionsContainer = "((ade|rtd)-transactions-[a-z0-9]{44})";
@@ -28,11 +30,6 @@ public class BlobRegisterAdapter {
 
   private final FileMetadataService fileMetadataService;
   private final NamingConventionPolicy namingConventionPolicy;
-
-  public BlobRegisterAdapter(FileMetadataService fileMetadataService, NamingConventionPolicy namingConventionPolicy) {
-    this.fileMetadataService = fileMetadataService;
-    this.namingConventionPolicy = namingConventionPolicy;
-  }
 
   public EventGridEvent evaluateEvent(EventGridEvent event) {
     LocalDateTime eventTimeinLocal = event.getEventTime();
