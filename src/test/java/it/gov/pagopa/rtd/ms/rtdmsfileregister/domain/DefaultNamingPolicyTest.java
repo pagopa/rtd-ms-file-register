@@ -70,4 +70,9 @@ class DefaultNamingPolicyTest {
     final var expectedParent = "ADEACK.03599.03599.2022-10-12.8034e5d9-0e92-45d2-9e81-bc84ce3be282.csv";
     assertThat(defaultPolicy.extractParentFileName(expectedParent, SENDER_ADE_ACK)).isEqualTo(expectedParent);
   }
+
+  @Test
+  void givenUnknownFileTypeThenParentIsNull() {
+    assertThat(defaultPolicy.extractParentFileName("no_matter", UNKNOWN)).isNull();
+  }
 }
