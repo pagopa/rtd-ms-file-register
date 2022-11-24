@@ -27,7 +27,6 @@ public class DefaultNamingPolicy implements NamingConventionPolicy {
     if (fileType == FileType.AGGREGATES_DESTINATION) {
       String[] parts = filename.replace(".gz", "").split("\\.");
       final var batchChunk = extractBatchServiceChunk(parts).orElse("");
-      //return "AGGADE." + parts[1] + "." + parts[2] + "." + parts[3] + "." + parts[4] + ".csv.pgp";
       return "ADE." + parts[1] + ".TRNLOG." + parts[2] + "." + parts[3] + "." + parts[4]
               + batchChunk
               + ".csv.pgp";
