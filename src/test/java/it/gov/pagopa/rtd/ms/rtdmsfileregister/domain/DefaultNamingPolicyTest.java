@@ -2,10 +2,12 @@ package it.gov.pagopa.rtd.ms.rtdmsfileregister.domain;
 
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileType;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.*;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.stream.Stream;
 
@@ -61,5 +63,11 @@ class DefaultNamingPolicyTest {
   void givenFilenameWithNoBatchChunkThenExtractRightParentFile(String filename, FileType fileType, String expectedParent) {
     final var parentFilename = defaultPolicy.extractParentFileName(filename, fileType);
     assertThat(parentFilename).isEqualTo(expectedParent);
+  }
+
+  @Test
+  void givenSenderAdeAckFilenameThenParentIsItself() {
+    final var expectedParent = "ADEACK.03599.03599.2022-10-12.8034e5d9-0e92-45d2-9e81-bc84ce3be282.csv";
+    assertThat(defaultPolicy.extractParentFileName(expectedParent, SENDER_ADE_ACK)).isEqualTo(expectedParent);
   }
 }

@@ -11,6 +11,7 @@ public class DefaultNamingPolicy implements NamingConventionPolicy {
     if (fileType == FileType.TRANSACTIONS_SOURCE
             || fileType == FileType.AGGREGATES_SOURCE
             || fileType == FileType.ADE_ACK
+            || fileType == FileType.SENDER_ADE_ACK
     ) {
       return filename;
     }
@@ -30,12 +31,6 @@ public class DefaultNamingPolicy implements NamingConventionPolicy {
       return "ADE." + parts[1] + ".TRNLOG." + parts[2] + "." + parts[3] + "." + parts[4]
               + batchChunk
               + ".csv.pgp";
-    }
-    if (fileType == FileType.SENDER_ADE_ACK) {
-      String originalAdeAck = filename.replaceFirst(filename.split("\\.")[1], "")
-              .replaceFirst(filename.split("\\.")[2], "")
-              .replaceFirst("\\.", "").replaceFirst("\\.", "") + ".gz";
-      return "CSTAR.".concat(originalAdeAck);
     }
     return null;
   }
