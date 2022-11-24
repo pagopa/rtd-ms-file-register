@@ -1,7 +1,6 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.domain.events;
 
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadata;
-import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileType;
 
 import java.util.HashMap;
 import java.util.Map;
