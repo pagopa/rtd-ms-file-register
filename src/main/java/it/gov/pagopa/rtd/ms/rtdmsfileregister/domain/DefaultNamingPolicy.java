@@ -3,6 +3,8 @@ package it.gov.pagopa.rtd.ms.rtdmsfileregister.domain;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileType;
 import org.springframework.data.util.Pair;
 
+import java.util.Optional;
+
 public class DefaultNamingPolicy implements NamingConventionPolicy {
   @Override
   public String extractParentFileName(String filename, FileType fileType) {
@@ -14,11 +16,9 @@ public class DefaultNamingPolicy implements NamingConventionPolicy {
     }
     if (fileType == FileType.AGGREGATES_CHUNK) {
       final var parts = filename.split("\\.");
-      final var chunkInfo = extractChunkInfo(parts);
-      final var parentChunkInfo = chunkInfo.getFirst().equals("00")
-              ? "" : String.format(".%s", chunkInfo.getFirst());
+      final var batchChunk = extractBatchServiceChunk(parts).orElse("");
       return "ADE." + parts[1] + ".TRNLOG." + parts[2] + "." + parts[3] + "." + parts[4]
-              + parentChunkInfo
+              + batchChunk
               + ".csv.pgp";
     }
     if (fileType == FileType.TRANSACTIONS_CHUNK) {
@@ -26,12 +26,10 @@ public class DefaultNamingPolicy implements NamingConventionPolicy {
     }
     if (fileType == FileType.AGGREGATES_DESTINATION) {
       String[] parts = filename.replace(".gz", "").split("\\.");
-      final var chunkInfo = extractChunkInfo(parts);
-      final var parentChunkInfo = chunkInfo.getFirst().equals("00")
-              ? "" : String.format(".%s", chunkInfo.getFirst());
+      final var batchChunk = extractBatchServiceChunk(parts).orElse("");
       //return "AGGADE." + parts[1] + "." + parts[2] + "." + parts[3] + "." + parts[4] + ".csv.pgp";
       return "ADE." + parts[1] + ".TRNLOG." + parts[2] + "." + parts[3] + "." + parts[4]
-              + parentChunkInfo
+              + batchChunk
               + ".csv.pgp";
     }
     if (fileType == FileType.SENDER_ADE_ACK) {
@@ -41,6 +39,12 @@ public class DefaultNamingPolicy implements NamingConventionPolicy {
       return "CSTAR.".concat(originalAdeAck);
     }
     return null;
+  }
+
+  private Optional<String> extractBatchServiceChunk(String[] parts) {
+    final var chunkInfo = extractChunkInfo(parts);
+    return chunkInfo.getFirst().equals("00")
+            ? Optional.empty() : Optional.of(String.format(".%s", chunkInfo.getFirst()));
   }
 
   private Pair<String, String> extractChunkInfo(String[] parts) {
