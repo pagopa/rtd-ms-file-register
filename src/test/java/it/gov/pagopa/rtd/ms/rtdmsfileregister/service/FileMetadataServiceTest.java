@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.AppConfiguration;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.RtdMsFileRegisterApplication;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.adapter.FileChangedEventListener;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.DTOViolationException;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.EmptyFilenameException;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameAlreadyPresent;
@@ -45,6 +46,9 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(classes = {AppConfiguration.class, FileMetadataServiceImpl.class, RtdMsFileRegisterApplication.class})
 @EntityScan("it.gov.pagopa.rtd.ms.rtdmsfileregister.model")
 class FileMetadataServiceTest {
+
+  @MockBean
+  private FileChangedEventListener fileChangedEventListener;
 
   @MockBean
   private FileMetadataRepository fileMetadataRepository;
