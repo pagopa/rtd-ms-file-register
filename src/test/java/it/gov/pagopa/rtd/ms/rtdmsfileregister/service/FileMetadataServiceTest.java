@@ -17,6 +17,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.AppConfiguration;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.RtdMsFileRegisterApplication;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.DTOViolationException;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.EmptyFilenameException;
@@ -41,7 +42,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 
 @DataMongoTest
-@ContextConfiguration(classes = {FileMetadataServiceImpl.class, RtdMsFileRegisterApplication.class})
+@ContextConfiguration(classes = {AppConfiguration.class, FileMetadataServiceImpl.class, RtdMsFileRegisterApplication.class})
 @EntityScan("it.gov.pagopa.rtd.ms.rtdmsfileregister.model")
 class FileMetadataServiceTest {
 

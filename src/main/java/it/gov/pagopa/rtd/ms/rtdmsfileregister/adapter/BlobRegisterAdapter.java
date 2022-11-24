@@ -1,16 +1,13 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.adapter;
 
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameAlreadyPresent;
-import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.EventGridEvent;
-import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileApplication;
-import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
-import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileStatus;
-import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileType;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.domain.NamingConventionPolicy;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.*;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.FileMetadataService;
-import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @Slf4j
@@ -29,8 +26,13 @@ public class BlobRegisterAdapter {
 
   private static final String EVENT_NOT_OF_INTEREST_MSG = "Event not of interest: ";
 
-  @Autowired
-  FileMetadataService fileMetadataService;
+  private final FileMetadataService fileMetadataService;
+  private final NamingConventionPolicy namingConventionPolicy;
+
+  public BlobRegisterAdapter(FileMetadataService fileMetadataService, NamingConventionPolicy namingConventionPolicy) {
+    this.fileMetadataService = fileMetadataService;
+    this.namingConventionPolicy = namingConventionPolicy;
+  }
 
   public EventGridEvent evaluateEvent(EventGridEvent event) {
     LocalDateTime eventTimeinLocal = event.getEventTime();
@@ -150,31 +152,7 @@ public class BlobRegisterAdapter {
   }
 
   public String extractParent(String filename, FileType fileType) {
-    if (fileType == FileType.TRANSACTIONS_SOURCE
-        || fileType == FileType.AGGREGATES_SOURCE
-        || fileType == FileType.ADE_ACK
-    ) {
-      return filename;
-    }
-    if (fileType == FileType.AGGREGATES_CHUNK) {
-      String[] parts = filename.split("\\.");
-      return "ADE." + parts[1] + ".TRNLOG." + parts[2] + "." + parts[3] + "." + parts[4]
-          + ".csv.pgp";
-    }
-    if (fileType == FileType.TRANSACTIONS_CHUNK) {
-      return filename.replaceAll("\\.(\\d)+\\.decrypted", "");
-    }
-    if (fileType == FileType.AGGREGATES_DESTINATION) {
-      String[] parts = filename.replace(".gz", "").split("\\.");
-      return "AGGADE." + parts[1] + "." + parts[2] + "." + parts[3] + "." + parts[4] + ".csv.pgp";
-    }
-    if (fileType == FileType.SENDER_ADE_ACK) {
-      String originalAdeAck = filename.replaceFirst(filename.split("\\.")[1], "")
-          .replaceFirst(filename.split("\\.")[2], "")
-          .replaceFirst("\\.", "").replaceFirst("\\.", "") + ".gz";
-      return "CSTAR.".concat(originalAdeAck);
-    }
-    return null;
+    return namingConventionPolicy.extractParentFileName(filename, fileType);
   }
 
   public String extractSender(String filename, FileType fileType) {
