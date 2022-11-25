@@ -337,7 +337,7 @@ class FileMetadataServiceTest {
 
     @Test
     void whenAckIsReadyThenFireAckToDownloadEvent() {
-      final var ackReadyEvent = mockFileEventMetadata(FileType.SENDER_ADE_ACK, FileStatus.DOWNLOAD_STARTED);
+      final var ackReadyEvent = mockFileEventMetadata(FileType.SENDER_ADE_ACK, FileStatus.SUCCESS);
       service.storeFileMetadata(ackReadyEvent);
       verify(fileChangedEventListener).handleFileChanged(
               new FileChanged(

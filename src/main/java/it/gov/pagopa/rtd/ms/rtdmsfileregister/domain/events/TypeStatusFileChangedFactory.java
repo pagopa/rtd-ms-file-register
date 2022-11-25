@@ -19,7 +19,7 @@ class TypeStatusFileChangedFactory implements FileChangedFactory {
     statusConversionMap.put("2_0", FileChanged.Type.RECEIVED);
     statusConversionMap.put("3_0", FileChanged.Type.DECRYPTED);
     statusConversionMap.put("4_0", FileChanged.Type.SENT_TO_ADE);
-    statusConversionMap.put("6_1", FileChanged.Type.ACK_TO_DOWNLOAD);
+    statusConversionMap.put("6_0", FileChanged.Type.ACK_TO_DOWNLOAD);
     statusConversionMap.put("6_2", FileChanged.Type.ACK_DOWNLOADED);
   }
 
