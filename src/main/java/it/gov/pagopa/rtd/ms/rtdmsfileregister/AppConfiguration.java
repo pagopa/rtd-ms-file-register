@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AppConfiguration {
 
-  private static final String PROJECTOR_BINDING_NAME = "aaa";
+  private static final String PROJECTOR_BINDING_NAME = "fileRegisterProjector-out-0";
 
   @Bean
   NamingConventionPolicy namingConventionPolicy() {
