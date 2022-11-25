@@ -25,17 +25,20 @@ import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.EmptyFil
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameAlreadyPresent;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameNotPresent;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.StatusAlreadySet;
-import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
-import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataEntity;
-import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileStatus;
-import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.SenderAdeAckListDTO;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.domain.events.FileChanged;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.*;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.repository.FileMetadataRepository;
+
+import java.io.File;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
@@ -55,6 +58,8 @@ class FileMetadataServiceTest {
 
   @Autowired
   private FileMetadataServiceImpl service;
+
+  private final ModelMapper modelMapper = new ModelMapper();
 
   private FileMetadataDTO testFileMetadataDTO;
   private FileMetadataEntity testFileMetadataEntity;
@@ -278,5 +283,125 @@ class FileMetadataServiceTest {
     int newStatus = FileStatus.SUCCESS.getOrder();
     assertThrows(StatusAlreadySet.class,
         () -> service.updateStatus("presentFilename", newStatus));
+  }
+
+  @Nested
+  class FireEventTests {
+    @Test
+    void whenFileIsUploadedThenFireReceivedEvent() {
+      final var fileUploadEvent = mockFileEventMetadata(FileType.AGGREGATES_SOURCE, FileStatus.SUCCESS);
+
+      service.storeFileMetadata(fileUploadEvent);
+      Mockito.verify(fileChangedEventListener).handleFileChanged(
+              new FileChanged(
+                      fileUploadEvent.getParent(),
+                      fileUploadEvent.getSender(),
+                      fileUploadEvent.getSize(),
+                      fileUploadEvent.getReceiveTimestamp(),
+                      FileChanged.Type.RECEIVED
+              )
+      );
+    }
+
+    @Test
+    void whenFileIsSplitThenFireDecryptedEvent() {
+      final var fileSplitEvent = mockFileEventMetadata(FileType.AGGREGATES_CHUNK, FileStatus.SUCCESS);
+
+      service.storeFileMetadata(fileSplitEvent);
+      Mockito.verify(fileChangedEventListener).handleFileChanged(
+              new FileChanged(
+                      fileSplitEvent.getParent(),
+                      fileSplitEvent.getSender(),
+                      fileSplitEvent.getSize(),
+                      fileSplitEvent.getReceiveTimestamp(),
+                      FileChanged.Type.DECRYPTED
+              )
+      );
+    }
+
+    @Test
+    void whenFileIsMovedToAdeThenFireSentToAdeEvent() {
+      final var moveToAdeEvent = mockFileEventMetadata(FileType.AGGREGATES_DESTINATION, FileStatus.SUCCESS);
+
+      service.storeFileMetadata(moveToAdeEvent);
+      verify(fileChangedEventListener).handleFileChanged(
+              new FileChanged(
+                      moveToAdeEvent.getParent(),
+                      moveToAdeEvent.getSender(),
+                      moveToAdeEvent.getSize(),
+                      moveToAdeEvent.getReceiveTimestamp(),
+                      FileChanged.Type.SENT_TO_ADE
+              )
+      );
+    }
+
+    @Test
+    void whenAckIsReadyThenFireAckToDownloadEvent() {
+      final var ackReadyEvent = mockFileEventMetadata(FileType.SENDER_ADE_ACK, FileStatus.DOWNLOAD_STARTED);
+      service.storeFileMetadata(ackReadyEvent);
+      verify(fileChangedEventListener).handleFileChanged(
+              new FileChanged(
+                      ackReadyEvent.getParent(),
+                      ackReadyEvent.getSender(),
+                      ackReadyEvent.getSize(),
+                      ackReadyEvent.getReceiveTimestamp(),
+                      FileChanged.Type.ACK_TO_DOWNLOAD
+              )
+      );
+    }
+
+    @Test
+    void whenAckIsImplicitAckedThenFireAckDownloadedEvent() {
+      final var ackAckedEvent = mockFileEventMetadata(FileType.SENDER_ADE_ACK, FileStatus.DOWNLOAD_ENDED);
+      when(fileMetadataRepository.findFirstByName("filename")).thenReturn(modelMapper.map(ackAckedEvent, FileMetadataEntity.class));
+      service.updateFileMetadata(ackAckedEvent);
+      verify(fileChangedEventListener).handleFileChanged(
+              new FileChanged(
+                      ackAckedEvent.getParent(),
+                      ackAckedEvent.getSender(),
+                      ackAckedEvent.getSize(),
+                      ackAckedEvent.getReceiveTimestamp(),
+                      FileChanged.Type.ACK_DOWNLOADED
+              )
+      );
+    }
+
+    @Test
+    void whenAckIsExplicitAckedThenFireAckDownloadEvent() {
+      final var ackReadyEvent = mockFileEventMetadata(FileType.SENDER_ADE_ACK, FileStatus.DOWNLOAD_STARTED);
+      final var ackAckedEvent = mockFileEventMetadata(FileType.SENDER_ADE_ACK, FileStatus.DOWNLOAD_ENDED);
+      when(fileMetadataRepository.findFirstByName("filename")).thenReturn(modelMapper.map(ackReadyEvent, FileMetadataEntity.class));
+      service.updateStatus(ackAckedEvent.getName(), FileStatus.DOWNLOAD_ENDED.getOrder());
+      verify(fileChangedEventListener).handleFileChanged(
+              new FileChanged(
+                      ackAckedEvent.getParent(),
+                      ackAckedEvent.getSender(),
+                      ackAckedEvent.getSize(),
+                      ackAckedEvent.getReceiveTimestamp(),
+                      FileChanged.Type.ACK_DOWNLOADED
+              )
+      );
+    }
+
+    @Test
+    void whenNothingOfRelevantHappensThenNoFireEvent() {
+      final var nothingEvent = mockFileEventMetadata(FileType.AGGREGATES_SOURCE, FileStatus.FAILED);
+      service.storeFileMetadata(nothingEvent);
+      verify(fileChangedEventListener, times(0)).handleFileChanged(any());
+    }
+
+    private FileMetadataDTO mockFileEventMetadata(FileType type, FileStatus status) {
+      final var fileMetadataDTO = new FileMetadataDTO();
+      fileMetadataDTO.setName("filename");
+      fileMetadataDTO.setType(type.getOrder());
+      fileMetadataDTO.setStatus(status.getOrder());
+      fileMetadataDTO.setReceiveTimestamp(LocalDateTime.now());
+      fileMetadataDTO.setSender("12345");
+      fileMetadataDTO.setParent("parent");
+      fileMetadataDTO.setApplication(FileApplication.ADE.getOrder());
+      fileMetadataDTO.setSize(1234L);
+      when(fileMetadataRepository.save(any())).thenReturn(modelMapper.map(fileMetadataDTO, FileMetadataEntity.class));
+      return fileMetadataDTO;
+    }
   }
 }
