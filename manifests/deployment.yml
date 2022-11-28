@@ -27,6 +27,8 @@ spec:
                 name: mongo-credentials
             - secretRef:
                 name: application-insights
+            - secretRef:
+                name: rtd-file-register-projector-producer
           resources:
             limits:
               cpu: 500m
