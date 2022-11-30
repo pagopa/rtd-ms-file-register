@@ -5,6 +5,8 @@ import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.EmptyFil
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.StatusAlreadySet;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameAlreadyPresent;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameNotPresent;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.domain.events.FileChangedFactory;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadata;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataEntity;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.SenderAdeAckListDTO;
@@ -16,21 +18,26 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class FileMetadataServiceImpl implements FileMetadataService {
 
-  ModelMapper modelMapper = new ModelMapper();
+  private final FileMetadataRepository repository;
+  private final FileChangedFactory eventFactory;
+  private final ApplicationEventPublisher eventPublisher;
 
-  @Autowired
-  private FileMetadataRepository repository;
+  private final ModelMapper modelMapper = new ModelMapper();
+
 
   public FileMetadataDTO retrieveFileMetadata(String filename) {
     FileMetadataEntity retrieved = repository.findFirstByName(filename);
@@ -49,8 +56,7 @@ public class FileMetadataServiceImpl implements FileMetadataService {
     }
 
     modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
-    return modelMapper.map(repository.save(modelMapper.map(metadata, FileMetadataEntity.class)),
-        FileMetadataDTO.class);
+    return modelMapper.map(saveAsEntity(metadata), FileMetadataDTO.class);
   }
 
   public FileMetadataDTO deleteFileMetadata(String filename) {
@@ -98,7 +104,7 @@ public class FileMetadataServiceImpl implements FileMetadataService {
 
     modelMapper.map(metadata, toBeUpdated, String.valueOf(FileMetadataEntity.class));
 
-    return modelMapper.map(repository.save(toBeUpdated), FileMetadataDTO.class);
+    return modelMapper.map(updateEntity(toBeUpdated), FileMetadataDTO.class);
   }
 
   @Override
@@ -134,6 +140,31 @@ public class FileMetadataServiceImpl implements FileMetadataService {
 
     repository.removeByName(filename);
 
-    return modelMapper.map(repository.save(toBeUpdated), FileMetadataDTO.class);
+    return modelMapper.map(updateEntity(toBeUpdated), FileMetadataDTO.class);
+  }
+
+
+  private FileMetadataEntity saveAsEntity(FileMetadataDTO fileMetadataDto) {
+    return updateEntity(modelMapper.map(fileMetadataDto, FileMetadataEntity.class));
+  }
+
+  /**
+   * Move save to repository to a single point.
+   * This allows to fires event properly without looking for "right place" where "fire events".
+   * The right place is after saving entity to db.
+   */
+  private FileMetadataEntity updateEntity(FileMetadataEntity entity) {
+    final var saveEntity = repository.save(entity);
+    fireEvents(saveEntity);
+    return saveEntity;
+  }
+
+  private void fireEvents(FileMetadata fileMetadata) {
+    final var event = eventFactory.createFrom(fileMetadata);
+    if (event.isPresent()) {
+      eventPublisher.publishEvent(event.get());
+    } else {
+      log.warn("No event created for {}", fileMetadata);
+    }
   }
 }
