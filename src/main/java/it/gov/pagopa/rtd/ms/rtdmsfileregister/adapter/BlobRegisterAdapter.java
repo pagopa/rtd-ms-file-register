@@ -36,19 +36,16 @@ public class BlobRegisterAdapter {
 
     String uri = event.getSubject();
     String[] parts = uri.split("/");
-    String containerName = parts[4];
-    if (containerName.matches("ade") || containerName.matches("sender-ade-ack")) {
-      containerName = containerName + "/" + parts[6];
-    }
+    String containerName = extractContainer(parts[4], parts[6]);
 
     FileType fileType = evaluateContainer(containerName);
 
     if (fileType == FileType.UNKNOWN) {
       log.info(EVENT_NOT_OF_INTEREST_MSG + event.getSubject());
       return null;
-    } else {
-      log.info("Received event: " + event.getSubject());
     }
+
+    log.info("Received event: " + event.getSubject());
 
     String blobName;
     if (fileType == FileType.AGGREGATES_DESTINATION
@@ -100,6 +97,13 @@ public class BlobRegisterAdapter {
 
     log.info("Evaluated event: {}", event.getSubject());
     return event;
+  }
+
+  public String extractContainer(String containerName, String subContainerName) {
+    if (containerName.matches("ade") || containerName.matches("sender-ade-ack")) {
+      return containerName + "/" + subContainerName;
+    }
+    return containerName;
   }
 
   public FileType evaluateContainer(String containerName) {
