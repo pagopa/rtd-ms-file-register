@@ -83,7 +83,7 @@ public class BlobRegisterAdapter {
       log.warn("No content length found for event: " + event.getSubject());
     } else {
       fileMetadata.setSize(event.getData().getContentLength());
-      if (fileMetadata.getSize() <= 0) {
+      if (fileMetadata.getSize() <= 0 || fileType != FileType.ADE_ACK) {
         log.warn("File size is " + fileMetadata.getSize() + " for event: " + event.getSubject());
       }
     }
@@ -93,7 +93,9 @@ public class BlobRegisterAdapter {
     try {
       fileMetadataService.storeFileMetadata(fileMetadata);
     } catch (FilenameAlreadyPresent e) {
-      log.warn("File already present: " + fileMetadata.getName());
+      if (fileType != FileType.ADE_ACK) {
+        log.warn("File already present: " + fileMetadata.getName());
+      }
     }
 
     log.info("Evaluated event: {}", event.getSubject());
