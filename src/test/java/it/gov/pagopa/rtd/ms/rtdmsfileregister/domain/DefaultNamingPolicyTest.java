@@ -1,6 +1,14 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.domain;
 
+import static it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileType.AGGREGATES_CHUNK;
+import static it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileType.AGGREGATES_DESTINATION;
+import static it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileType.AGGREGATES_SOURCE;
+import static it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileType.SENDER_ADE_ACK;
+import static it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileType.UNKNOWN;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileType;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -8,11 +16,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
-
-import java.util.stream.Stream;
-
-import static it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileType.*;
-import static org.assertj.core.api.Assertions.assertThat;
 
 class DefaultNamingPolicyTest {
 

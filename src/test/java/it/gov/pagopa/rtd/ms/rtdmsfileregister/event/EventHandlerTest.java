@@ -149,7 +149,8 @@ class EventHandlerTest {
       "rtd-transactions-32489876908u74bh781e2db57k098c5ad00000000000, CSTAR.99999.TRNLOG.20220419.121045.001.csv.pgp",
       "rtd-transactions-decrypted, CSTAR.99999.TRNLOG.20220419.121045.001.csv.pgp.0.decrypted",
       "ade-transactions-32489876908u74bh781e2db57k098c5ad00000000000, ADE.99999.TRNLOG.20220503.172038.001.csv.pgp",
-      "ade-transactions-decrypted, AGGADE.99999.20220503.172038.001.0",
+      "ade-transactions-decrypted, AGGADE.99999.20220503.172038.001.00000",
+      "ade-transactions-decrypted, AGGADE.99999.20220503.172038.001.01000",
       "ade, in/AGGADE.99999.20220503.172038.001.0.gz",
       "ade, ack/CSTAR.ADEACK.20220503.172038.001.csv.gz",
       "sender-ade-ack, 99999/ADEACK.99999.12345.20220715.165744.csv",
@@ -164,6 +165,7 @@ class EventHandlerTest {
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
     verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
+    verify(blobRegisterAdapter, times(1)).extractContainer(any(), any());
     verify(blobRegisterAdapter, times(1)).extractParent(any(), any());
     verify(blobRegisterAdapter, times(1)).extractSender(any(), any());
   }
@@ -188,6 +190,7 @@ class EventHandlerTest {
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
     verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
+    verify(blobRegisterAdapter, times(1)).extractContainer(any(), any());
     verify(blobRegisterAdapter, times(1)).extractParent(any(), any());
     verify(blobRegisterAdapter, times(1)).extractSender(any(), any());
 
@@ -213,6 +216,7 @@ class EventHandlerTest {
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
     verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
+    verify(blobRegisterAdapter, times(1)).extractContainer(any(), any());
     verify(blobRegisterAdapter, times(1)).extractParent(any(), any());
     verify(blobRegisterAdapter, times(1)).extractSender(any(), any());
 
@@ -238,6 +242,7 @@ class EventHandlerTest {
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
     verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
+    verify(blobRegisterAdapter, times(1)).extractContainer(any(), any());
     verify(blobRegisterAdapter, times(1)).extractParent(any(), any());
     verify(blobRegisterAdapter, times(1)).extractSender(any(), any());
   }
@@ -257,6 +262,7 @@ class EventHandlerTest {
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
     verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
+    verify(blobRegisterAdapter, times(1)).extractContainer(any(), any());
     verify(blobRegisterAdapter, times(1)).extractParent(any(), any());
     verify(blobRegisterAdapter, times(1)).extractSender(any(), any());
   }
@@ -279,6 +285,7 @@ class EventHandlerTest {
     stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
     verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
+    verify(blobRegisterAdapter, times(1)).extractContainer(any(), any());
     verify(blobRegisterAdapter, never()).evaluateApplication(any());
     verify(blobRegisterAdapter, never()).extractParent(any(), any());
     verify(blobRegisterAdapter, never()).extractSender(any(), any());
@@ -303,6 +310,7 @@ class EventHandlerTest {
     verify(blobRegisterAdapter, never()).evaluateEvent(any());
     verify(blobRegisterAdapter, never()).evaluateContainer(any());
     verify(blobRegisterAdapter, never()).evaluateApplication(any());
+    verify(blobRegisterAdapter, never()).extractContainer(any(), any());
     verify(blobRegisterAdapter, never()).extractParent(any(), any());
     verify(blobRegisterAdapter, never()).extractSender(any(), any());
   }
