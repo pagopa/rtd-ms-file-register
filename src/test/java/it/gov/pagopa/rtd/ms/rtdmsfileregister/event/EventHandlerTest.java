@@ -1,5 +1,6 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.event;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.AppConfiguration;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.adapter.BlobRegisterAdapter;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameAlreadyPresent;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.EventGridData;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.EventGridEvent;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.FileMetadataService;
@@ -20,6 +22,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -28,6 +31,8 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration;
 import org.springframework.integration.support.MessageBuilder;
@@ -136,13 +141,12 @@ class EventHandlerTest {
     }
     myEvent.setData(eventGridData);
 
-
-  OffsetDateTime off = OffsetDateTime.parse("2020-08-06T12:19:16.500+03:00");
-  ZonedDateTime zoned = off.atZoneSameInstant(ZoneId.of("Europe/Rome"));
-  LocalDateTime localDateTime = zoned.toLocalDateTime();
+    OffsetDateTime off = OffsetDateTime.parse("2020-08-06T12:19:16.500+03:00");
+    ZonedDateTime zoned = off.atZoneSameInstant(ZoneId.of("Europe/Rome"));
+    LocalDateTime localDateTime = zoned.toLocalDateTime();
     myEvent.setEventTime(localDateTime);
 
-}
+  }
 
   @ParameterizedTest
   @CsvSource({
@@ -152,7 +156,7 @@ class EventHandlerTest {
       "ade-transactions-decrypted, AGGADE.99999.20220503.172038.001.00000",
       "ade-transactions-decrypted, AGGADE.99999.20220503.172038.001.01000",
       "ade, in/AGGADE.99999.20220503.172038.001.0.gz",
-      "ade, ack/CSTAR.ADEACK.20220503.172038.001.csv.gz",
+      "ade, ack/CSTAR.ADEACK.20220826.013326.014.OK",
       "sender-ade-ack, 99999/ADEACK.99999.12345.20220715.165744.csv",
   })
   void consumeEvent(String container, String blob) {
