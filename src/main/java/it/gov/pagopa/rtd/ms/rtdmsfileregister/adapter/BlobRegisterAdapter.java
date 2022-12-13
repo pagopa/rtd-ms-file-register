@@ -36,19 +36,16 @@ public class BlobRegisterAdapter {
 
     String uri = event.getSubject();
     String[] parts = uri.split("/");
-    String containerName = parts[4];
-    if (containerName.matches("ade") || containerName.matches("sender-ade-ack")) {
-      containerName = containerName + "/" + parts[6];
-    }
+    String containerName = extractContainer(parts[4], parts[6]);
 
     FileType fileType = evaluateContainer(containerName);
 
     if (fileType == FileType.UNKNOWN) {
       log.info(EVENT_NOT_OF_INTEREST_MSG + event.getSubject());
       return null;
-    } else {
-      log.info("Received event: " + event.getSubject());
     }
+
+    log.info("Received event: " + event.getSubject());
 
     String blobName;
     if (fileType == FileType.AGGREGATES_DESTINATION
@@ -83,7 +80,7 @@ public class BlobRegisterAdapter {
       log.warn("No content length found for event: " + event.getSubject());
     } else {
       fileMetadata.setSize(event.getData().getContentLength());
-      if (fileMetadata.getSize() <= 0) {
+      if (fileMetadata.getSize() <= 0 || fileType != FileType.ADE_ACK) {
         log.warn("File size is " + fileMetadata.getSize() + " for event: " + event.getSubject());
       }
     }
@@ -93,11 +90,20 @@ public class BlobRegisterAdapter {
     try {
       fileMetadataService.storeFileMetadata(fileMetadata);
     } catch (FilenameAlreadyPresent e) {
-      log.warn("File already present: " + fileMetadata.getName());
+      if (fileType != FileType.ADE_ACK) {
+        log.error("File already present: " + fileMetadata.getName());
+      }
     }
 
     log.info("Evaluated event: {}", event.getSubject());
     return event;
+  }
+
+  public String extractContainer(String containerName, String subContainerName) {
+    if (containerName.matches("ade") || containerName.matches("sender-ade-ack")) {
+      return containerName + "/" + subContainerName;
+    }
+    return containerName;
   }
 
   public FileType evaluateContainer(String containerName) {
