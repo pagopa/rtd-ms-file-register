@@ -91,7 +91,7 @@ public class BlobRegisterAdapter {
       fileMetadataService.storeFileMetadata(fileMetadata);
     } catch (FilenameAlreadyPresent e) {
       if (fileType != FileType.ADE_ACK) {
-        log.warn("File already present: " + fileMetadata.getName());
+        log.error("File already present: " + fileMetadata.getName());
       }
     }
 
