@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.AppConfiguration;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.adapter.BlobRegisterAdapter;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.EventGridData;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.EventGridEvent;
@@ -41,7 +42,7 @@ import org.springframework.test.context.TestPropertySource;
 @EmbeddedKafka(topics = {"rtd-platform-events"}, partitions = 1,
     bootstrapServersProperty = "spring.embedded.kafka.brokers")
 @EnableAutoConfiguration(exclude = {TestSupportBinderAutoConfiguration.class})
-@ContextConfiguration(classes = {EventHandler.class})
+@ContextConfiguration(classes = {EventHandler.class, AppConfiguration.class})
 @TestPropertySource(value = {"classpath:application-test.yml"}, inheritProperties = false)
 @DirtiesContext
 class EventHandlerTest {
