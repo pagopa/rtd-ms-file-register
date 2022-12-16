@@ -12,6 +12,7 @@ services:
     environment:
       MONGODB_CONNECTION_URI: "mongodb://host.docker.internal"
       KAFKA_BROKER: "kafka:9092"
+      KAFKA_RTD_PROJECTOR_BROKER: "kafka:9092"
       SPRING_PROFILES_ACTIVE: dev
     depends_on:
       - kafka
