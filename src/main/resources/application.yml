@@ -2,6 +2,17 @@ logging:
     level:
         root: INFO
 
+# Enable only health probes
+management:
+    metrics.export.defaults.enabled: false
+    info.defaults.enabled: false
+    endpoints.enabled-by-default: false
+    endpoint:
+        health:
+            enabled: true
+            probes:
+                enabled: true
+
 ---
 
 spring:
