@@ -130,7 +130,7 @@ stages:
     dependsOn: ['publish_artifact_helm']
     condition: and(succeeded(), eq(variables.canDeploy, true))
     variables:
-      pomversion: $[ stageDependencies.pom_version.POM.outputs['getpomversion.outputPomVersion'] ]
+      pomVersion: $[ stageDependencies.pom_version.POM.outputs['getpomversion.outputPomVersion'] ]
     jobs:
       - deployment: 'Deploy_to_${{ variables.environment }}'
         displayName: 'Deploy to ${{ variables.environment }} K8S'
