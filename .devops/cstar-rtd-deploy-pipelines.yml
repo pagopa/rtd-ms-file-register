@@ -17,6 +17,8 @@ trigger:
     include:
       - src/*
       - pom.xml
+      - helm/*
+      - Dockerfile
 
 pr: none
 
