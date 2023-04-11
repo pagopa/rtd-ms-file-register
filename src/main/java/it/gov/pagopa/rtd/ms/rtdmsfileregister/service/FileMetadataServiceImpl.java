@@ -11,6 +11,8 @@ import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataEntity;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.SenderAdeAckListDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.repository.FileMetadataRepository;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -80,8 +82,8 @@ public class FileMetadataServiceImpl implements FileMetadataService {
     if (!violations.isEmpty()) {
       for (ConstraintViolation<FileMetadataDTO> violation : violations) {
         if (violation.getPropertyPath().toString().equals("name")) {
-          if (violation.getMessage().equals("must not be null") || violation.getMessage()
-              .equals("must not be blank")) {
+          if (violation.getConstraintDescriptor().getAnnotation() instanceof NotNull ||
+              violation.getConstraintDescriptor().getAnnotation() instanceof NotBlank) {
             throw new EmptyFilenameException();
           }
         } else {
