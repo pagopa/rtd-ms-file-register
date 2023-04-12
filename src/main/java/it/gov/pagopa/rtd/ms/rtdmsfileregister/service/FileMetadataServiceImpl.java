@@ -2,25 +2,22 @@ package it.gov.pagopa.rtd.ms.rtdmsfileregister.service;
 
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.DTOViolationException;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.EmptyFilenameException;
-import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.StatusAlreadySet;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameAlreadyPresent;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameNotPresent;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.StatusAlreadySet;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.domain.events.FileChangedFactory;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadata;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataEntity;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.SenderAdeAckListDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.repository.FileMetadataRepository;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.Conditions;
@@ -82,10 +79,7 @@ public class FileMetadataServiceImpl implements FileMetadataService {
     if (!violations.isEmpty()) {
       for (ConstraintViolation<FileMetadataDTO> violation : violations) {
         if (violation.getPropertyPath().toString().equals("name")) {
-          if (violation.getConstraintDescriptor().getAnnotation() instanceof NotNull ||
-              violation.getConstraintDescriptor().getAnnotation() instanceof NotBlank) {
-            throw new EmptyFilenameException();
-          }
+          throw new EmptyFilenameException();
         } else {
           throw new DTOViolationException();
         }
@@ -151,9 +145,8 @@ public class FileMetadataServiceImpl implements FileMetadataService {
   }
 
   /**
-   * Move save to repository to a single point.
-   * This allows to fires event properly without looking for "right place" where "fire events".
-   * The right place is after saving entity to db.
+   * Move save to repository to a single point. This allows to fires event properly without looking
+   * for "right place" where "fire events". The right place is after saving entity to db.
    */
   private FileMetadataEntity updateEntity(FileMetadataEntity entity) {
     final var saveEntity = repository.save(entity);
