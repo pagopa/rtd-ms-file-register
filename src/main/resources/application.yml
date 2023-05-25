@@ -1,7 +1,9 @@
 logging:
     level:
         root: INFO
-        org.apache.kafka: WARN
+        org.apache.kafka: DEBUG
+        org.springframework.cloud: DEBUG
+
 
 # Enable only health probes
 management:
