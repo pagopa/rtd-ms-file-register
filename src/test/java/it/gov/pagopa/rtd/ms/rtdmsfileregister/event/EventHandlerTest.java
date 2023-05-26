@@ -1,6 +1,6 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.event;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -28,15 +28,17 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
-import org.springframework.cloud.stream.function.StreamBridge;
-import org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration;
+import org.springframework.cloud.stream.binder.test.InputDestination;
+import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration;
+import org.springframework.context.annotation.Import;
 import org.springframework.integration.support.MessageBuilder;
-import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -44,16 +46,16 @@ import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@EmbeddedKafka(topics = {"rtd-platform-events"}, partitions = 1,
-    bootstrapServersProperty = "spring.embedded.kafka.brokers")
-@EnableAutoConfiguration(exclude = {TestSupportBinderAutoConfiguration.class})
+@EnableAutoConfiguration(exclude = {
+    MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
+@Import(TestChannelBinderConfiguration.class)
 @ContextConfiguration(classes = {EventHandler.class, AppConfiguration.class})
 @TestPropertySource(value = {"classpath:application-test.yml"}, inheritProperties = false)
 @DirtiesContext
 class EventHandlerTest {
 
   @Autowired
-  private StreamBridge stream;
+  InputDestination inputDestination;
 
   @MockBean
   FileMetadataService fileMetadataService;
@@ -165,7 +167,7 @@ class EventHandlerTest {
     myEvent.setSubject(uri);
     myList = List.of(myEvent);
 
-    stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
+    inputDestination.send(MessageBuilder.withPayload(myList).build());
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
     verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
@@ -190,7 +192,7 @@ class EventHandlerTest {
 
     myList = List.of(myEvent);
 
-    stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
+    inputDestination.send(MessageBuilder.withPayload(myList).build());
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
     verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
@@ -216,7 +218,7 @@ class EventHandlerTest {
 
     myList = List.of(myEvent);
 
-    stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
+    inputDestination.send(MessageBuilder.withPayload(myList).build());
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
     verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
@@ -242,7 +244,7 @@ class EventHandlerTest {
 
     myList = List.of(myEvent);
 
-    stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
+    inputDestination.send(MessageBuilder.withPayload(myList).build());
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
     verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
@@ -262,7 +264,7 @@ class EventHandlerTest {
 
     myList = List.of(myEvent);
 
-    stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
+    inputDestination.send(MessageBuilder.withPayload(myList).build());
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
     verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
@@ -286,7 +288,7 @@ class EventHandlerTest {
 
     myList = List.of(myEvent);
 
-    stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
+    inputDestination.send(MessageBuilder.withPayload(myList).build());
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
     verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, times(1)).extractContainer(any(), any());
@@ -310,7 +312,7 @@ class EventHandlerTest {
 
     myList = List.of(myEvent);
 
-    stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
+    inputDestination.send(MessageBuilder.withPayload(myList).build());
     verify(blobRegisterAdapter, never()).evaluateEvent(any());
     verify(blobRegisterAdapter, never()).evaluateContainer(any());
     verify(blobRegisterAdapter, never()).evaluateApplication(any());
@@ -328,7 +330,7 @@ class EventHandlerTest {
 
     myEvent.setSubject(uri);
     myList = List.of(myEvent);
-    stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
+    inputDestination.send(MessageBuilder.withPayload(myList).build());
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
     verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());
@@ -346,7 +348,7 @@ class EventHandlerTest {
 
     myEvent.setSubject(uri);
     myList = List.of(myEvent);
-    stream.send("blobStorageConsumer-in-0", MessageBuilder.withPayload(myList).build());
+    inputDestination.send(MessageBuilder.withPayload(myList).build());
     verify(blobRegisterAdapter, times(1)).evaluateEvent(any());
     verify(blobRegisterAdapter, times(1)).evaluateContainer(any());
     verify(blobRegisterAdapter, times(1)).evaluateApplication(any());

@@ -4,6 +4,7 @@ microservice-chart:
   fullnameOverride: ""
 
   livenessProbe:
+    handlerType: httpGet
     httpGet:
       path: /actuator/health/liveness
       port: 8080
@@ -12,6 +13,7 @@ microservice-chart:
     periodSeconds: 10
 
   readinessProbe:
+    handlerType: httpGet
     httpGet:
       path: /actuator/health/readiness
       port: 8080
@@ -47,6 +49,9 @@ microservice-chart:
   securityContext:
     allowPrivilegeEscalation: false
 
+  envConfig:
+    APPLICATIONINSIGHTS_PREVIEW_PROFILER_ENABLED: "false"
+
   envSecret:
     MONGODB_CONNECTION_URI: mongo-db-connection-uri
     APPLICATIONINSIGHTS_CONNECTION_STRING: appinsights-instrumentation-key
@@ -67,5 +72,3 @@ microservice-chart:
     rtd-blob-storage-events:
       KAFKA_TOPIC_BLOB_STORAGE_EVENTS: KAFKA_TOPIC_BLOB_STORAGE_EVENTS
       KAFKA_BROKER: KAFKA_BROKER
-
-
