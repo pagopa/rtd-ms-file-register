@@ -24,12 +24,14 @@ import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.DTOViola
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.EmptyFilenameException;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameAlreadyPresent;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameNotPresent;
-import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.StatusAlreadySet;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.domain.events.FileChanged;
-import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.*;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileApplication;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataEntity;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileStatus;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileType;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.SenderAdeAckListDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.repository.FileMetadataRepository;
-
-import java.io.File;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -103,22 +105,17 @@ class FileMetadataServiceTest {
     List<FileMetadataEntity> senderAdeACKList = List.of(senderAdeACKFileMetadataDTO1,
         senderAdeACKFileMetadataDTO2);
 
-    when(fileMetadataRepository.save(any(FileMetadataEntity.class))).thenAnswer(invocation -> {
-      return testFileMetadataEntity;
-    });
+    when(fileMetadataRepository.save(any(FileMetadataEntity.class)))
+        .thenAnswer(invocation -> testFileMetadataEntity);
 
-    when(fileMetadataRepository.findFirstByName("presentFilename")).thenAnswer(invocation -> {
-      return testFileMetadataEntity;
-    });
+    when(fileMetadataRepository.findFirstByName("presentFilename"))
+        .thenAnswer(invocation -> testFileMetadataEntity);
 
-    when(fileMetadataRepository.removeByName("presentFilename")).thenAnswer(invocation -> {
-      return testFileMetadataEntity;
-    });
+    when(fileMetadataRepository.removeByName("presentFilename"))
+        .thenAnswer(invocation -> testFileMetadataEntity);
 
-    when(fileMetadataRepository.findNamesBySenderAndTypeAndStatus("presentFilename", 6,
-        0)).thenAnswer(invocation -> {
-      return senderAdeACKList;
-    });
+    when(fileMetadataRepository.findNamesBySenderAndTypeAndStatus("presentFilename", 6, 0))
+        .thenAnswer(invocation -> senderAdeACKList);
 
   }
 
@@ -279,10 +276,14 @@ class FileMetadataServiceTest {
   }
 
   @Test
-  void updateAfterSenderAdeAckAlreadyDownloaded() {
-    int newStatus = FileStatus.SUCCESS.getOrder();
-    assertThrows(StatusAlreadySet.class,
-        () -> service.updateStatus("presentFilename", newStatus));
+  void updateSenderAdeAckWithStatusAlreadyPresent() {
+    // the file status is already SUCCESS by setup
+    FileMetadataDTO result = service.updateStatus("presentFilename",
+        FileStatus.SUCCESS.getOrder());
+
+    assertNotNull(result);
+    assertEquals(FileStatus.SUCCESS.getOrder(), result.getStatus());
+    Mockito.verify(fileMetadataRepository, times(0)).save(any());
   }
 
   @Nested
@@ -381,6 +382,16 @@ class FileMetadataServiceTest {
                       FileChanged.Type.ACK_DOWNLOADED
               )
       );
+    }
+
+    @Test
+    void whenAckIsExplicitAckedThenFireAckDownloadEventEvenIfItHasBeenAlreadyDownloaded() {
+      final var ackAckedEvent = mockFileEventMetadata(FileType.SENDER_ADE_ACK, FileStatus.DOWNLOAD_ENDED);
+      when(fileMetadataRepository.findFirstByName("filename")).thenReturn(modelMapper.map(ackAckedEvent, FileMetadataEntity.class));
+
+      service.updateStatus("filename", FileStatus.DOWNLOAD_ENDED.getOrder());
+
+      verify(fileChangedEventListener).handleFileChanged(any());
     }
 
     @Test
