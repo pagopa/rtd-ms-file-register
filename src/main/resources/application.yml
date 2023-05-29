@@ -48,7 +48,6 @@ spring:
                         auto-create-topics: false
                         brokers: ${KAFKA_RTD_PROJECTOR_BROKER:localhost:29095}
                         configuration.sasl.jaas.config: ${KAFKA_RTD_PROJECTOR_SASL_JAAS_CONFIG}
-                        sync: true
                         requiredAcks: all
                 blob-storage:
                     type: kafka
