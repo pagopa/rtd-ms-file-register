@@ -128,15 +128,18 @@ public class FileMetadataServiceImpl implements FileMetadataService {
       throw new FilenameNotPresent();
     }
 
-    if (toBeUpdated.getStatus() == status) {
-      throw new StatusAlreadySet();
+    // the ack can be downloaded many times (as result of the eventual consistency of the file report)
+    // and the update event must be triggered always
+    if (toBeUpdated.getStatus() != status) {
+      toBeUpdated.setStatus(status);
+      repository.removeByName(filename);
+      toBeUpdated = updateEntity(toBeUpdated);
+    } else {
+      // if the status has not changed then do nothing on db, just trigger the event to update the report
+      fireEvents(toBeUpdated);
     }
 
-    toBeUpdated.setStatus(status);
-
-    repository.removeByName(filename);
-
-    return modelMapper.map(updateEntity(toBeUpdated), FileMetadataDTO.class);
+    return modelMapper.map(toBeUpdated, FileMetadataDTO.class);
   }
 
 
