@@ -1,11 +1,11 @@
-FROM maven:3.9.0-amazoncorretto-17 as buildtime
+FROM maven:3.9.0-amazoncorretto-17@sha256:0d683f66624265935e836c9d2c3851ce3cf250cb48c9929d979d8d80f62d8590 as buildtime
 
 WORKDIR /build
 COPY . .
 
 RUN mvn clean package
 
-FROM amazoncorretto:17.0.7-al2023-headless as runtime
+FROM amazoncorretto:17.0.7-al2023-headless@sha256:18154896dc03cab39734594c592b73ba506e105e66c81753083cf06235f5c714 as runtime
 
 VOLUME /tmp
 WORKDIR /app
