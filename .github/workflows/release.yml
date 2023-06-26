@@ -27,7 +27,7 @@ jobs:
         with:
           semantic_version: 18.0.0
           extra_plugins: |
-            semantic-release/release-notes-generator#5f9d65debbb60057c0d35d3a198e41f5bf09cf0f #v10.0.3
-            semantic-release/git#3e934d45f97fd07a63617c0fc098c9ed3e67d97a #v10.0.1
+            @semantic-release/release-notes-generator@5f9d65debbb60057c0d35d3a198e41f5bf09cf0f #v10.0.3
+            @semantic-release/git@3e934d45f97fd07a63617c0fc098c9ed3e67d97a #v10.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
