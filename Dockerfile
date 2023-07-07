@@ -12,7 +12,6 @@ RUN useradd --uid 10000 runner
 USER 10000
 
 VOLUME /tmp
-WORKDIR /app
 
 COPY --from=buildtime /build/target/*.jar /app/app.jar
 # The agent is enabled at runtime via JAVA_TOOL_OPTIONS.
