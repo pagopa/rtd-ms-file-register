@@ -10,15 +10,14 @@ FROM amazoncorretto:17.0.7-al2023-headless@sha256:18154896dc03cab39734594c592b73
 VOLUME /tmp
 WORKDIR /app
 
-# useradd is not present inside amazoncorretto image and for docker the user does not need to exist
-RUN yum install -y /usr/sbin/adduser
-RUN useradd --uid 10000 runner
-USER 10000
-
 COPY --from=buildtime /build/target/*.jar /app/app.jar
 # The agent is enabled at runtime via JAVA_TOOL_OPTIONS.
 ADD https://github.com/microsoft/ApplicationInsights-Java/releases/download/3.4.13/applicationinsights-agent-3.4.13.jar /app/applicationinsights-agent.jar
 
 EXPOSE 8080
+
+RUN yum install -y /usr/sbin/adduser
+RUN useradd --uid 10000 runner
+USER 10000
 
 ENTRYPOINT ["java","-jar","/app/app.jar"]
