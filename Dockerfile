@@ -10,7 +10,7 @@ FROM amazoncorretto:17.0.7-al2023-headless@sha256:18154896dc03cab39734594c592b73
 VOLUME /tmp
 WORKDIR /app
 
-RUN useradd --uid 10000 runner
+# useradd is not present inside amazoncorretto image and for docker the user does not need to exist
 USER 10000
 
 COPY --from=buildtime /build/target/*.jar /app/app.jar
