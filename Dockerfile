@@ -11,6 +11,8 @@ VOLUME /tmp
 WORKDIR /app
 
 # useradd is not present inside amazoncorretto image and for docker the user does not need to exist
+RUN yum install -y /usr/sbin/adduser
+RUN useradd --uid 10000 runner
 USER 10000
 
 COPY --from=buildtime /build/target/*.jar /app/app.jar
