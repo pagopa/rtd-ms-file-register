@@ -7,16 +7,21 @@ RUN mvn clean package
 
 FROM amazoncorretto:17.0.7-al2023-headless@sha256:18154896dc03cab39734594c592b73ba506e105e66c81753083cf06235f5c714 AS runtime
 
+# operation needed because amazoncorretto do not contain the shadow-utils package
+RUN yum install -y /usr/sbin/adduser
+RUN useradd --uid 10000 runner
+
 VOLUME /tmp
 WORKDIR /app
-
-RUN useradd --uid 10000 runner
-USER 10000
 
 COPY --from=buildtime /build/target/*.jar /app/app.jar
 # The agent is enabled at runtime via JAVA_TOOL_OPTIONS.
 ADD https://github.com/microsoft/ApplicationInsights-Java/releases/download/3.4.13/applicationinsights-agent-3.4.13.jar /app/applicationinsights-agent.jar
+# give ownership to /app folder to newly created "runner" user
+RUN chown -R runner:runner /app
 
 EXPOSE 8080
+
+USER 10000
 
 ENTRYPOINT ["java","-jar","/app/app.jar"]
