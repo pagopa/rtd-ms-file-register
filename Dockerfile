@@ -24,4 +24,4 @@ EXPOSE 8080
 
 USER 10000
 
-ENTRYPOINT ["java","-jar","-javaagents:/app/applicationinsights-agent.jar","/app/app.jar"]
+ENTRYPOINT ["java","-jar","/app/app.jar"]
