@@ -7,11 +7,12 @@ RUN mvn clean package
 
 FROM amazoncorretto:17.0.7-al2023-headless@sha256:18154896dc03cab39734594c592b73ba506e105e66c81753083cf06235f5c714 AS runtime
 
-RUN yum install -y /usr/sbin/adduser
-RUN useradd --uid 10000 runner
-USER 10000
+#RUN yum install -y /usr/sbin/adduser
+#RUN useradd --uid 10000 runner
+#USER 10000
 
 VOLUME /tmp
+WORKDIR /app
 
 COPY --from=buildtime /build/target/*.jar /app/app.jar
 # The agent is enabled at runtime via JAVA_TOOL_OPTIONS.
