@@ -24,9 +24,18 @@ spring:
         mongodb:
             uri: ${MONGODB_CONNECTION_URI:mongodb://localhost:27017}
             database: ${MONGODB_NAME:rtd}
+    rabbitmq:
+        host: ${KAFKA_RTD_PROJECTOR_TOPIC}
+#        port:
+
     cloud:
         stream:
             kafka:
+                binder:
+                    configuration:
+                        security.protocol: SASL_SSL
+                        sasl.mechanism: PLAIN
+            rabbit:
                 binder:
                     configuration:
                         security.protocol: SASL_SSL
@@ -48,7 +57,7 @@ spring:
                     type: rabbit
                     environment.spring.cloud.stream.rabbit.binder:
 #                        auto-create-topics: false
-                        brokers: ${KAFKA_RTD_PROJECTOR_BROKER:localhost:29095}
+#                        brokers: ${KAFKA_RTD_PROJECTOR_BROKER:localhost:29095}
                         configuration.sasl.jaas.config: ${KAFKA_RTD_PROJECTOR_SASL_JAAS_CONFIG}
 #                        requiredAcks: all
                 blob-storage:
