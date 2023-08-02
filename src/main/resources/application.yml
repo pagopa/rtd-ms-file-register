@@ -25,8 +25,8 @@ spring:
             uri: ${MONGODB_CONNECTION_URI:mongodb://localhost:27017}
             database: ${MONGODB_NAME:rtd}
     rabbitmq:
-        host: ${KAFKA_RTD_PROJECTOR_BROKER}
-#        port:
+        host: cstar-d-rtd-evh-ns.servicebus.windows.net
+        port: 9093
 
     cloud:
         stream:
