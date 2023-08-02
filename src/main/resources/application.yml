@@ -41,14 +41,16 @@ spring:
                     destination: ${KAFKA_RTD_PROJECTOR_TOPIC:rtd-file-register-projector}
                     content-type: application/json
                     binder: eventhub-projector
+                    delayedExchange: true
+                    delayExpression: 60000 # 60 seconds
             binders:
                 eventhub-projector:
-                    type: kafka
-                    environment.spring.cloud.stream.kafka.binder:
-                        auto-create-topics: false
+                    type: rabbit
+                    environment.spring.cloud.stream.rabbit.binder:
+#                        auto-create-topics: false
                         brokers: ${KAFKA_RTD_PROJECTOR_BROKER:localhost:29095}
                         configuration.sasl.jaas.config: ${KAFKA_RTD_PROJECTOR_SASL_JAAS_CONFIG}
-                        requiredAcks: all
+#                        requiredAcks: all
                 blob-storage:
                     type: kafka
                     environment:
