@@ -25,7 +25,7 @@ spring:
             uri: ${MONGODB_CONNECTION_URI:mongodb://localhost:27017}
             database: ${MONGODB_NAME:rtd}
     rabbitmq:
-        host: ${KAFKA_RTD_PROJECTOR_TOPIC}
+        host: ${KAFKA_RTD_PROJECTOR_BROKER}
 #        port:
 
     cloud:
