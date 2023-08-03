@@ -26,16 +26,13 @@ spring:
             database: ${MONGODB_NAME:rtd}
     rabbitmq:
         host: cstar-d-rtd-evh-ns.servicebus.windows.net
-        port: 9093
+        port: 5672
+#        user: rtd-file-register-projector-producer-policy
+#        password: ${RTD_PROJECTOR_PRODUCER_POLICY_KEY:psw}
 
     cloud:
         stream:
             kafka:
-                binder:
-                    configuration:
-                        security.protocol: SASL_SSL
-                        sasl.mechanism: PLAIN
-            rabbit:
                 binder:
                     configuration:
                         security.protocol: SASL_SSL
