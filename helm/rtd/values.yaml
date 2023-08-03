@@ -60,6 +60,7 @@ microservice-chart:
     APPLICATIONINSIGHTS_CONNECTION_STRING: appinsights-instrumentation-key
     KAFKA_SASL_JAAS_CONFIG_CONSUMER_BLOB_STORAGE_EVENTS: evh-rtd-platform-events-rtd-platform-events-sub-key
     KAFKA_RTD_PROJECTOR_SASL_JAAS_CONFIG: evh-rtd-file-register-projector-rtd-file-register-projector-producer-policy-rtd
+    RTD_PROJECTOR_PRODUCER_POLICY_KEY: evh-rtd-file-register-projector-rtd-file-register-projector-pub-key
 
   envConfigMapExternals:
     rtd-fileregister:
