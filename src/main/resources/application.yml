@@ -28,7 +28,7 @@ spring:
         host: cstar-d-rtd-evh-ns.servicebus.windows.net
         port: 5672
 #        user: rtd-file-register-projector-producer-policy
-#        password: ${RTD_PROJECTOR_PRODUCER_POLICY_KEY:psw}
+#        password: ${RTD_PROJECTOR_PRODUCER_POLICY_KEY}
 
     cloud:
         stream:
