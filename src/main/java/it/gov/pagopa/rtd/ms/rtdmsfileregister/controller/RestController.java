@@ -1,6 +1,7 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.controller;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.SenderAdeAckListDTO;
 import java.util.List;
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * Controller to expose RTD File Register MicroService's endpoints
  */
-@Api(tags = "RTD file register Controller")
+@OpenAPIDefinition(tags ={ @Tag(name="RTD file register Controller") })
 @RequestMapping("")
 @Validated
 public interface RestController {

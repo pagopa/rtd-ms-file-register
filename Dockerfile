@@ -1,27 +1,22 @@
-FROM maven:3.9.0-amazoncorretto-17@sha256:0d683f66624265935e836c9d2c3851ce3cf250cb48c9929d979d8d80f62d8590 AS buildtime
+FROM maven:3.9.3-amazoncorretto-17@sha256:4ab7db7bd5f95e58b0ba1346ff29d6abdd9b73e5fd89c5140edead8b037386ff AS buildtime
 
 WORKDIR /build
 COPY . .
 
 RUN mvn clean package
 
-FROM amazoncorretto:17.0.7-al2023-headless@sha256:18154896dc03cab39734594c592b73ba506e105e66c81753083cf06235f5c714 AS runtime
-
-# operation needed because amazoncorretto do not contain the shadow-utils package
-RUN yum install -y /usr/sbin/adduser
-RUN useradd --uid 10000 runner
+FROM amazoncorretto:17.0.8-alpine3.18@sha256:0c61f12abfb091be48474e836e6802ff3a93e8e038e0460af8c7f447ccbd3901 AS runtime
 
 VOLUME /tmp
 WORKDIR /app
 
 COPY --from=buildtime /build/target/*.jar /app/app.jar
 # The agent is enabled at runtime via JAVA_TOOL_OPTIONS.
-ADD https://github.com/microsoft/ApplicationInsights-Java/releases/download/3.4.13/applicationinsights-agent-3.4.13.jar /app/applicationinsights-agent.jar
-# give ownership to /app folder to newly created "runner" user
-RUN chown -R runner:runner /app
+ADD https://github.com/microsoft/ApplicationInsights-Java/releases/download/3.4.15/applicationinsights-agent-3.4.15.jar /app/applicationinsights-agent.jar
+RUN chown -R nobody:nobody /app
 
 EXPOSE 8080
 
-USER 10000
+USER 65534
 
 ENTRYPOINT ["java","-jar","/app/app.jar"]
