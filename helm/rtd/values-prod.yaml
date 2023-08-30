@@ -17,12 +17,7 @@ microservice-chart:
 
   envSecret:
     aks-api-url: cstar-p-weu-prod01-aks-apiserver-url
-    KAFKA_SASL_JAAS_CONFIG_CONSUMER_BLOB_STORAGE_EVENTS: evh-rtd-platform-events-rtd-platform-events-sub-key
 
-  envConfigMapExternals:
-    rtd-blob-storage-events:
-      KAFKA_TOPIC_BLOB_STORAGE_EVENTS: KAFKA_TOPIC_BLOB_STORAGE_EVENTS
-      KAFKA_BROKER: KAFKA_BROKER
   #  autoscaling:
   #    enable: false
   #    minReplica: 1
