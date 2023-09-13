@@ -26,8 +26,6 @@ spring:
             database: ${MONGODB_NAME:rtd}
     cloud:
         stream:
-            defaultBinder: eventhub-projector
-            source: blob-storage, eventhub-projector
             kafka:
                 binder:
                     configuration:
