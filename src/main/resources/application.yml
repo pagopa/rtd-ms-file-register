@@ -25,12 +25,12 @@ spring:
             uri: ${MONGODB_CONNECTION_URI:mongodb://localhost:27017}
             database: ${MONGODB_NAME:rtd}
     cloud:
-#        function:
-#            definition: blobStorageConsumer;fileRegisterProjector
+        function:
+            definition: blobStorageConsumer;fileRegisterProjector
         stream:
-            default-binder: blob-storage
-            input-bindings: blobStorageConsumer
-            output-bindings: ${KAFKA_RTD_PROJECTOR_TOPIC}
+            default-binder: eventhub-projector
+#            input-bindings: blobStorageConsumer
+#            output-bindings: ${KAFKA_RTD_PROJECTOR_TOPIC}
             kafka:
                 binder:
                     configuration:
