@@ -27,7 +27,7 @@ spring:
     cloud:
         stream:
             defaultBinder: eventhub-projector
-            source: eventhub-projector
+            source: blob-storage, eventhub-projector
             kafka:
                 binder:
                     configuration:
