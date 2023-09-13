@@ -26,9 +26,9 @@ spring:
             database: ${MONGODB_NAME:rtd}
     cloud:
         function:
-            definition: blobStorageConsumer
+            definition: blobStorageConsumer;fileRegisterProjector
         stream:
-            default-binder: eventhub-projector
+            default-binder: blob-storage
 #            input-bindings: blobStorageConsumer
 #            output-bindings: fileRegisterProjector
 #            function:
