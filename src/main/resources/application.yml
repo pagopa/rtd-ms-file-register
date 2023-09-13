@@ -28,9 +28,9 @@ spring:
         function:
             definition: blobStorageConsumer
         stream:
-            default-binder: blob-storage
+            default-binder: eventhub-projector
 #            input-bindings: blobStorageConsumer
-            output-bindings: fileRegisterProjector
+#            output-bindings: fileRegisterProjector
 #            function:
 #                autodetect: false
             kafka:
