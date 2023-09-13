@@ -26,11 +26,13 @@ spring:
             database: ${MONGODB_NAME:rtd}
     cloud:
         function:
-            definition: blobStorageConsumer;fileRegisterProjector
+            definition: blobStorageConsumer
         stream:
-            default-binder: eventhub-projector
+            default-binder: blob-storage
 #            input-bindings: blobStorageConsumer
-#            output-bindings: ${KAFKA_RTD_PROJECTOR_TOPIC}
+            output-bindings: fileRegisterProjector
+#            function:
+#                autodetect: false
             kafka:
                 binder:
                     configuration:
