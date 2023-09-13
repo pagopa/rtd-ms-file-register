@@ -25,6 +25,8 @@ spring:
             uri: ${MONGODB_CONNECTION_URI:mongodb://localhost:27017}
             database: ${MONGODB_NAME:rtd}
     cloud:
+        function:
+            definition: blobStorageConsumer;fileRegisterProjector
         stream:
             kafka:
                 binder:
