@@ -30,7 +30,7 @@ spring:
         stream:
             default-binder: blob-storage
             input-bindings: blobStorageConsumer
-            output-bindings: fileRegisterProjector
+            output-bindings: ${KAFKA_RTD_PROJECTOR_TOPIC}
             kafka:
                 binder:
                     configuration:
