@@ -26,6 +26,7 @@ spring:
             database: ${MONGODB_NAME:rtd}
     cloud:
         stream:
+            source: fileRegisterProjector
             kafka:
                 binder:
                     configuration:
