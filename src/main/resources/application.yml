@@ -29,10 +29,6 @@ spring:
             definition: blobStorageConsumer;fileRegisterProjector
         stream:
             default-binder: blob-storage
-#            input-bindings: blobStorageConsumer
-#            output-bindings: fileRegisterProjector
-#            function:
-#                autodetect: false
             kafka:
                 binder:
                     configuration:
