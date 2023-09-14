@@ -25,7 +25,10 @@ spring:
             uri: ${MONGODB_CONNECTION_URI:mongodb://localhost:27017}
             database: ${MONGODB_NAME:rtd}
     cloud:
+        function:
+            definition: blobStorageConsumer;fileRegisterProjector
         stream:
+            default-binder: blob-storage
             kafka:
                 binder:
                     configuration:
@@ -48,6 +51,7 @@ spring:
                         auto-create-topics: false
                         brokers: ${KAFKA_RTD_PROJECTOR_BROKER:localhost:29095}
                         configuration.sasl.jaas.config: ${KAFKA_RTD_PROJECTOR_SASL_JAAS_CONFIG}
+                        sync: false
                         requiredAcks: all
                 blob-storage:
                     type: kafka
@@ -95,7 +99,7 @@ spring:
                     environment.spring.cloud.stream.kafka.binder:
                         auto-create-topics: false
                         brokers: ${KAFKA_RTD_PROJECTOR_BROKER:localhost:29095}
-                        sync: true
+                        sync: false
                         requiredAcks: all
                         consumerProperties:
                             key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
