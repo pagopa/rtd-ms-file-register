@@ -35,59 +35,59 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
     steps:
-    - name: Checkout the code
-      uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 #v3.5.3
-    - name: Build the Docker image
-      run: docker build . --file ${{ env.DOCKERFILE }} --tag localbuild/testimage:latest
-    - name: Run the Anchore scan action itself with GitHub Advanced Security code scanning integration enabled
-      id: scan
-      uses: anchore/scan-action@4be3c24559b430723e51858969965e163b196957 #v3.3.5
-      with:
-        image: "localbuild/testimage:latest"
-        fail-build: true
-        severity-cutoff: "high"
-    - name: Upload Anchore Scan Report
-      uses: github/codeql-action/upload-sarif@6c089f53dd51dc3fc7e599c3cb5356453a52ca9e #v2.20.0
-      if: always()
-      with:
-        sarif_file: ${{ steps.scan.outputs.sarif }}
-    - name: Inspect action SARIF report
-      if: always()
-      run: cat ${{ steps.scan.outputs.sarif }}
-    - name: CVE Description escaped extraction and print
-      if: always()
-      run: |
-        SCAN_RESULTS=$(jq -r '.runs[0].tool.driver.rules | map(.shortDescription.text) | join("\\n")' ${{ steps.scan.outputs.sarif }})
-        echo "SCAN_RESULTS=$SCAN_RESULTS" >> $GITHUB_ENV
-        echo "CVE_CRITICAL=$(echo $SCAN_RESULTS | grep -o critical | wc -l)" >> $GITHUB_ENV
-        echo "CVE_HIGH=$(echo $SCAN_RESULTS | grep -o high | wc -l)" >> $GITHUB_ENV
-        echo "CVE_MEDIUM=$(echo $SCAN_RESULTS | grep -o medium | wc -l)" >> $GITHUB_ENV
-        
-        echo -e $SCAN_RESULTS
-    - name: Send notification to Slack
-      id: slack
-      if: always() && github.event_name == 'schedule' && steps.scan.outcome == 'failure'
-      uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 #v1.24.0
-      with:
-        payload: |
-          {
-            "blocks": [
-              {
-                "type": "header",
-                "text": {
-                  "type": "plain_text",
-                  "text": "${{ github.event.repository.name }} - Notification Scan Result Failed on ${{ github.ref_type }} ${{ github.ref_name }}!"
+      - name: Checkout the code
+        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 #v3.6.0
+      - name: Build the Docker image
+        run: docker build . --file ${{ env.DOCKERFILE }} --tag localbuild/testimage:latest
+      - name: Run the Anchore scan action itself with GitHub Advanced Security code scanning integration enabled
+        id: scan
+        uses: anchore/scan-action@24fd7c9060f3c96848dd1929fac8d796fb5ae4b4 #v3.3.6
+        with:
+          image: "localbuild/testimage:latest"
+          fail-build: true
+          severity-cutoff: "high"
+      - name: Upload Anchore Scan Report
+        uses: github/codeql-action/upload-sarif@6c089f53dd51dc3fc7e599c3cb5356453a52ca9e #v2.20.0
+        if: always()
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif }}
+      - name: Inspect action SARIF report
+        if: always()
+        run: cat ${{ steps.scan.outputs.sarif }}
+      - name: CVE Description escaped extraction and print
+        if: always()
+        run: |
+          SCAN_RESULTS=$(jq -r '.runs[0].tool.driver.rules | map(.shortDescription.text) | join("\\n")' ${{ steps.scan.outputs.sarif }})
+          echo "SCAN_RESULTS=$SCAN_RESULTS" >> $GITHUB_ENV
+          echo "CVE_CRITICAL=$(echo $SCAN_RESULTS | grep -o critical | wc -l)" >> $GITHUB_ENV
+          echo "CVE_HIGH=$(echo $SCAN_RESULTS | grep -o high | wc -l)" >> $GITHUB_ENV
+          echo "CVE_MEDIUM=$(echo $SCAN_RESULTS | grep -o medium | wc -l)" >> $GITHUB_ENV
+          
+          echo -e $SCAN_RESULTS
+      - name: Send notification to Slack
+        id: slack
+        if: always() 
+        uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 #v1.24.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "${{ github.event.repository.name }} - Notification Scan Result Failed on ${{ github.ref_type }} ${{ github.ref_name }}!"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "GitHub Action scan results:\n`CRITICAL`: ${{ env.CVE_CRITICAL }}\n`HIGH`: ${{ env.CVE_HIGH }}\n`MEDIUM`: ${{ env.CVE_MEDIUM }}\n\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|See execution details on GitHub>"
+                  }
                 }
-              },
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "GitHub Action scan results:\n`CRITICAL`: ${{ env.CVE_CRITICAL }}\n`HIGH`: ${{ env.CVE_HIGH }}\n`MEDIUM`: ${{ env.CVE_MEDIUM }}\n\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|See execution details on GitHub>"
-                }
-              }
-            ]
-          }
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.CVE_SCAN_SLACK_WEBHOOK }}
-        SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.CVE_SCAN_SLACK_WEBHOOK }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
