@@ -76,6 +76,14 @@
 			<artifactId>azure-monitor-opentelemetry-exporter</artifactId>
 			<version>1.0.0-beta.11</version>
 		</dependency>
+		<!-- temporarily overriding transitive dependency from azure-core until next azure-bom release
+			https://github.com/microsoft/ApplicationInsights-Java/blob/e34e7a436391193e9717557f932821ac0fa7aa88/dependencyManagement/build.gradle.kts#L66
+		-->
+		<dependency>
+			<groupId>io.projectreactor.netty</groupId>
+			<artifactId>reactor-netty-http</artifactId>
+			<version>1.1.11</version>
+		</dependency>
 
 <!--		test-->
 		<dependency>
