@@ -4,10 +4,10 @@ logging:
         root: INFO
         org.apache.kafka: WARN
 
+
 # OpenTelemetry
 applicationinsights.enabled: '@applicationinsights.enabled@'
-otel.instrumentation.kafka.enabled: true
-otel.instrumentation.spring-kafka.enabled: true
+otel.log.level: ${OPENTELEMETRY_LOG_LEVEL:${APPLICATIONINSIGHTS_INSTRUMENTATION_LOGGING_LEVEL:INFO}}
 otel.instrumentation.logback-appender.enabled: true # enable logback instrumentation
 otel.traces.sampler.probability: 1.0 # sample probability for tracing (spans)
 otel.metric.export.interval: 60000 # sampling rate for metrics (millis)

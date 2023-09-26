@@ -50,7 +50,7 @@ import org.springframework.test.context.TestPropertySource;
     MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
 @Import(TestChannelBinderConfiguration.class)
 @ContextConfiguration(classes = {EventHandler.class, AppConfiguration.class})
-@TestPropertySource(value = {"classpath:application-test.yml"}, inheritProperties = false)
+@TestPropertySource(value = {"classpath:application.yml"}, inheritProperties = false)
 @DirtiesContext
 class EventHandlerTest {
 
