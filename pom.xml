@@ -21,6 +21,8 @@
 		<swagger-annotations.version>2.2.15</swagger-annotations.version>
 		<modelmapper.version>3.1.1</modelmapper.version>
 		<kafka.version>3.5.1</kafka.version>
+		<sonar.exclusions>**/telemetry/AppInsightConfig.java</sonar.exclusions>
+		<applicationinsights.enabled>true</applicationinsights.enabled>
 	</properties>
 
 	<dependencies>
@@ -48,6 +50,33 @@
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jsr310</artifactId>
 		</dependency>
+
+		<!-- opentelemetry -->
+		<dependency>
+			<groupId>io.opentelemetry.instrumentation</groupId>
+			<artifactId>opentelemetry-spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.opentelemetry.instrumentation</groupId>
+			<artifactId>opentelemetry-mongo-3.1</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.opentelemetry.instrumentation</groupId>
+			<artifactId>opentelemetry-spring-integration-4.1</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.opentelemetry.instrumentation</groupId>
+			<artifactId>opentelemetry-logback-appender-1.0</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Azure Monitor OpenTelemetry Exporter -->
+		<dependency>
+			<groupId>com.azure</groupId>
+			<artifactId>azure-monitor-opentelemetry-exporter</artifactId>
+			<version>1.0.0-beta.11</version>
+		</dependency>
+
 <!--		test-->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -83,6 +112,20 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
 				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.opentelemetry</groupId>
+				<artifactId>opentelemetry-bom</artifactId>
+				<version>1.30.1</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.opentelemetry.instrumentation</groupId>
+				<artifactId>opentelemetry-instrumentation-bom-alpha</artifactId>
+				<version>1.30.0-alpha</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
