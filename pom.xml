@@ -21,7 +21,7 @@
 		<swagger-annotations.version>2.2.15</swagger-annotations.version>
 		<modelmapper.version>3.1.1</modelmapper.version>
 		<kafka.version>3.5.1</kafka.version>
-		<sonar.exclusions>**/telemetry/AppInsightConfig.java</sonar.exclusions>
+		<sonar.exclusions>**/telemetry/**.java</sonar.exclusions>
 		<applicationinsights.enabled>true</applicationinsights.enabled>
 	</properties>
 
@@ -62,7 +62,11 @@
 		</dependency>
 		<dependency>
 			<groupId>io.opentelemetry.instrumentation</groupId>
-			<artifactId>opentelemetry-spring-integration-4.1</artifactId>
+			<artifactId>opentelemetry-spring-kafka-2.7</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.opentelemetry.instrumentation</groupId>
+			<artifactId>opentelemetry-kafka-clients-2.6</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.opentelemetry.instrumentation</groupId>

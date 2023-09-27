@@ -3,20 +3,20 @@ package it.gov.pagopa.rtd.ms.rtdmsfileregister.telemetry;
 import com.azure.monitor.opentelemetry.exporter.AzureMonitorExporterBuilder;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.mongo.v3_1.MongoTelemetry;
-import io.opentelemetry.instrumentation.spring.integration.v4_1.SpringIntegrationTelemetry;
 import io.opentelemetry.sdk.logs.export.LogRecordExporter;
 import io.opentelemetry.sdk.metrics.export.MetricExporter;
 import io.opentelemetry.sdk.trace.export.SpanExporter;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.mongo.MongoClientSettingsBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.integration.config.GlobalChannelInterceptor;
-import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.context.annotation.Import;
 
 @Configuration
 @ConditionalOnProperty(value = "applicationinsights.enabled", havingValue = "true", matchIfMissing = false)
-public class AppInsightConfig {
+@Import(KafkaInstrumentation.class)
+public class AppInsightConfig implements BeanPostProcessor {
 
   private final AzureMonitorExporterBuilder azureMonitorExporterBuilder;
 
@@ -45,13 +45,5 @@ public class AppInsightConfig {
   ) {
     return clientSettingsBuilder -> clientSettingsBuilder
         .addCommandListener(MongoTelemetry.builder(openTelemetry).build().newCommandListener());
-  }
-
-  @Bean
-  @GlobalChannelInterceptor(order = Integer.MIN_VALUE, patterns = "*")
-  public ChannelInterceptor openTelemetryChannelInterceptor(OpenTelemetry openTelemetry) {
-    return SpringIntegrationTelemetry.builder(openTelemetry)
-        .setProducerSpanEnabled(true)
-        .build().newChannelInterceptor();
   }
 }
