@@ -68,7 +68,7 @@ spring:
                     type: kafka
                     environment.spring.cloud.stream.kafka.binder:
                         auto-create-topics: false
-                        brokers: ${KAFKA_RTD_PROJECTOR_BROKER:192.168.1.15:29095}
+                        brokers: ${KAFKA_RTD_PROJECTOR_BROKER:localhost:29095}
                         configuration.sasl.jaas.config: ${KAFKA_RTD_PROJECTOR_SASL_JAAS_CONFIG}
                         sync: false
                         requiredAcks: all
@@ -81,7 +81,7 @@ spring:
                                     kafka:
                                         binder:
                                             auto-create-topics: false
-                                            brokers: ${KAFKA_BROKER:192.168.1.15:29095}
+                                            brokers: ${KAFKA_BROKER:localhost:29095}
                                             configuration:
                                                 sasl.jaas.config: ${KAFKA_SASL_JAAS_CONFIG_CONSUMER_BLOB_STORAGE_EVENTS}
                                             consumerProperties:
