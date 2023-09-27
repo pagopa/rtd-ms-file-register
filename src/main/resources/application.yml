@@ -17,6 +17,12 @@ otel.exporter.otlp.enabled: false # disable send to OTLP endpoint
 management:
     metrics:
         export.defaults.enabled: false
+        enable:
+            all: false
+            process.cpu: true
+            system.cpu: true
+            jvm.memory: true
+            application: true
     info.defaults.enabled: false
     endpoints:
         enabled-by-default: false
@@ -43,10 +49,10 @@ spring:
         stream:
             default-binder: blob-storage
             kafka:
-#                binder:
-#                    configuration:
-#                        security.protocol: SASL_SSL
-#                        sasl.mechanism: PLAIN
+                binder:
+                    configuration:
+                        security.protocol: SASL_SSL
+                        sasl.mechanism: PLAIN
             bindings:
                 blobStorageConsumer-in-0: # name must match [handler name]-in-0
                     destination: rtd-platform-events
