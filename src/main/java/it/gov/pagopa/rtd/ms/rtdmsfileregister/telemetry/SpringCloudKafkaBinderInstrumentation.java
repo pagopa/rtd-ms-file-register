@@ -13,7 +13,7 @@ import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.listener.AbstractMessageListenerContainer;
 
 /**
- * The `KafkaInstrumentation` class is responsible for configuring and customizing
+ * The `SpringCloudKafkaBinderInstrumentation` class is responsible for configuring and customizing
  * Kafka-related components to use opentelemetry tracing.
  * <p>
  * The `binderCustomizer` method configures the Kafka binder to be traced with opentelemetry
@@ -23,7 +23,7 @@ import org.springframework.kafka.listener.AbstractMessageListenerContainer;
  * <p>
  * Overall, this class allows to observe and trace all Kafka interactions.
  */
-public class KafkaInstrumentation {
+public class SpringCloudKafkaBinderInstrumentation {
 
   @Bean
   public BinderCustomizer binderCustomizer(

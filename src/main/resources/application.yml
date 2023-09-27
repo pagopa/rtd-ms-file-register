@@ -1,4 +1,4 @@
-spring.application.name: rtdfileregister-local
+spring.application.name: rtdfileregister
 logging:
     level:
         root: INFO

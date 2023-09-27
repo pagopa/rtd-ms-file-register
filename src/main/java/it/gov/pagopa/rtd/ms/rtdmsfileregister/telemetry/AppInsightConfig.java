@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Import;
 
 @Configuration
 @ConditionalOnProperty(value = "applicationinsights.enabled", havingValue = "true", matchIfMissing = false)
-@Import(KafkaInstrumentation.class)
+@Import(SpringCloudKafkaBinderInstrumentation.class)
 public class AppInsightConfig implements BeanPostProcessor {
 
   private final AzureMonitorExporterBuilder azureMonitorExporterBuilder;
