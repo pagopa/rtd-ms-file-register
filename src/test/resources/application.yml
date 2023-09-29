@@ -1,7 +1,7 @@
 logging:
   level:
     root: INFO
-
+applicationinsights.enabled: false
 ---
 spring:
   config:
