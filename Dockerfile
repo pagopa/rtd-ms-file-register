@@ -11,7 +11,6 @@ VOLUME /tmp
 WORKDIR /app
 
 COPY --from=buildtime /build/target/*.jar /app/app.jar
-# The agent is enabled at runtime via JAVA_TOOL_OPTIONS.
 RUN chown -R nobody:nobody /app
 
 EXPOSE 8080
