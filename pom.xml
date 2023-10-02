@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>it.gov.pagopa.rtd.ms</groupId>
 	<artifactId>rtd-ms-file-register</artifactId>
-	<version>1.0.5</version>
+	<version>1.1.0</version>
 	<name>rtd-ms-file-register</name>
 	<description>Micro-service designed to register the state of each and every file ingested by RTD</description>
 
@@ -21,6 +21,8 @@
 		<swagger-annotations.version>2.2.15</swagger-annotations.version>
 		<modelmapper.version>3.1.1</modelmapper.version>
 		<kafka.version>3.5.1</kafka.version>
+		<sonar.exclusions>**/telemetry/**.java</sonar.exclusions>
+		<applicationinsights.enabled>true</applicationinsights.enabled>
 	</properties>
 
 	<dependencies>
@@ -48,6 +50,37 @@
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jsr310</artifactId>
 		</dependency>
+
+		<!-- opentelemetry -->
+		<dependency>
+			<groupId>io.opentelemetry.instrumentation</groupId>
+			<artifactId>opentelemetry-spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.opentelemetry.instrumentation</groupId>
+			<artifactId>opentelemetry-mongo-3.1</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.opentelemetry.instrumentation</groupId>
+			<artifactId>opentelemetry-spring-kafka-2.7</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.opentelemetry.instrumentation</groupId>
+			<artifactId>opentelemetry-kafka-clients-2.6</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.opentelemetry.instrumentation</groupId>
+			<artifactId>opentelemetry-logback-appender-1.0</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Azure Monitor OpenTelemetry Exporter -->
+		<dependency>
+			<groupId>com.azure</groupId>
+			<artifactId>azure-monitor-opentelemetry-exporter</artifactId>
+			<version>1.0.0-beta.11</version>
+		</dependency>
+
 <!--		test-->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -86,6 +119,33 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<dependency>
+				<groupId>io.opentelemetry</groupId>
+				<artifactId>opentelemetry-bom</artifactId>
+				<version>1.30.1</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.opentelemetry.instrumentation</groupId>
+				<artifactId>opentelemetry-instrumentation-bom-alpha</artifactId>
+				<version>1.30.0-alpha</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<!-- temporarily overriding transitive dependency from azure-core until next azure-bom release
+  https://github.com/microsoft/ApplicationInsights-Java/blob/e34e7a436391193e9717557f932821ac0fa7aa88/dependencyManagement/build.gradle.kts#L66
+-->
+			<dependency>
+				<groupId>io.projectreactor.netty</groupId>
+				<artifactId>reactor-netty-http</artifactId>
+				<version>1.1.11</version>
+			</dependency>
+			<dependency>
+				<groupId>io.projectreactor.netty</groupId>
+				<artifactId>reactor-netty-core</artifactId>
+				<version>1.1.11</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -106,5 +166,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
