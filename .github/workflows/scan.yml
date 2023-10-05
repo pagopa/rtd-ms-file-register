@@ -4,11 +4,8 @@
 # documentation.
 
 # This workflow checks out code, builds an image, performs a container image
-# vulnerability scan with Anchore's Grype tool, and integrates the results with GitHub Advanced Security
-# code scanning feature.  For more information on the Anchore scan action usage
-# and parameters, see https://github.com/anchore/scan-action. For more
-# information on Anchore's container image scanning tool Grype, see
-# https://github.com/anchore/grype
+# vulnerability scan with Trivy tool, and integrates the results with GitHub Advanced Security
+# code scanning feature.
 name: Container Scan
 
 on:
@@ -27,7 +24,7 @@ env:
   DOCKERFILE: Dockerfile
 
 jobs:
-  Anchore-Build-Scan:
+  Build-Scan:
     permissions:
       contents: read # for actions/checkout to fetch code
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
@@ -43,21 +40,21 @@ jobs:
         id: scan
         uses: aquasecurity/trivy-action@fbd16365eb88e12433951383f5e99bd901fc618f #v0.12.0
         with:
-          image: "localbuild/testimage:latest"
+          image-ref: "localbuild/testimage:latest"
           format: 'sarif'
-          output: 'trivy-results.sarif'
+          output: 'results.sarif'
       - name: Upload Anchore Scan Report
         uses: github/codeql-action/upload-sarif@6c089f53dd51dc3fc7e599c3cb5356453a52ca9e #v2.20.0
         if: always()
         with:
-          sarif_file: 'trivy-results.sarif'
+          sarif_file: 'results.sarif'
       - name: Inspect action SARIF report
         if: always()
-        run: cat trivy-results.sarif
+        run: cat results.sarif
       - name: CVE Description escaped extraction and print
         if: always() 
         run: |
-          SCAN_RESULTS=$(jq -r '.runs[0].tool.driver.rules | map(.shortDescription.text) | join("\\n")' trivy-results.sarif)
+          SCAN_RESULTS=$(jq -r '.runs[0].tool.driver.rules | map(.shortDescription.text) | join("\\n")' results.sarif)
           echo "SCAN_RESULTS=$SCAN_RESULTS" >> $GITHUB_ENV
           echo "CVE_CRITICAL=$(echo $SCAN_RESULTS | grep -o critical | wc -l)" >> $GITHUB_ENV
           echo "CVE_HIGH=$(echo $SCAN_RESULTS | grep -o high | wc -l)" >> $GITHUB_ENV
