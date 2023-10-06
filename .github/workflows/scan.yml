@@ -24,7 +24,7 @@ env:
   DOCKERFILE: Dockerfile
 
 jobs:
-  Build-Scan:
+  Build&Scan:
     permissions:
       contents: read # for actions/checkout to fetch code
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
@@ -55,6 +55,9 @@ jobs:
           echo "CVE_MEDIUM=$(echo $SCAN_RESULTS | grep -o MEDIUM | wc -l)" >> $GITHUB_ENV
           
           echo $SCAN_RESULTS
+          echo 'CVE_CRITICAL=${{ env.CVE_CRITICAL }}'
+          echo 'CVE_HIGH=${{ env.CVE_HIGH }}'
+          echo 'CVE_MEDIUM=${{ env.CVE_MEDIUM }}'
       - name: Fails if CVE HIGH or CRITICAL are detected
         id: cve-threshold
         if: env.CVE_HIGH > 0 || env.CVE_CRITICAL > 0
