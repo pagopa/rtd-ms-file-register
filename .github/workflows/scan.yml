@@ -45,14 +45,9 @@ jobs:
           output: 'results.sarif'
       - name: Upload Anchore Scan Report
         uses: github/codeql-action/upload-sarif@6c089f53dd51dc3fc7e599c3cb5356453a52ca9e #v2.20.0
-        if: always()
         with:
           sarif_file: 'results.sarif'
-      - name: Inspect action SARIF report
-        if: always()
-        run: cat results.sarif
       - name: CVE Description escaped extraction and print
-        if: always() 
         run: |
           SCAN_RESULTS=$(jq -r '.runs[0].tool.driver.rules | map(.help.text) | join("\\n")' results.sarif)
           echo "CVE_CRITICAL=$(echo $SCAN_RESULTS | grep -o CRITICAL | wc -l)" >> $GITHUB_ENV
@@ -60,9 +55,13 @@ jobs:
           echo "CVE_MEDIUM=$(echo $SCAN_RESULTS | grep -o MEDIUM | wc -l)" >> $GITHUB_ENV
           
           echo $SCAN_RESULTS
+      - name: Fails if CVE HIGH or CRITICAL are detected
+        id: cve-threshold
+        if: env.CVE_HIGH > 0 || env.CVE_CRITICAL > 0
+        run: exit 1
       - name: Send notification to Slack
         id: slack
-        if: always() && github.event_name == 'schedule' && steps.scan.outcome == 'failure'
+        if: always() && github.event_name == 'schedule' && steps.cve-threshold.outcome == 'failure'
         uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 #v1.24.0
         with:
           payload: |
