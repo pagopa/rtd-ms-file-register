@@ -55,12 +55,11 @@ jobs:
         if: always() 
         run: |
           SCAN_RESULTS=$(jq -r '.runs[0].tool.driver.rules | map(.help.text) | join("\\n")' results.sarif)
-          echo "SCAN_RESULTS=$SCAN_RESULTS" >> $GITHUB_ENV
           echo "CVE_CRITICAL=$(echo $SCAN_RESULTS | grep -o CRITICAL | wc -l)" >> $GITHUB_ENV
           echo "CVE_HIGH=$(echo $SCAN_RESULTS | grep -o HIGH | wc -l)" >> $GITHUB_ENV
           echo "CVE_MEDIUM=$(echo $SCAN_RESULTS | grep -o MEDIUM | wc -l)" >> $GITHUB_ENV
           
-          echo -e $SCAN_RESULTS
+          echo $SCAN_RESULTS
       - name: Send notification to Slack
         id: slack
         if: always() && github.event_name == 'schedule' && steps.scan.outcome == 'failure'
