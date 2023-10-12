@@ -34,6 +34,27 @@ management:
                 enabled: true
 
 ---
+binders: &binders
+    eventhubprojector:
+        type: kafka
+        environment.spring.cloud.stream.kafka.binder:
+            auto-create-topics: false
+            brokers: ${KAFKA_RTD_PROJECTOR_BROKER:localhost:29095}
+            configuration.sasl.jaas.config: ${KAFKA_RTD_PROJECTOR_SASL_JAAS_CONFIG}
+            sync: false
+            requiredAcks: all
+    blobstorage:
+        type: kafka
+        environment.spring.cloud.stream.kafka.binder:
+            auto-create-topics: false
+            brokers: ${KAFKA_BROKER:localhost:29095}
+            configuration:
+                sasl.jaas.config: ${KAFKA_SASL_JAAS_CONFIG_CONSUMER_BLOB_STORAGE_EVENTS}
+            consumerProperties:
+                key:
+                    deserializer: org.apache.kafka.common.serialization.StringDeserializer
+                value:
+                    deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
 spring:
     config:
@@ -45,9 +66,10 @@ spring:
             database: ${MONGODB_NAME:rtd}
     cloud:
         function:
+            autodetect: false
             definition: blobStorageConsumer;fileRegisterProjector
         stream:
-            default-binder: blob-storage
+            default-binder: blobstorage
             kafka:
                 binder:
                     configuration:
@@ -58,37 +80,15 @@ spring:
                     destination: rtd-platform-events
                     group: rtd-file-register-consumer-group
                     content-type: application/json
-                    binder: blob-storage
+                    binder: blobstorage
                 fileRegisterProjector-out-0:
                     destination: ${KAFKA_RTD_PROJECTOR_TOPIC:rtd-file-register-projector}
                     content-type: application/json
-                    binder: eventhub-projector
+                    binder: eventhubprojector
             binders:
-                eventhub-projector:
-                    type: kafka
-                    environment.spring.cloud.stream.kafka.binder:
-                        auto-create-topics: false
-                        brokers: ${KAFKA_RTD_PROJECTOR_BROKER:localhost:29095}
-                        configuration.sasl.jaas.config: ${KAFKA_RTD_PROJECTOR_SASL_JAAS_CONFIG}
-                        sync: false
-                        requiredAcks: all
-                blob-storage:
-                    type: kafka
-                    environment:
-                        spring:
-                            cloud:
-                                stream:
-                                    kafka:
-                                        binder:
-                                            auto-create-topics: false
-                                            brokers: ${KAFKA_BROKER:localhost:29095}
-                                            configuration:
-                                                sasl.jaas.config: ${KAFKA_SASL_JAAS_CONFIG_CONSUMER_BLOB_STORAGE_EVENTS}
-                                            consumerProperties:
-                                                key:
-                                                    deserializer: org.apache.kafka.common.serialization.StringDeserializer
-                                                value:
-                                                    deserializer: org.apache.kafka.common.serialization.StringDeserializer
+                <<: *binders
+                binders:
+                    <<: *binders
 
 ---
 
