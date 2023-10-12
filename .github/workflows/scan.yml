@@ -21,7 +21,7 @@ permissions:
   contents: read
 
 env:
-  DOCKERFILE: Dockerfile
+  DOCKERFILE: Dockerfile.native
 
 jobs:
   BuildAndScan:
@@ -35,7 +35,7 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 #v3.6.0
       - name: Build the Docker image
-        run: docker build . --file ${{ env.DOCKERFILE }} --tag localbuild/testimage:latest
+        run: docker build . --file ${{ env.DOCKERFILE }} --target cve --tag localbuild/testimage:latest
       - name: Run the Trivy scan action itself with GitHub Advanced Security code scanning integration enabled
         id: scan
         uses: aquasecurity/trivy-action@fbd16365eb88e12433951383f5e99bd901fc618f #v0.12.0
