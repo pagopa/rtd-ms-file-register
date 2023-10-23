@@ -6,7 +6,7 @@ COPY . .
 RUN ./mvnw clean package -Pnative -DskipTests
 
 FROM ubuntu:jammy-20230624@sha256:0bced47fffa3361afa981854fcabcd4577cd43cebbb808cea2b1f33a3dd7f508 AS cve
-COPY --form=builder /build/target/rtd-ms-file-register*.jar .
+COPY --from=builder /build/target/rtd-ms-file-register*.jar .
 
 FROM ubuntu:jammy-20230624@sha256:0bced47fffa3361afa981854fcabcd4577cd43cebbb808cea2b1f33a3dd7f508 AS runtime
 
