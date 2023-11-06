@@ -2,7 +2,7 @@ spring.application.name: rtdfileregister
 logging:
     level:
         root: INFO
-        org.apache.kafka: WARN
+#        org.apache.kafka: WARN
 
 
 # OpenTelemetry
