@@ -50,6 +50,7 @@ spring:
             default-binder: blob-storage
             kafka:
                 binder:
+                    bootstrap.servers: ${KAFKA_BROKER:localhost:29095}
                     configuration:
                         security.protocol: SASL_SSL
                         sasl.mechanism: PLAIN
@@ -68,27 +69,22 @@ spring:
                     type: kafka
                     environment.spring.cloud.stream.kafka.binder:
                         auto-create-topics: false
-                        brokers: ${KAFKA_RTD_PROJECTOR_BROKER:localhost:29095}
+                        #brokers: ${KAFKA_RTD_PROJECTOR_BROKER:localhost:29095}
                         configuration.sasl.jaas.config: ${KAFKA_RTD_PROJECTOR_SASL_JAAS_CONFIG}
                         sync: false
                         requiredAcks: all
                 blob-storage:
                     type: kafka
-                    environment:
-                        spring:
-                            cloud:
-                                stream:
-                                    kafka:
-                                        binder:
-                                            auto-create-topics: false
-                                            brokers: ${KAFKA_BROKER:localhost:29095}
-                                            configuration:
-                                                sasl.jaas.config: ${KAFKA_SASL_JAAS_CONFIG_CONSUMER_BLOB_STORAGE_EVENTS}
-                                            consumerProperties:
-                                                key:
-                                                    deserializer: org.apache.kafka.common.serialization.StringDeserializer
-                                                value:
-                                                    deserializer: org.apache.kafka.common.serialization.StringDeserializer
+                    environment.spring.cloud.stream.kafka.binder:
+                        auto-create-topics: false
+                        #brokers: ${KAFKA_BROKER:localhost:29095}
+                        configuration:
+                            sasl.jaas.config: ${KAFKA_SASL_JAAS_CONFIG_CONSUMER_BLOB_STORAGE_EVENTS}
+                        consumerProperties:
+                            key:
+                                deserializer: org.apache.kafka.common.serialization.StringDeserializer
+                            value:
+                                deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
 ---
 
