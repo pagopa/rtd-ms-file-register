@@ -50,7 +50,8 @@ spring:
             default-binder: blob-storage
             kafka:
                 binder:
-                    bootstrap.servers: ${KAFKA_BROKER:localhost:29095}
+                    #bootstrap.servers: ${KAFKA_BROKER:localhost:29095}
+                    brokers: ${KAFKA_BROKER:localhost:29095}
                     configuration:
                         security.protocol: SASL_SSL
                         sasl.mechanism: PLAIN
