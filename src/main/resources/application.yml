@@ -2,7 +2,7 @@ spring.application.name: rtdfileregister
 logging:
     level:
         root: INFO
-#        org.apache.kafka: WARN
+        org.apache.kafka: DEBUG
 
 
 # OpenTelemetry
@@ -45,7 +45,7 @@ spring:
             database: ${MONGODB_NAME:rtd}
     cloud:
         function:
-            definition: blobStorageConsumer;fileRegisterProjector
+            definition: blobStorageConsumer
         stream:
             default-binder: blob-storage
             kafka:
