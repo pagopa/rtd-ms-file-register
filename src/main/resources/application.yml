@@ -49,10 +49,6 @@ spring:
         stream:
             default-binder: blob-storage
             kafka:
-                default:
-                    producer:
-#                        The service will close connections if requests larger than 1046528 bytes are sent
-                        max.request.size: 1000000
                 binder:
                     brokers: ${KAFKA_BROKER:localhost:29095}
                     configuration:
@@ -61,6 +57,9 @@ spring:
 #                        Recommended Values for both consumer and producer for azure eventhub
                         metadata.max.age.ms: 180000
                         connections.max.idle.ms: 180000
+                    producerProperties:
+#                        The service will close connections if requests larger than 1046528 bytes are sent
+                        max.request.size: 1000000
             bindings:
                 blobStorageConsumer-in-0: # name must match [handler name]-in-0
                     destination: rtd-platform-events
