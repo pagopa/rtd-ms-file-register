@@ -45,16 +45,22 @@ spring:
             database: ${MONGODB_NAME:rtd}
     cloud:
         function:
-            definition: blobStorageConsumer
+            definition: blobStorageConsumer;fileRegisterProjector
         stream:
             default-binder: blob-storage
             kafka:
+                default:
+                    producer:
+#                        The service will close connections if requests larger than 1046528 bytes are sent
+                        max.request.size: 1000000
                 binder:
-                    #bootstrap.servers: ${KAFKA_BROKER:localhost:29095}
                     brokers: ${KAFKA_BROKER:localhost:29095}
                     configuration:
                         security.protocol: SASL_SSL
                         sasl.mechanism: PLAIN
+#                        Recommended Values for both consumer and producer for azure eventhub
+                        metadata.max.age.ms: 180000
+                        connections.max.idle.ms: 180000
             bindings:
                 blobStorageConsumer-in-0: # name must match [handler name]-in-0
                     destination: rtd-platform-events
@@ -70,7 +76,6 @@ spring:
                     type: kafka
                     environment.spring.cloud.stream.kafka.binder:
                         auto-create-topics: false
-                        #brokers: ${KAFKA_RTD_PROJECTOR_BROKER:localhost:29095}
                         configuration.sasl.jaas.config: ${KAFKA_RTD_PROJECTOR_SASL_JAAS_CONFIG}
                         sync: false
                         requiredAcks: all
@@ -78,7 +83,6 @@ spring:
                     type: kafka
                     environment.spring.cloud.stream.kafka.binder:
                         auto-create-topics: false
-                        #brokers: ${KAFKA_BROKER:localhost:29095}
                         configuration:
                             sasl.jaas.config: ${KAFKA_SASL_JAAS_CONFIG_CONSUMER_BLOB_STORAGE_EVENTS}
                         consumerProperties:
