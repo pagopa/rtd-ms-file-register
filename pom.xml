@@ -134,7 +134,7 @@
 				<scope>import</scope>
 			</dependency>
 			<!-- temporarily overriding transitive dependency from azure-core until next azure-bom release
-  https://github.com/microsoft/ApplicationInsights-Java/blob/e34e7a436391193e9717557f932821ac0fa7aa88/dependencyManagement/build.gradle.kts#L66
+  https://github.com/microsoft/ApplicationInsights-Java/blob/c01d32d8bd1fc5b30f55fd362efbd3bd0bfb7c6b/dependencyManagement/build.gradle.kts#L67
 -->
 			<dependency>
 				<groupId>io.projectreactor.netty</groupId>
