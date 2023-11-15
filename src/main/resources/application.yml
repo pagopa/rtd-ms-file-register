@@ -57,7 +57,6 @@ spring:
 #                        Recommended Values for both consumer and producer for azure eventhub
                         metadata.max.age.ms: 180000
                         connections.max.idle.ms: 180000
-                    producerProperties:
 #                        The service will close connections if requests larger than 1046528 bytes are sent
                         max.request.size: 1000000
             bindings:
