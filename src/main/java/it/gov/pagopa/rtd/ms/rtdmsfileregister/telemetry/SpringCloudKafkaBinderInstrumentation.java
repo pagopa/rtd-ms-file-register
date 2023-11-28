@@ -8,6 +8,7 @@ import org.springframework.cloud.stream.binder.BinderCustomizer;
 import org.springframework.cloud.stream.binder.kafka.KafkaMessageChannelBinder;
 import org.springframework.cloud.stream.binder.kafka.config.ClientFactoryCustomizer;
 import org.springframework.cloud.stream.config.ListenerContainerCustomizer;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.listener.AbstractMessageListenerContainer;
@@ -27,13 +28,16 @@ public class SpringCloudKafkaBinderInstrumentation {
 
   @Bean
   public BinderCustomizer binderCustomizer(
-      ListenerContainerCustomizer<AbstractMessageListenerContainer<?, ?>> containerCustomizer,
-      ClientFactoryCustomizer customizedKafkaClient
+      ApplicationContext context
   ) {
     return (binder, binderName) -> {
       if ((Object) binder instanceof KafkaMessageChannelBinder kafkaMessageChannelBinder) {
-        kafkaMessageChannelBinder.setContainerCustomizer(containerCustomizer);
-        kafkaMessageChannelBinder.addClientFactoryCustomizer(customizedKafkaClient);
+        kafkaMessageChannelBinder.setContainerCustomizer(
+            context.getBean("containerCustomizer", ListenerContainerCustomizer.class)
+        );
+        kafkaMessageChannelBinder.addClientFactoryCustomizer(context.getBean(
+            "customizedKafkaClient", ClientFactoryCustomizer.class
+        ));
       }
     };
   }
