@@ -52,9 +52,6 @@ microservice-chart:
     runAsUser: 65534
     runAsGroup: 65534
 
-  envConfig:
-    APPLICATIONINSIGHTS_PREVIEW_PROFILER_ENABLED: "false"
-
   envSecret:
     MONGODB_CONNECTION_URI: mongo-db-connection-uri
     APPLICATIONINSIGHTS_CONNECTION_STRING: appinsights-instrumentation-key
