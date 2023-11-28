@@ -15,10 +15,8 @@
     <captureExperimentalAttributes>true</captureExperimentalAttributes>
     <captureMdcAttributes>*</captureMdcAttributes>
     <!-- Set the logging level for OpenTelemetry from the environment variable -->
-    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
       <level>${otelLogLevel}</level>
-      <onMatch>ACCEPT</onMatch>
-      <onMismatch>DENY</onMismatch>
     </filter>
   </appender>
 
