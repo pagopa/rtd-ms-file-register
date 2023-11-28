@@ -54,6 +54,11 @@ spring:
                     configuration:
                         security.protocol: SASL_SSL
                         sasl.mechanism: PLAIN
+#                        Recommended Values for both consumer and producer for azure eventhub
+                        metadata.max.age.ms: 180000
+                        connections.max.idle.ms: 180000
+#                        The service will close connections if requests larger than 1046528 bytes are sent
+                        max.request.size: 1000000
             bindings:
                 blobStorageConsumer-in-0: # name must match [handler name]-in-0
                     destination: rtd-platform-events
@@ -71,8 +76,6 @@ spring:
                         auto-create-topics: false
                         brokers: ${KAFKA_RTD_PROJECTOR_BROKER:localhost:29095}
                         configuration.sasl.jaas.config: ${KAFKA_RTD_PROJECTOR_SASL_JAAS_CONFIG}
-                        sync: false
-                        requiredAcks: all
                 blobstorage:
                     type: kafka
                     environment.spring.cloud.stream.kafka.binder:
