@@ -16,11 +16,11 @@
 
 	<properties>
 		<java.version>17</java.version>
-		<spring-cloud.version>2022.0.4</spring-cloud.version>
+		<spring-cloud.version>2023.0.0</spring-cloud.version>
 		<snakeyaml.version>2.2</snakeyaml.version>
-		<swagger-annotations.version>2.2.18</swagger-annotations.version>
+		<swagger-annotations.version>2.2.20</swagger-annotations.version>
 		<modelmapper.version>3.2.0</modelmapper.version>
-		<kafka.version>3.6.0</kafka.version>
+		<kafka.version>3.6.1</kafka.version>
 		<sonar.exclusions>**/telemetry/**.java</sonar.exclusions>
 		<applicationinsights.enabled>true</applicationinsights.enabled>
 	</properties>
