@@ -3,6 +3,7 @@ logging:
     level:
         root: INFO
         org.apache.kafka: WARN
+        reactor.netty.http.client.HttpClientConnect: ERROR # prevent logging WARN timeout azure exporter
 
 
 # OpenTelemetry
