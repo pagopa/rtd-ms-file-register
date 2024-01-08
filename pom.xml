@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.5</version>
+		<version>3.2.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>it.gov.pagopa.rtd.ms</groupId>
@@ -16,11 +16,11 @@
 
 	<properties>
 		<java.version>17</java.version>
-		<spring-cloud.version>2022.0.4</spring-cloud.version>
+		<spring-cloud.version>2023.0.0</spring-cloud.version>
 		<snakeyaml.version>2.2</snakeyaml.version>
-		<swagger-annotations.version>2.2.18</swagger-annotations.version>
+		<swagger-annotations.version>2.2.20</swagger-annotations.version>
 		<modelmapper.version>3.2.0</modelmapper.version>
-		<kafka.version>3.6.0</kafka.version>
+		<kafka.version>3.6.1</kafka.version>
 		<sonar.exclusions>**/telemetry/**.java</sonar.exclusions>
 		<applicationinsights.enabled>true</applicationinsights.enabled>
 	</properties>
@@ -139,12 +139,12 @@
 			<dependency>
 				<groupId>io.projectreactor.netty</groupId>
 				<artifactId>reactor-netty-http</artifactId>
-				<version>1.1.11</version>
+				<version>1.1.14</version>
 			</dependency>
 			<dependency>
 				<groupId>io.projectreactor.netty</groupId>
 				<artifactId>reactor-netty-core</artifactId>
-				<version>1.1.11</version>
+				<version>1.1.14</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
