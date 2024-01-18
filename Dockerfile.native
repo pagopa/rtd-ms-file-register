@@ -1,0 +1,20 @@
+FROM ghcr.io/graalvm/native-image:ol8-java17-22.3.3@sha256:d55ebb6eec6751b87ce9d34ab1004fa088d227d90d3edb4d9b3a994e54ac285a AS builder
+
+WORKDIR /build
+COPY . .
+
+RUN ./mvnw clean package -Pnative -DskipTests
+
+FROM ubuntu:noble-20231221@sha256:38d380071057443ebb6d65566c03a98eaec411e84e04e5e16cff49b1d6fdc9a0 AS cve
+COPY --from=builder /build/target/rtd-ms-file-register*.jar .
+
+FROM ubuntu:noble-20231221@sha256:38d380071057443ebb6d65566c03a98eaec411e84e04e5e16cff49b1d6fdc9a0 AS runtime
+
+EXPOSE 8080
+
+RUN useradd --uid 10000 runner
+USER 10000
+
+COPY --from=builder /build/target/rtd-ms-file-register .
+
+ENTRYPOINT ["./rtd-ms-file-register"]

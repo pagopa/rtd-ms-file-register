@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.2.1</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>it.gov.pagopa.rtd.ms</groupId>
 	<artifactId>rtd-ms-file-register</artifactId>
@@ -81,7 +82,7 @@
 			<version>1.0.0-beta.11</version>
 		</dependency>
 
-<!--		test-->
+		<!--		test-->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream-test-binder</artifactId>
@@ -92,9 +93,9 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-<!--		utility-->
+		<!--		utility-->
 		<dependency>
-    		<groupId>io.swagger.core.v3</groupId>
+			<groupId>io.swagger.core.v3</groupId>
 			<artifactId>swagger-annotations</artifactId>
 			<version>${swagger-annotations.version}</version>
 		</dependency>
@@ -133,8 +134,9 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			<!-- temporarily overriding transitive dependency from azure-core until next azure-bom release
-  https://github.com/microsoft/ApplicationInsights-Java/blob/e34e7a436391193e9717557f932821ac0fa7aa88/dependencyManagement/build.gradle.kts#L66
+			<!-- temporarily overriding transitive dependency from azure-core until next azure-bom
+			release
+			https://github.com/microsoft/ApplicationInsights-Java/blob/e34e7a436391193e9717557f932821ac0fa7aa88/dependencyManagement/build.gradle.kts#L66
 -->
 			<dependency>
 				<groupId>io.projectreactor.netty</groupId>
@@ -148,22 +150,52 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	<profiles>
+		<profile>
+			<id>native</id>
+			<properties>
+				<applicationinsights.enabled>true</applicationinsights.enabled>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.graalvm.buildtools</groupId>
+						<artifactId>native-maven-plugin</artifactId>
+						<configuration>
+							<metadataRepository>
+								<enabled>true</enabled>
+							</metadataRepository>
+							<buildArgs>
+								<arg>
+									--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback</arg>
+							</buildArgs>
+						</configuration>
+						<executions>
+							<execution>
+								<id>build-native</id>
+								<goals>
+									<goal>compile-no-fork</goal>
+								</goals>
+								<phase>package</phase>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<version>${project.parent.version}</version>
+						<configuration>
+							<excludes>
+								<exclude>
+									<groupId>org.projectlombok</groupId>
+									<artifactId>lombok</artifactId>
+								</exclude>
+							</excludes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${project.parent.version}</version>
-				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 </project>
