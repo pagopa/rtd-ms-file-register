@@ -1,4 +1,4 @@
-FROM ghcr.io/graalvm/native-image:ol8-java17-22.3.3@sha256:d55ebb6eec6751b87ce9d34ab1004fa088d227d90d3edb4d9b3a994e54ac285a AS builder
+FROM ghcr.io/graalvm/graalvm-community:17-ol9@sha256:eac1619df619a6ac24333d3be635d10a217b1bb3aa04ca1485b0e29a011d460a AS builder
 
 WORKDIR /build
 COPY . .
