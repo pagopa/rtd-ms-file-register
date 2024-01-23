@@ -6,16 +6,23 @@ import io.opentelemetry.instrumentation.mongo.v3_1.MongoTelemetry;
 import io.opentelemetry.sdk.logs.export.LogRecordExporter;
 import io.opentelemetry.sdk.metrics.export.MetricExporter;
 import io.opentelemetry.sdk.trace.export.SpanExporter;
+
+import org.springframework.aot.hint.MemberCategory;
+import org.springframework.aot.hint.RuntimeHintsRegistrar;
+import org.springframework.aot.hint.TypeReference;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.mongo.MongoClientSettingsBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportRuntimeHints;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.telemetry.AppInsightConfig.CustomRuntimeHints;
 
 @Configuration
 @ConditionalOnProperty(value = "applicationinsights.enabled", havingValue = "true", matchIfMissing = false)
 @Import(SpringCloudKafkaBinderInstrumentation.class)
+@ImportRuntimeHints(CustomRuntimeHints.class)
 public class AppInsightConfig implements BeanPostProcessor {
 
   private final AzureMonitorExporterBuilder azureMonitorExporterBuilder;
@@ -41,9 +48,23 @@ public class AppInsightConfig implements BeanPostProcessor {
 
   @Bean
   public MongoClientSettingsBuilderCustomizer mongoOpenTelemetryBridge(
-      OpenTelemetry openTelemetry
-  ) {
+      OpenTelemetry openTelemetry) {
     return clientSettingsBuilder -> clientSettingsBuilder
         .addCommandListener(MongoTelemetry.builder(openTelemetry).build().newCommandListener());
+  }
+
+  // Probably due to an instability of snapshot version some reflection data are
+  // missing,
+  // this register the missing class.
+  public static class CustomRuntimeHints implements RuntimeHintsRegistrar {
+
+    @Override
+    public void registerHints(org.springframework.aot.hint.RuntimeHints hints,
+        ClassLoader classLoader) {
+      hints.reflection().registerType(
+          TypeReference
+              .of("org.springframework.integration.config.ConverterRegistrar$IntegrationConverterRegistration"),
+          MemberCategory.values());
+    }
   }
 }
