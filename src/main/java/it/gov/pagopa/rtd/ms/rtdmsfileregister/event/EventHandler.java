@@ -6,8 +6,11 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import lombok.Getter;
+
+import org.springframework.aot.hint.annotation.Reflective;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.integration.annotation.Reactive;
 import org.springframework.messaging.Message;
 
 /**
@@ -23,8 +26,10 @@ public class EventHandler {
    * @return a consumer for Event Grid events.
    */
   @Bean
+  @Reflective
   public Consumer<Message<List<EventGridEvent>>> blobStorageConsumer(BlobRegisterAdapter blobRegisterAdapter) {
-    return message -> message.getPayload().stream()
+    
+    return (Message<List<EventGridEvent>> message) -> message.getPayload().stream()
         .filter(e -> "Microsoft.Storage.BlobCreated".equals(e.getEventType()))
         .map(blobRegisterAdapter::evaluateEvent)
         .collect(Collectors.toList());
