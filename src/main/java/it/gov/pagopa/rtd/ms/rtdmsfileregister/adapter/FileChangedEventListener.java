@@ -3,6 +3,8 @@ package it.gov.pagopa.rtd.ms.rtdmsfileregister.adapter;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.domain.events.FileChanged;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +36,7 @@ public class FileChangedEventListener {
   }
 
   @EventListener
+  @RegisterReflectionForBinding(FileChanged.class)
   public void handleFileChanged(FileChanged event) {
     log.info("Firing file changed event {}", event);
     streamBridge.send(bindingName, MessageBuilder.withPayload(event).build());
