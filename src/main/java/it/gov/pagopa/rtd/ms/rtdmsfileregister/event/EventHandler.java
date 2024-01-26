@@ -27,11 +27,9 @@ public class EventHandler {
   @Bean
   @RegisterReflectionForBinding(EventGridEvent.class)
   public Consumer<Message<List<EventGridEvent>>> blobStorageConsumer(BlobRegisterAdapter blobRegisterAdapter) {
-    return message -> {
-      message.getPayload().stream()
+    return message -> message.getPayload().stream()
         .filter(e -> "Microsoft.Storage.BlobCreated".equals(e.getEventType()))
         .map(blobRegisterAdapter::evaluateEvent)
         .collect(Collectors.toList());
-    };
   }
-} 
+}
