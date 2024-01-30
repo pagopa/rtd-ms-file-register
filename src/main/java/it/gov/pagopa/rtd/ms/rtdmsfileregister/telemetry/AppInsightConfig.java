@@ -6,6 +6,7 @@ import io.opentelemetry.instrumentation.mongo.v3_1.MongoTelemetry;
 import io.opentelemetry.sdk.logs.export.LogRecordExporter;
 import io.opentelemetry.sdk.metrics.export.MetricExporter;
 import io.opentelemetry.sdk.trace.export.SpanExporter;
+
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.mongo.MongoClientSettingsBuilderCustomizer;
@@ -41,9 +42,9 @@ public class AppInsightConfig implements BeanPostProcessor {
 
   @Bean
   public MongoClientSettingsBuilderCustomizer mongoOpenTelemetryBridge(
-      OpenTelemetry openTelemetry
-  ) {
+      OpenTelemetry openTelemetry) {
     return clientSettingsBuilder -> clientSettingsBuilder
         .addCommandListener(MongoTelemetry.builder(openTelemetry).build().newCommandListener());
   }
+
 }

@@ -27,4 +27,5 @@ public class AppConfiguration {
   FileChangedEventListener fileChangedEventListener(StreamBridge streamBridge) {
     return new FileChangedEventListener(streamBridge, PROJECTOR_BINDING_NAME);
   }
+
 }

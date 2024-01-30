@@ -47,7 +47,7 @@ spring:
         function:
             definition: blobStorageConsumer;fileRegisterProjector
         stream:
-            default-binder: blob-storage
+            default-binder: blobstorage
             kafka:
                 binder:
                     configuration:
@@ -63,19 +63,19 @@ spring:
                     destination: rtd-platform-events
                     group: rtd-file-register-consumer-group
                     content-type: application/json
-                    binder: blob-storage
+                    binder: blobstorage
                 fileRegisterProjector-out-0:
                     destination: ${KAFKA_RTD_PROJECTOR_TOPIC:rtd-file-register-projector}
                     content-type: application/json
-                    binder: eventhub-projector
+                    binder: eventhubprojector
             binders:
-                eventhub-projector:
+                eventhubprojector:
                     type: kafka
                     environment.spring.cloud.stream.kafka.binder:
                         auto-create-topics: false
                         brokers: ${KAFKA_RTD_PROJECTOR_BROKER:localhost:29095}
                         configuration.sasl.jaas.config: ${KAFKA_RTD_PROJECTOR_SASL_JAAS_CONFIG}
-                blob-storage:
+                blobstorage:
                     type: kafka
                     environment.spring.cloud.stream.kafka.binder:
                         auto-create-topics: false
@@ -105,13 +105,13 @@ spring:
                     destination: rtd-platform-events
                     group: rtd-file-register-consumer-group
                     content-type: application/json
-                    binder: blob-storage
+                    binder: blobstorage
                 fileRegisterProjector-out-0:
                     destination: ${KAFKA_RTD_PROJECTOR_TOPIC:rtd-file-register-projector}
                     content-type: application/json
-                    binder: eventhub-projector
+                    binder: eventhubprojector
             binders:
-                eventhub-projector:
+                eventhubprojector:
                     type: kafka
                     environment.spring.cloud.stream.kafka.binder:
                         auto-create-topics: false
@@ -121,7 +121,7 @@ spring:
                         consumerProperties:
                             key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
                             value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-                blob-storage:
+                blobstorage:
                     type: kafka
                     environment:
                         spring:

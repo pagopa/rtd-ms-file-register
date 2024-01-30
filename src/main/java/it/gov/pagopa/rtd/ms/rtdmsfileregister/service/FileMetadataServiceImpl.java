@@ -4,7 +4,6 @@ import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.DTOViola
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.EmptyFilenameException;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameAlreadyPresent;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameNotPresent;
-import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.StatusAlreadySet;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.domain.events.FileChangedFactory;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadata;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
