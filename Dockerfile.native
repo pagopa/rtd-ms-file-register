@@ -1,0 +1,20 @@
+FROM ghcr.io/graalvm/graalvm-community:21.0.2-ol9-20240116@sha256:6e46c711c90bdbc24e23ccdb6e3fba837d660e68dd4ffeb87abbd3d08e115653 AS builder
+
+WORKDIR /build
+COPY . .
+
+RUN ./mvnw clean package -Pnative -DskipTests
+
+FROM ubuntu:noble-20231221@sha256:38d380071057443ebb6d65566c03a98eaec411e84e04e5e16cff49b1d6fdc9a0 AS cve
+COPY --from=builder /build/target/rtd-ms-file-register*.jar .
+
+FROM ubuntu:noble-20231221@sha256:38d380071057443ebb6d65566c03a98eaec411e84e04e5e16cff49b1d6fdc9a0 AS runtime
+
+EXPOSE 8080
+
+RUN useradd --uid 10000 runner
+USER 10000
+
+COPY --from=builder /build/target/rtd-ms-file-register .
+
+ENTRYPOINT ["./rtd-ms-file-register"]
