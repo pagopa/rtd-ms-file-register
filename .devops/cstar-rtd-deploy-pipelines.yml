@@ -6,6 +6,10 @@ parameters:
     displayName: 'Launch maven and docker build'
     type: boolean
     default: true
+  - name: 'buildNative'
+    displayName: 'Deploy and build native version'
+    type: boolean
+    default: true
 
 trigger:
   branches:
@@ -19,6 +23,7 @@ trigger:
       - pom.xml
       - helm/*
       - Dockerfile
+      - Dockerfile.native
 
 pr: none
 
@@ -106,6 +111,10 @@ stages:
               containerRegistry: '$(dockerRegistryServiceConnection)'
               repository: '$(imageRepository)'
               command: 'buildAndPush'
+              ${{ if eq(parameters.buildNative, true) }}:
+                Dockerfile: 'Dockerfile.native'
+              ${{ else }}:
+                Dockerfile: 'Dockerfile'
               tags: |
                 $(Build.BuildId)
                 latest
