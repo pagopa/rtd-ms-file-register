@@ -9,8 +9,8 @@ microservice-chart:
       path: /actuator/health/liveness
       port: 8080
     initialDelaySeconds: 5
-    failureThreshold: 1
-    periodSeconds: 1
+    failureThreshold: 6
+    periodSeconds: 5
 
   readinessProbe:
     handlerType: httpGet
@@ -18,8 +18,8 @@ microservice-chart:
       path: /actuator/health/readiness
       port: 8080
     initialDelaySeconds: 5
-    failureThreshold: 1
-    periodSeconds: 1
+    failureThreshold: 6
+    periodSeconds: 5
 
   podAnnotations: { }
 
