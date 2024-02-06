@@ -8,7 +8,7 @@ microservice-chart:
     httpGet:
       path: /actuator/health/liveness
       port: 8080
-    failureThreshold: 6
+    failureThreshold: 1
     periodSeconds: 1
 
   readinessProbe:
@@ -16,7 +16,7 @@ microservice-chart:
     httpGet:
       path: /actuator/health/readiness
       port: 8080
-    failureThreshold: 6
+    failureThreshold: 1
     periodSeconds: 1
 
   podAnnotations: { }
