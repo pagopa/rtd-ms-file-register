@@ -22,8 +22,6 @@ public class FileMetadata {
   @NotBlank
   private String name;
 
-  @NotNull
-  @NotBlank
   private String container;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
