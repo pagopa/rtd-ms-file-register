@@ -14,6 +14,7 @@ import it.gov.pagopa.rtd.ms.rtdmsfileregister.adapter.BlobRegisterAdapter;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameAlreadyPresent;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.EventGridData;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.EventGridEvent;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.repository.FileMetadataRepository;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.FileMetadataService;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -59,7 +60,8 @@ class EventHandlerTest {
 
   @MockBean
   FileMetadataService fileMetadataService;
-
+  @MockBean
+  FileMetadataRepository repository;
   @SpyBean
   BlobRegisterAdapter blobRegisterAdapter;
 
@@ -326,7 +328,9 @@ class EventHandlerTest {
   @ExtendWith(OutputCaptureExtension.class)
   void fileAlreadyPresentWarning(CapturedOutput capturedOutput) {
     when(fileMetadataService.storeFileMetadata(any())).thenThrow(new FilenameAlreadyPresent());
-    String uri = "/blobServices/default/containers/" + "ade-transactions-32489876908u74bh781e2db57k098c5ad00000000000" + "/blobs/" + "ADE.99999.TRNLOG.20220503.172038.001.csv.pgp";
+    String uri = "/blobServices/default/containers/"
+        + "ade-transactions-32489876908u74bh781e2db57k098c5ad00000000000" + "/blobs/"
+        + "ADE.99999.TRNLOG.20220503.172038.001.csv.pgp";
 
     myEvent.setSubject(uri);
     myList = List.of(myEvent);
@@ -344,7 +348,8 @@ class EventHandlerTest {
   @ExtendWith(OutputCaptureExtension.class)
   void fileAlreadyPresentIgnoreWarning(CapturedOutput capturedOutput) {
     when(fileMetadataService.storeFileMetadata(any())).thenThrow(new FilenameAlreadyPresent());
-    String uri = "/blobServices/default/containers/" + "ade" + "/blobs/" + "ack/CSTAR.ADEACK.20220826.013326.014.OK";
+    String uri = "/blobServices/default/containers/" + "ade" + "/blobs/"
+        + "ack/CSTAR.ADEACK.20220826.013326.014.OK";
 
     myEvent.setSubject(uri);
     myList = List.of(myEvent);

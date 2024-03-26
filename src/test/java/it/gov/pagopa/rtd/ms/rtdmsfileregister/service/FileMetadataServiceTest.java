@@ -309,13 +309,24 @@ class FileMetadataServiceTest {
 
     @Test
     void whenFileIsSplitThenFireDecryptedEvent() {
+      final var mockedEntity = new FileMetadataEntity();
+      mockedEntity.setName("parentFilename");
+      mockedEntity.setContainer("parentContainer");
+      mockedEntity.setType(FileType.AGGREGATES_CHUNK.getOrder());
+      mockedEntity.setStatus(FileStatus.SUCCESS.getOrder());
+      mockedEntity.setReceiveTimestamp(LocalDateTime.now());
+      mockedEntity.setSender("12345");
+      mockedEntity.setParent("parent");
+      mockedEntity.setApplication(FileApplication.ADE.getOrder());
+      mockedEntity.setSize(1234L);
+      when(fileMetadataRepository.findFirstByName(null)).thenReturn(mockedEntity);
       final var fileSplitEvent = mockFileEventMetadata(FileType.AGGREGATES_CHUNK,
           FileStatus.SUCCESS);
 
       service.storeFileMetadata(fileSplitEvent);
       Mockito.verify(fileChangedEventListener).handleFileChanged(
           new FileChanged(
-              "/" + fileSplitEvent.getContainer() + "/" + fileSplitEvent.getParent(),
+              "/" + mockedEntity.getContainer() + "/" + fileSplitEvent.getParent(),
               fileSplitEvent.getSender(),
               fileSplitEvent.getSize(),
               fileSplitEvent.getReceiveTimestamp(),
