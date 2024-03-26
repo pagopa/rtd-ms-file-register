@@ -8,6 +8,8 @@ spring:
     activate:
       on-profile: test
   cloud:
+    function:
+      definition: blobStorageConsumer
     stream:
       bindings:
         blobStorageConsumer-in-0: # name must match [handler name]-in-0
