@@ -80,7 +80,7 @@ class FileMetadataServiceTest {
 
   static String newTestFileMetadataJSON = "{\"name\":\"newFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"hash\":\"090ed8c1103eb1dc4bae0ac2aa608fa5c085648438b7d38cfc238b9a98eba545\",\"status\":1,\"application\":0,\"size\":5555,\"type\":0}";
 
-  private String metadataUpdatesJSON = "{\"name\":\"presentFilename\",\"container\": \"ade-decrypted\",\"status\":1,\"application\":0,\"size\":0,\"type\":0}";
+  private String metadataUpdatesJSON = "{\"name\":\"presentFilename\",\"container\": \"ade-transactions-decrypted\",\"status\":1,\"application\":0,\"size\":0,\"type\":0}";
 
   private String notPresentMetadataUpdatesJSON = "{\"name\":\"notPresentFilename\",\"container\": \"ade-decrypted\",\"status\":1,\"application\":0,\"size\":0,\"type\":0}";
 
