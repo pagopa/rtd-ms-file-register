@@ -309,16 +309,7 @@ class FileMetadataServiceTest {
 
     @Test
     void whenFileIsSplitThenFireDecryptedEvent() {
-      final var mockedEntity = new FileMetadataEntity();
-      mockedEntity.setName("parentFilename");
-      mockedEntity.setContainer("parentContainer");
-      mockedEntity.setType(FileType.AGGREGATES_CHUNK.getOrder());
-      mockedEntity.setStatus(FileStatus.SUCCESS.getOrder());
-      mockedEntity.setReceiveTimestamp(LocalDateTime.now());
-      mockedEntity.setSender("12345");
-      mockedEntity.setParent("parent");
-      mockedEntity.setApplication(FileApplication.ADE.getOrder());
-      mockedEntity.setSize(1234L);
+      final var mockedEntity = getMockedParent();
       when(fileMetadataRepository.findFirstByName(null)).thenReturn(mockedEntity);
       final var fileSplitEvent = mockFileEventMetadata(FileType.AGGREGATES_CHUNK,
           FileStatus.SUCCESS);
@@ -327,6 +318,24 @@ class FileMetadataServiceTest {
       Mockito.verify(fileChangedEventListener).handleFileChanged(
           new FileChanged(
               "/" + mockedEntity.getContainer() + "/" + fileSplitEvent.getParent(),
+              fileSplitEvent.getSender(),
+              fileSplitEvent.getSize(),
+              fileSplitEvent.getReceiveTimestamp(),
+              FileChanged.Type.DECRYPTED
+          )
+      );
+    }
+
+    @Test
+    void givenNoParentFileWhenFileIsSplitThenFireDecryptedEvent() {
+      when(fileMetadataRepository.findFirstByName(null)).thenReturn(null);
+      final var fileSplitEvent = mockFileEventMetadata(FileType.AGGREGATES_CHUNK,
+          FileStatus.SUCCESS);
+
+      service.storeFileMetadata(fileSplitEvent);
+      Mockito.verify(fileChangedEventListener).handleFileChanged(
+          new FileChanged(
+              "/" + fileSplitEvent.getContainer() + "/" + fileSplitEvent.getParent(),
               fileSplitEvent.getSender(),
               fileSplitEvent.getSize(),
               fileSplitEvent.getReceiveTimestamp(),
@@ -439,5 +448,19 @@ class FileMetadataServiceTest {
           .thenReturn(modelMapper.map(fileMetadataDTO, FileMetadataEntity.class));
       return fileMetadataDTO;
     }
+  }
+
+  private FileMetadataEntity getMockedParent() {
+    final var mockedEntity = new FileMetadataEntity();
+    mockedEntity.setName("parentFilename");
+    mockedEntity.setContainer("parentContainer");
+    mockedEntity.setType(FileType.AGGREGATES_CHUNK.getOrder());
+    mockedEntity.setStatus(FileStatus.SUCCESS.getOrder());
+    mockedEntity.setReceiveTimestamp(LocalDateTime.now());
+    mockedEntity.setSender("12345");
+    mockedEntity.setParent("parent");
+    mockedEntity.setApplication(FileApplication.ADE.getOrder());
+    mockedEntity.setSize(1234L);
+    return mockedEntity;
   }
 }
