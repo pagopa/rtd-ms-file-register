@@ -5,10 +5,10 @@ import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadata;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.repository.FileMetadataRepository;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
-@Component
+@Slf4j
 public class DecryptedEventCommand implements Function<FileMetadata, FileChanged> {
 
   private final FileMetadataRepository repository;
@@ -22,8 +22,15 @@ public class DecryptedEventCommand implements Function<FileMetadata, FileChanged
         namingConventionPolicy.extractParentFileName(fileMetadata.getName(),
             fileMetadata.getContainer()));
 
-    // todo if absent then raise error?
+    if (parentFile == null) {
+      log.warn("Cannot find parent file from DB!");
+      // return container of the actual file, not the parent's
+      return new FileChanged("/" + fileMetadata.getContainer() + "/" + fileMetadata.getParent(),
+          fileMetadata.getSender(), fileMetadata.getSize(), fileMetadata.getReceiveTimestamp(),
+          StatusMapper.getFileChangedTypeFromFile(fileMetadata));
+    }
 
+    // return container of the parent pgp file
     return new FileChanged("/" + parentFile.getContainer() + "/" + fileMetadata.getParent(),
         fileMetadata.getSender(), fileMetadata.getSize(), fileMetadata.getReceiveTimestamp(),
         StatusMapper.getFileChangedTypeFromFile(fileMetadata));
