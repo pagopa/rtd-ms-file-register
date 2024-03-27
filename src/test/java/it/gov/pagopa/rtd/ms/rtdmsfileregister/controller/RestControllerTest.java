@@ -55,7 +55,7 @@ class RestControllerTest {
 
   static String SENDER_ADE_ACK_ENDPOINT = "/sender-ade-ack";
 
-  static String TEST_FILE_METADATA = "{\"name\":\"presentFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"application\":0,\"size\":0,\"type\":0}";
+  static String TEST_FILE_METADATA = "{\"name\":\"presentFilename\",\"container\": \"ade-decrypted\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"application\":0,\"size\":0,\"type\":0}";
 
   static String UPDATED_TEST_FILE_METADATA = "{\"name\":\"presentFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"hash\":\"0c8795b2d35316c58136ec2c62056e23e9e620e3b6ec6653661db7a76abd38b5\",\"status\":1}";
 

@@ -4,9 +4,7 @@ import it.gov.pagopa.rtd.ms.rtdmsfileregister.adapter.BlobRegisterAdapter;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.EventGridEvent;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import lombok.Getter;
-
 import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +27,6 @@ public class EventHandler {
   public Consumer<Message<List<EventGridEvent>>> blobStorageConsumer(BlobRegisterAdapter blobRegisterAdapter) {
     return message -> message.getPayload().stream()
         .filter(e -> "Microsoft.Storage.BlobCreated".equals(e.getEventType()))
-        .map(blobRegisterAdapter::evaluateEvent)
-        .collect(Collectors.toList());
+        .forEach(blobRegisterAdapter::evaluateEvent);
   }
 }

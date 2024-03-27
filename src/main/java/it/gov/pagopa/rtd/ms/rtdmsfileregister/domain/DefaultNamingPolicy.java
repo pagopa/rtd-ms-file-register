@@ -35,6 +35,41 @@ public class DefaultNamingPolicy implements NamingConventionPolicy {
     return null;
   }
 
+  @Override
+  public String extractParentFileName(String filename, String container) {
+    return extractParentFileName(filename, extractFileTypeFromContainer(container));
+  }
+
+  @Override
+  public FileType extractFileTypeFromContainer(String containerName) {
+    // RTD types
+    if (containerName.matches("rtd-transactions-[a-z0-9]{44}")) {
+      return FileType.TRANSACTIONS_SOURCE;
+    }
+    if (containerName.matches("rtd-transactions-decrypted")) {
+      return FileType.TRANSACTIONS_CHUNK;
+    }
+
+    // ADE types
+    if (containerName.matches("ade-transactions-[a-z0-9]{44}")) {
+      return FileType.AGGREGATES_SOURCE;
+    }
+    if (containerName.matches("ade-transactions-decrypted")) {
+      return FileType.AGGREGATES_CHUNK;
+    }
+    if (containerName.matches("ade/in")) {
+      return FileType.AGGREGATES_DESTINATION;
+    }
+    if (containerName.matches("ade/ack")) {
+      return FileType.ADE_ACK;
+    }
+    if (containerName.matches("sender-ade-ack/[A-Z0-9]{5}")) {
+      return FileType.SENDER_ADE_ACK;
+    }
+
+    return FileType.UNKNOWN;
+  }
+
   private Optional<String> extractBatchServiceChunk(String[] parts) {
     final var chunkInfo = extractChunkInfo(parts);
     return chunkInfo.getFirst().equals("00")

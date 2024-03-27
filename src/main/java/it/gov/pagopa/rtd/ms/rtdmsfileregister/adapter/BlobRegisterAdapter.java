@@ -2,13 +2,16 @@ package it.gov.pagopa.rtd.ms.rtdmsfileregister.adapter;
 
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.controller.RestController.FilenameAlreadyPresent;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.domain.NamingConventionPolicy;
-import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.*;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.EventGridEvent;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileApplication;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileMetadataDTO;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileStatus;
+import it.gov.pagopa.rtd.ms.rtdmsfileregister.model.FileType;
 import it.gov.pagopa.rtd.ms.rtdmsfileregister.service.FileMetadataService;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 @Service
 @Slf4j
@@ -31,7 +34,7 @@ public class BlobRegisterAdapter {
   private final FileMetadataService fileMetadataService;
   private final NamingConventionPolicy namingConventionPolicy;
 
-  public EventGridEvent evaluateEvent(EventGridEvent event) {
+  public void evaluateEvent(EventGridEvent event) {
     LocalDateTime eventTimeinLocal = event.getEventTime();
 
     String uri = event.getSubject();
@@ -42,7 +45,7 @@ public class BlobRegisterAdapter {
 
     if (fileType == FileType.UNKNOWN) {
       log.info(EVENT_NOT_OF_INTEREST_MSG + event.getSubject());
-      return null;
+      return;
     }
 
     log.info("Received event: " + event.getSubject());
@@ -53,7 +56,7 @@ public class BlobRegisterAdapter {
         || fileType == FileType.SENDER_ADE_ACK) {
       if (parts.length < 8) {
         log.info(EVENT_NOT_OF_INTEREST_MSG + event.getSubject());
-        return null;
+        return;
       }
       blobName = parts[7];
     } else {
@@ -61,17 +64,12 @@ public class BlobRegisterAdapter {
     }
 
     FileMetadataDTO fileMetadata = new FileMetadataDTO();
-
     fileMetadata.setName(blobName);
-
+    fileMetadata.setContainer(containerName);
     fileMetadata.setReceiveTimestamp(eventTimeinLocal);
-
     fileMetadata.setStatus(FileStatus.SUCCESS.getOrder());
-
     fileMetadata.setType(fileType.getOrder());
-
     fileMetadata.setApplication(evaluateApplication(fileType).getOrder());
-
     fileMetadata.setSender(extractSender(blobName, fileType));
 
     if (event.getData() == null) {
@@ -96,7 +94,6 @@ public class BlobRegisterAdapter {
     }
 
     log.info("Evaluated event: {}", event.getSubject());
-    return event;
   }
 
   public String extractContainer(String containerName, String subContainerName) {
@@ -107,32 +104,7 @@ public class BlobRegisterAdapter {
   }
 
   public FileType evaluateContainer(String containerName) {
-    // RTD types
-    if (containerName.matches("rtd-transactions-[a-z0-9]{44}")) {
-      return FileType.TRANSACTIONS_SOURCE;
-    }
-    if (containerName.matches("rtd-transactions-decrypted")) {
-      return FileType.TRANSACTIONS_CHUNK;
-    }
-
-    // ADE types
-    if (containerName.matches("ade-transactions-[a-z0-9]{44}")) {
-      return FileType.AGGREGATES_SOURCE;
-    }
-    if (containerName.matches("ade-transactions-decrypted")) {
-      return FileType.AGGREGATES_CHUNK;
-    }
-    if (containerName.matches("ade/in")) {
-      return FileType.AGGREGATES_DESTINATION;
-    }
-    if (containerName.matches("ade/ack")) {
-      return FileType.ADE_ACK;
-    }
-    if (containerName.matches("sender-ade-ack/[A-Z0-9]{5}")) {
-      return FileType.SENDER_ADE_ACK;
-    }
-
-    return FileType.UNKNOWN;
+    return namingConventionPolicy.extractFileTypeFromContainer(containerName);
   }
 
   public FileApplication evaluateApplication(FileType fileType) {
