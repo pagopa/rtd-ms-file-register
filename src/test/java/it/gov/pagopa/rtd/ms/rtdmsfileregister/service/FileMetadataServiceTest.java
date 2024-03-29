@@ -82,7 +82,7 @@ class FileMetadataServiceTest {
 
   private String metadataUpdatesJSON = "{\"name\":\"presentFilename\",\"container\": \"ade-transactions-decrypted\",\"status\":1,\"application\":0,\"size\":0,\"type\":0}";
 
-  private String notPresentMetadataUpdatesJSON = "{\"name\":\"notPresentFilename\",\"container\": \"ade-decrypted\",\"status\":1,\"application\":0,\"size\":0,\"type\":0}";
+  private String notPresentMetadataUpdatesJSON = "{\"name\":\"notPresentFilename\",\"container\": \"ade-transactions-decrypted\",\"status\":1,\"application\":0,\"size\":0,\"type\":0}";
 
 
   @BeforeEach
