@@ -230,7 +230,7 @@ class FileMetadataServiceTest {
 
   @ParameterizedTest
   @ValueSource(strings = {
-      "{\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"container\": \"ade-decrypted\",\"status\":0,\"application\":0,\"size\":0,\"type\":0}",
+      "{\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"container\": \"ade-transactions-decrypted\",\"status\":0,\"application\":0,\"size\":0,\"type\":0}",
       "{\"name\":\"\",\"container\": \"ade-decrypted\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":0}",
   })
   void updateKoEmptyFilename(String body) throws JsonProcessingException {
