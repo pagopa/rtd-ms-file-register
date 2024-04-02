@@ -48,7 +48,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 
 @DataMongoTest
-@ContextConfiguration(classes = {AppConfiguration.class, FileMetadataServiceImpl.class, RtdMsFileRegisterApplication.class})
+@ContextConfiguration(classes = {AppConfiguration.class, FileMetadataServiceImpl.class,
+    RtdMsFileRegisterApplication.class})
 @EntityScan("it.gov.pagopa.rtd.ms.rtdmsfileregister.model")
 class FileMetadataServiceTest {
 
@@ -79,9 +80,9 @@ class FileMetadataServiceTest {
 
   static String newTestFileMetadataJSON = "{\"name\":\"newFilename\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"hash\":\"090ed8c1103eb1dc4bae0ac2aa608fa5c085648438b7d38cfc238b9a98eba545\",\"status\":1,\"application\":0,\"size\":5555,\"type\":0}";
 
-  private String metadataUpdatesJSON = "{\"name\":\"presentFilename\",\"status\":1,\"application\":0,\"size\":0,\"type\":0}";
+  private String metadataUpdatesJSON = "{\"name\":\"presentFilename\",\"container\": \"ade-transactions-decrypted\",\"status\":1,\"application\":0,\"size\":0,\"type\":0}";
 
-  private String notPresentMetadataUpdatesJSON = "{\"name\":\"notPresentFilename\",\"status\":1,\"application\":0,\"size\":0,\"type\":0}";
+  private String notPresentMetadataUpdatesJSON = "{\"name\":\"notPresentFilename\",\"container\": \"ade-transactions-decrypted\",\"status\":1,\"application\":0,\"size\":0,\"type\":0}";
 
 
   @BeforeEach
@@ -229,8 +230,8 @@ class FileMetadataServiceTest {
 
   @ParameterizedTest
   @ValueSource(strings = {
-      "{\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"application\":0,\"size\":0,\"type\":0}",
-      "{\"name\":\"\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":0}",
+      "{\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"container\": \"ade-transactions-decrypted\",\"status\":0,\"application\":0,\"size\":0,\"type\":0}",
+      "{\"name\":\"\",\"container\": \"ade-transactions-decrypted\",\"receiveTimestamp\":\"2020-08-06T11:19:16.500\",\"status\":0,\"type\":0,\"application\":0,\"size\":0}",
   })
   void updateKoEmptyFilename(String body) throws JsonProcessingException {
     ObjectMapper objectMapper = new ObjectMapper();
@@ -288,51 +289,75 @@ class FileMetadataServiceTest {
 
   @Nested
   class FireEventTests {
+
     @Test
     void whenFileIsUploadedThenFireReceivedEvent() {
-      final var fileUploadEvent = mockFileEventMetadata(FileType.AGGREGATES_SOURCE, FileStatus.SUCCESS);
+      final var fileUploadEvent = mockFileEventMetadata(FileType.AGGREGATES_SOURCE,
+          FileStatus.SUCCESS);
 
       service.storeFileMetadata(fileUploadEvent);
       Mockito.verify(fileChangedEventListener).handleFileChanged(
-              new FileChanged(
-                      fileUploadEvent.getParent(),
-                      fileUploadEvent.getSender(),
-                      fileUploadEvent.getSize(),
-                      fileUploadEvent.getReceiveTimestamp(),
-                      FileChanged.Type.RECEIVED
-              )
+          new FileChanged(
+              "/" + fileUploadEvent.getContainer() + "/" + fileUploadEvent.getParent(),
+              fileUploadEvent.getSender(),
+              fileUploadEvent.getSize(),
+              fileUploadEvent.getReceiveTimestamp(),
+              FileChanged.Type.RECEIVED
+          )
       );
     }
 
     @Test
     void whenFileIsSplitThenFireDecryptedEvent() {
-      final var fileSplitEvent = mockFileEventMetadata(FileType.AGGREGATES_CHUNK, FileStatus.SUCCESS);
+      final var mockedEntity = getMockedParent();
+      when(fileMetadataRepository.findFirstByName(null)).thenReturn(mockedEntity);
+      final var fileSplitEvent = mockFileEventMetadata(FileType.AGGREGATES_CHUNK,
+          FileStatus.SUCCESS);
 
       service.storeFileMetadata(fileSplitEvent);
       Mockito.verify(fileChangedEventListener).handleFileChanged(
-              new FileChanged(
-                      fileSplitEvent.getParent(),
-                      fileSplitEvent.getSender(),
-                      fileSplitEvent.getSize(),
-                      fileSplitEvent.getReceiveTimestamp(),
-                      FileChanged.Type.DECRYPTED
-              )
+          new FileChanged(
+              "/" + mockedEntity.getContainer() + "/" + fileSplitEvent.getParent(),
+              fileSplitEvent.getSender(),
+              fileSplitEvent.getSize(),
+              fileSplitEvent.getReceiveTimestamp(),
+              FileChanged.Type.DECRYPTED
+          )
+      );
+    }
+
+    @Test
+    void givenNoParentFileWhenFileIsSplitThenFireDecryptedEvent() {
+      when(fileMetadataRepository.findFirstByName(null)).thenReturn(null);
+      final var fileSplitEvent = mockFileEventMetadata(FileType.AGGREGATES_CHUNK,
+          FileStatus.SUCCESS);
+
+      service.storeFileMetadata(fileSplitEvent);
+      Mockito.verify(fileChangedEventListener).handleFileChanged(
+          new FileChanged(
+              "/" + fileSplitEvent.getContainer() + "/" + fileSplitEvent.getParent(),
+              fileSplitEvent.getSender(),
+              fileSplitEvent.getSize(),
+              fileSplitEvent.getReceiveTimestamp(),
+              FileChanged.Type.DECRYPTED
+          )
       );
     }
 
     @Test
     void whenFileIsMovedToAdeThenFireSentToAdeEvent() {
-      final var moveToAdeEvent = mockFileEventMetadata(FileType.AGGREGATES_DESTINATION, FileStatus.SUCCESS);
+      final var moveToAdeEvent = mockFileEventMetadata(FileType.AGGREGATES_DESTINATION,
+          FileStatus.SUCCESS);
 
       service.storeFileMetadata(moveToAdeEvent);
       verify(fileChangedEventListener).handleFileChanged(
-              new FileChanged(
-                      moveToAdeEvent.getParent(),
-                      moveToAdeEvent.getSender(),
-                      moveToAdeEvent.getSize(),
-                      moveToAdeEvent.getReceiveTimestamp(),
-                      FileChanged.Type.SENT_TO_ADE
-              )
+          new FileChanged(
+              "/" + moveToAdeEvent.getContainer() + "/" + moveToAdeEvent.getParent(),
+              moveToAdeEvent.getSender(),
+              moveToAdeEvent.getSize(),
+              moveToAdeEvent.getReceiveTimestamp(),
+              FileChanged.Type.SENT_TO_ADE
+          )
       );
     }
 
@@ -341,53 +366,60 @@ class FileMetadataServiceTest {
       final var ackReadyEvent = mockFileEventMetadata(FileType.SENDER_ADE_ACK, FileStatus.SUCCESS);
       service.storeFileMetadata(ackReadyEvent);
       verify(fileChangedEventListener).handleFileChanged(
-              new FileChanged(
-                      ackReadyEvent.getParent(),
-                      ackReadyEvent.getSender(),
-                      ackReadyEvent.getSize(),
-                      ackReadyEvent.getReceiveTimestamp(),
-                      FileChanged.Type.ACK_TO_DOWNLOAD
-              )
+          new FileChanged(
+              "/" + ackReadyEvent.getContainer() + "/" + ackReadyEvent.getParent(),
+              ackReadyEvent.getSender(),
+              ackReadyEvent.getSize(),
+              ackReadyEvent.getReceiveTimestamp(),
+              FileChanged.Type.ACK_TO_DOWNLOAD
+          )
       );
     }
 
     @Test
     void whenAckIsImplicitAckedThenFireAckDownloadedEvent() {
-      final var ackAckedEvent = mockFileEventMetadata(FileType.SENDER_ADE_ACK, FileStatus.DOWNLOAD_ENDED);
-      when(fileMetadataRepository.findFirstByName("filename")).thenReturn(modelMapper.map(ackAckedEvent, FileMetadataEntity.class));
+      final var ackAckedEvent = mockFileEventMetadata(FileType.SENDER_ADE_ACK,
+          FileStatus.DOWNLOAD_ENDED);
+      when(fileMetadataRepository.findFirstByName("filename"))
+          .thenReturn(modelMapper.map(ackAckedEvent, FileMetadataEntity.class));
       service.updateFileMetadata(ackAckedEvent);
       verify(fileChangedEventListener).handleFileChanged(
-              new FileChanged(
-                      ackAckedEvent.getParent(),
-                      ackAckedEvent.getSender(),
-                      ackAckedEvent.getSize(),
-                      ackAckedEvent.getReceiveTimestamp(),
-                      FileChanged.Type.ACK_DOWNLOADED
-              )
+          new FileChanged(
+              "/" + ackAckedEvent.getContainer() + "/" + ackAckedEvent.getParent(),
+              ackAckedEvent.getSender(),
+              ackAckedEvent.getSize(),
+              ackAckedEvent.getReceiveTimestamp(),
+              FileChanged.Type.ACK_DOWNLOADED
+          )
       );
     }
 
     @Test
     void whenAckIsExplicitAckedThenFireAckDownloadEvent() {
-      final var ackReadyEvent = mockFileEventMetadata(FileType.SENDER_ADE_ACK, FileStatus.DOWNLOAD_STARTED);
-      final var ackAckedEvent = mockFileEventMetadata(FileType.SENDER_ADE_ACK, FileStatus.DOWNLOAD_ENDED);
-      when(fileMetadataRepository.findFirstByName("filename")).thenReturn(modelMapper.map(ackReadyEvent, FileMetadataEntity.class));
+      final var ackReadyEvent = mockFileEventMetadata(FileType.SENDER_ADE_ACK,
+          FileStatus.DOWNLOAD_STARTED);
+      final var ackAckedEvent = mockFileEventMetadata(FileType.SENDER_ADE_ACK,
+          FileStatus.DOWNLOAD_ENDED);
+      when(fileMetadataRepository.findFirstByName("filename"))
+          .thenReturn(modelMapper.map(ackReadyEvent, FileMetadataEntity.class));
       service.updateStatus(ackAckedEvent.getName(), FileStatus.DOWNLOAD_ENDED.getOrder());
       verify(fileChangedEventListener).handleFileChanged(
-              new FileChanged(
-                      ackAckedEvent.getParent(),
-                      ackAckedEvent.getSender(),
-                      ackAckedEvent.getSize(),
-                      ackAckedEvent.getReceiveTimestamp(),
-                      FileChanged.Type.ACK_DOWNLOADED
-              )
+          new FileChanged(
+              "/" + ackAckedEvent.getContainer() + "/" + ackAckedEvent.getParent(),
+              ackAckedEvent.getSender(),
+              ackAckedEvent.getSize(),
+              ackAckedEvent.getReceiveTimestamp(),
+              FileChanged.Type.ACK_DOWNLOADED
+          )
       );
     }
 
     @Test
     void whenAckIsExplicitAckedThenFireAckDownloadEventEvenIfItHasBeenAlreadyDownloaded() {
-      final var ackAckedEvent = mockFileEventMetadata(FileType.SENDER_ADE_ACK, FileStatus.DOWNLOAD_ENDED);
-      when(fileMetadataRepository.findFirstByName("filename")).thenReturn(modelMapper.map(ackAckedEvent, FileMetadataEntity.class));
+      final var ackAckedEvent = mockFileEventMetadata(FileType.SENDER_ADE_ACK,
+          FileStatus.DOWNLOAD_ENDED);
+      when(fileMetadataRepository.findFirstByName("filename"))
+          .thenReturn(modelMapper.map(ackAckedEvent, FileMetadataEntity.class));
 
       service.updateStatus("filename", FileStatus.DOWNLOAD_ENDED.getOrder());
 
@@ -404,6 +436,7 @@ class FileMetadataServiceTest {
     private FileMetadataDTO mockFileEventMetadata(FileType type, FileStatus status) {
       final var fileMetadataDTO = new FileMetadataDTO();
       fileMetadataDTO.setName("filename");
+      fileMetadataDTO.setContainer("container");
       fileMetadataDTO.setType(type.getOrder());
       fileMetadataDTO.setStatus(status.getOrder());
       fileMetadataDTO.setReceiveTimestamp(LocalDateTime.now());
@@ -411,8 +444,23 @@ class FileMetadataServiceTest {
       fileMetadataDTO.setParent("parent");
       fileMetadataDTO.setApplication(FileApplication.ADE.getOrder());
       fileMetadataDTO.setSize(1234L);
-      when(fileMetadataRepository.save(any())).thenReturn(modelMapper.map(fileMetadataDTO, FileMetadataEntity.class));
+      when(fileMetadataRepository.save(any()))
+          .thenReturn(modelMapper.map(fileMetadataDTO, FileMetadataEntity.class));
       return fileMetadataDTO;
     }
+  }
+
+  private FileMetadataEntity getMockedParent() {
+    final var mockedEntity = new FileMetadataEntity();
+    mockedEntity.setName("parentFilename");
+    mockedEntity.setContainer("parentContainer");
+    mockedEntity.setType(FileType.AGGREGATES_CHUNK.getOrder());
+    mockedEntity.setStatus(FileStatus.SUCCESS.getOrder());
+    mockedEntity.setReceiveTimestamp(LocalDateTime.now());
+    mockedEntity.setSender("12345");
+    mockedEntity.setParent("parent");
+    mockedEntity.setApplication(FileApplication.ADE.getOrder());
+    mockedEntity.setSize(1234L);
+    return mockedEntity;
   }
 }
