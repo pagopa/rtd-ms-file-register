@@ -9,8 +9,8 @@ import java.util.Optional;
  */
 public interface FileChangedFactory {
 
-  static FileChangedFactory typeStatusBased() {
-    return new TypeStatusFileChangedFactory();
+  static FileChangedFactory typeStatusBased(DecryptedEventCommand command) {
+    return new TypeStatusFileChangedFactory(command);
   }
 
   Optional<FileChanged> createFrom(FileMetadata fileMetadata);
