@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Data
 public class FileChanged {
 
-  private final String fileName;
+  private final String filePath;
   private final String sender;
   private final Long size;
   private final LocalDateTime receiveTimestamp;
