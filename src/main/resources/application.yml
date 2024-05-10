@@ -6,12 +6,13 @@ logging:
 
 
 # OpenTelemetry
-applicationinsights.enabled: '@applicationinsights.enabled@'
+applicationinsights:
+    enabled: '@applicationinsights.enabled@'
+    connection-string: ${APPLICATIONINSIGHTS_CONNECTION_STRING:myconnectionstring}
 otel.log.level: ${OPENTELEMETRY_LOG_LEVEL:INFO}
 otel.instrumentation.logback-appender.enabled: true # enable logback instrumentation
 otel.traces.sampler.probability: 1.0 # sample probability for tracing (spans)
 otel.metric.export.interval: 60000 # sampling rate for metrics (millis)
-otel.exporter.otlp.enabled: false # disable send to OTLP endpoint
 
 # Enable only health probes
 management:
