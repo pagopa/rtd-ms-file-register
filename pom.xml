@@ -166,8 +166,8 @@
 								<enabled>true</enabled>
 							</metadataRepository>
 							<buildArgs>
-								<arg>
-									--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback</arg>
+								<arg>--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback</arg>
+								<arg>--initialize-at-build-time=com.azure.core.util.logging.ClientLogger</arg>
 							</buildArgs>
 						</configuration>
 						<executions>
