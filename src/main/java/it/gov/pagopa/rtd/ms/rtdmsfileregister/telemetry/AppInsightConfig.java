@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.mongo.MongoClientSettingsBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 /**
  * Configuration for AppInsight OpenTelemetry. Connection string will automatically take from
@@ -17,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnProperty(value = "applicationinsights.enabled", havingValue = "true", matchIfMissing = false)
+@Import(SpringCloudKafkaBinderInstrumentation.class)
 public class AppInsightConfig {
 
   private final AzureMonitorExporterBuilder azureMonitorExporterBuilder;
