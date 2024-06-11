@@ -21,7 +21,6 @@
 		<snakeyaml.version>2.2</snakeyaml.version>
 		<swagger-annotations.version>2.2.22</swagger-annotations.version>
 		<modelmapper.version>3.2.0</modelmapper.version>
-		<kafka.version>3.7.0</kafka.version>
 		<sonar.exclusions>**/telemetry/**.java</sonar.exclusions>
 		<applicationinsights.enabled>true</applicationinsights.enabled>
 	</properties>
