@@ -5,10 +5,10 @@ COPY . .
 
 RUN ./mvnw clean package -Pnative -DskipTests
 
-FROM ubuntu:noble-20240225@sha256:723ad8033f109978f8c7e6421ee684efb624eb5b9251b70c6788fdb2405d050b AS cve
+FROM ubuntu:noble-20240530@sha256:e3f92abc0967a6c19d0dfa2d55838833e947b9d74edbcb0113e48535ad4be12a AS cve
 COPY --from=builder /build/target/rtd-ms-file-register*.jar .
 
-FROM ubuntu:noble-20240225@sha256:723ad8033f109978f8c7e6421ee684efb624eb5b9251b70c6788fdb2405d050b AS runtime
+FROM ubuntu:noble-20240530@sha256:e3f92abc0967a6c19d0dfa2d55838833e947b9d74edbcb0113e48535ad4be12a AS runtime
 
 EXPOSE 8080
 
