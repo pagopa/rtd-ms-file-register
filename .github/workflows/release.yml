@@ -17,17 +17,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 #v4.1.1
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
         with:
           persist-credentials: false
           fetch-depth: 0
-
-      - name: Release
-        uses: cycjimmy/semantic-release-action@61680d0e9b02ff86f5648ade99e01be17f0260a4 #v4.0.0
+      - name: Setup Node.js
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
-          semantic_version: 18.0.0
+          node-version: 20
+          scope: 'cycjimmy'
+      - name: Release
+        uses: cycjimmy/semantic-release-action@cb425203a562475bca039ba4dbf90c7f9ac790f4 # v4.1.0
+        with:
           extra_plugins: |
-            semantic-release/release-notes-generator#5f9d65debbb60057c0d35d3a198e41f5bf09cf0f #v10.0.3
-            semantic-release/git#3e934d45f97fd07a63617c0fc098c9ed3e67d97a #v10.0.1
+            semantic-release/release-notes-generator#fff490d209c7bb69b71bd704cd19d0363eeca4ff
+            semantic-release/git#3e934d45f97fd07a63617c0fc098c9ed3e67d97a
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
