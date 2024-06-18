@@ -6,12 +6,23 @@ logging:
 
 
 # OpenTelemetry
-applicationinsights.enabled: '@applicationinsights.enabled@'
-otel.log.level: ${OPENTELEMETRY_LOG_LEVEL:INFO}
-otel.instrumentation.logback-appender.enabled: true # enable logback instrumentation
-otel.traces.sampler.probability: 1.0 # sample probability for tracing (spans)
-otel.metric.export.interval: 60000 # sampling rate for metrics (millis)
-otel.exporter.otlp.enabled: false # disable send to OTLP endpoint
+applicationinsights:
+    enabled: '@applicationinsights.enabled@'
+    connection-string: ${APPLICATIONINSIGHTS_CONNECTION_STRING:myconnectionstring}
+otel:
+    log:
+        level: ${OPENTELEMETRY_LOG_LEVEL:INFO}
+    traces:
+        sampler:
+            probability: 1.0 # sample probability for tracing (spans)
+    metric:
+        export:
+            interval: 60000 # sampling rate for metrics (millis)
+    instrumentation:
+        logback-appender:
+            enabled: true # enable logback instrumentation
+        micrometer:
+            enabled: false
 
 # Enable only health probes
 management:
@@ -19,10 +30,10 @@ management:
         export.defaults.enabled: false
         enable:
             all: false
-            process.cpu: true
-            system.cpu: true
-            jvm.memory: true
-            application: true
+            process.cpu: false
+            system.cpu: false
+            jvm.memory: false
+            application: false
     info.defaults.enabled: false
     endpoints:
         enabled-by-default: false

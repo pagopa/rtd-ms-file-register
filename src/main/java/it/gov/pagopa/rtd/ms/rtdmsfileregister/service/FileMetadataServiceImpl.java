@@ -161,7 +161,7 @@ public class FileMetadataServiceImpl implements FileMetadataService {
     if (event.isPresent()) {
       eventPublisher.publishEvent(event.get());
     } else {
-      log.warn("No event created for {}", fileMetadata);
+      log.info("No event created for {}", fileMetadata);
     }
   }
 }
