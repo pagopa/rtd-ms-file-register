@@ -23,7 +23,7 @@ public class DecryptedEventCommand implements Function<FileMetadata, FileChanged
             fileMetadata.getContainer()));
 
     if (parentFile == null) {
-      log.warn("Cannot find parent file from DB!");
+      log.info("Cannot find parent file from DB!");
       // return container of the actual file, not the parent's
       return new FileChanged("/" + fileMetadata.getContainer() + "/" + fileMetadata.getParent(),
           fileMetadata.getSender(), fileMetadata.getSize(), fileMetadata.getReceiveTimestamp(),
