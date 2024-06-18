@@ -73,13 +73,13 @@ public class BlobRegisterAdapter {
     fileMetadata.setSender(extractSender(blobName, fileType));
 
     if (event.getData() == null) {
-      log.warn("No metedata found for event: " + event.getSubject());
+      log.info("No metadata found for event: " + event.getSubject());
     } else if (event.getData().getContentLength() == null) {
-      log.warn("No content length found for event: " + event.getSubject());
+      log.info("No content length found for event: " + event.getSubject());
     } else {
       fileMetadata.setSize(event.getData().getContentLength());
-      if (fileMetadata.getSize() <= 0 || fileType != FileType.ADE_ACK) {
-        log.warn("File size is " + fileMetadata.getSize() + " for event: " + event.getSubject());
+      if (fileMetadata.getSize() <= 0 && fileType != FileType.ADE_ACK) {
+        log.info("File size is " + fileMetadata.getSize() + " for event: " + event.getSubject());
       }
     }
 
