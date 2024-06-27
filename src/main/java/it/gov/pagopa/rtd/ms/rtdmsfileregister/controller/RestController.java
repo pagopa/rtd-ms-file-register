@@ -85,7 +85,4 @@ public interface RestController {
 
   }
 
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
-  @ExceptionHandler(MethodArgumentNotValidException.class)
-  Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex);
 }
