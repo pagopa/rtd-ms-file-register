@@ -31,9 +31,9 @@ jobs:
       actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
     runs-on: ubuntu-latest
     outputs:
-        CVE_CRITICAL: ${{env.CVE_CRITICAL}}
-        CVE_HIGH: ${{env.CVE_HIGH}}
-        CVE_MEDIUM: ${{env.CVE_MEDIUM}}
+      CVE_CRITICAL: ${{env.CVE_CRITICAL}}
+      CVE_HIGH: ${{env.CVE_HIGH}}
+      CVE_MEDIUM: ${{env.CVE_MEDIUM}}
     steps:
       - name: Checkout the code
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
@@ -66,7 +66,7 @@ jobs:
   SendSlackNotification:
     needs: BuildAndScan
     uses: ./.github/workflows/send-notification.yml
-    if: github.event_name == 'schedule' && needs.BuildAndScan.steps.cve-threshold.outcome == 'failure'
+    if: always() && github.event_name == 'schedule' && needs.BuildAndScan.result == 'failure'
     with:
       CVE_CRITICAL: ${{needs.BuildAndScan.outputs.CVE_CRITICAL}}
       CVE_HIGH: ${{needs.BuildAndScan.outputs.CVE_HIGH}}
