@@ -1,14 +1,14 @@
-FROM ghcr.io/graalvm/graalvm-community:21.0.2-ol9-20240116@sha256:6e46c711c90bdbc24e23ccdb6e3fba837d660e68dd4ffeb87abbd3d08e115653 AS builder
+FROM ghcr.io/graalvm/graalvm-community:23.0.1-ol8-20241015@sha256:c9012a16ed8858f7701f38ab04ea02d711bc5edaf143941cb122f537d1d3e69d AS builder
 
 WORKDIR /build
 COPY . .
 
 RUN ./mvnw clean package -Pnative -DskipTests
 
-FROM ubuntu:noble-20240530@sha256:e3f92abc0967a6c19d0dfa2d55838833e947b9d74edbcb0113e48535ad4be12a AS cve
+FROM ubuntu:noble-20241011@sha256:99c35190e22d294cdace2783ac55effc69d32896daaa265f0bbedbcde4fbe3e5 AS cve
 COPY --from=builder /build/target/rtd-ms-file-register*.jar .
 
-FROM ubuntu:noble-20240530@sha256:e3f92abc0967a6c19d0dfa2d55838833e947b9d74edbcb0113e48535ad4be12a AS runtime
+FROM ubuntu:noble-20241011@sha256:99c35190e22d294cdace2783ac55effc69d32896daaa265f0bbedbcde4fbe3e5 AS runtime
 
 EXPOSE 8080
 
