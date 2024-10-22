@@ -1,4 +1,4 @@
-FROM ghcr.io/graalvm/graalvm-community:23.0.1-ol8-20241015@sha256:c9012a16ed8858f7701f38ab04ea02d711bc5edaf143941cb122f537d1d3e69d AS builder
+FROM ghcr.io/graalvm/graalvm-community:21.0.2-ol9-20240116@sha256:6e46c711c90bdbc24e23ccdb6e3fba837d660e68dd4ffeb87abbd3d08e115653 AS builder
 
 WORKDIR /build
 COPY . .
