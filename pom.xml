@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.1</version>
+		<version>3.3.4</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>it.gov.pagopa.rtd.ms</groupId>
@@ -17,10 +17,10 @@
 
 	<properties>
 		<java.version>17</java.version>
-		<spring-cloud.version>2023.0.2</spring-cloud.version>
+		<spring-cloud.version>2023.0.3</spring-cloud.version>
 		<snakeyaml.version>2.2</snakeyaml.version>
-		<swagger-annotations.version>2.2.22</swagger-annotations.version>
-		<modelmapper.version>3.2.0</modelmapper.version>
+		<swagger-annotations.version>2.2.25</swagger-annotations.version>
+		<modelmapper.version>3.2.1</modelmapper.version>
 		<sonar.exclusions>**/telemetry/**.java</sonar.exclusions>
 		<applicationinsights.enabled>true</applicationinsights.enabled>
 	</properties>
@@ -122,14 +122,14 @@
 			<dependency>
 				<groupId>io.opentelemetry</groupId>
 				<artifactId>opentelemetry-bom</artifactId>
-				<version>1.37.0</version>
+				<version>1.43.0</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
 			<dependency>
 				<groupId>io.opentelemetry.instrumentation</groupId>
-				<artifactId>opentelemetry-instrumentation-bom-alpha</artifactId>
-				<version>2.3.0-alpha</version>
+				<artifactId>opentelemetry-instrumentation-bom</artifactId>
+				<version>2.9.0</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -140,12 +140,12 @@
 			<dependency>
 				<groupId>io.projectreactor.netty</groupId>
 				<artifactId>reactor-netty-http</artifactId>
-				<version>1.1.14</version>
+				<version>1.1.23</version>
 			</dependency>
 			<dependency>
 				<groupId>io.projectreactor.netty</groupId>
 				<artifactId>reactor-netty-core</artifactId>
-				<version>1.1.14</version>
+				<version>1.1.23</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
