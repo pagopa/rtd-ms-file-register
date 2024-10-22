@@ -19,8 +19,8 @@
 		<java.version>17</java.version>
 		<spring-cloud.version>2023.0.3</spring-cloud.version>
 		<snakeyaml.version>2.2</snakeyaml.version>
-		<swagger-annotations.version>2.2.25</swagger-annotations.version>
-		<modelmapper.version>3.2.1</modelmapper.version>
+		<swagger-annotations.version>2.2.22</swagger-annotations.version>
+		<modelmapper.version>3.2.0</modelmapper.version>
 		<sonar.exclusions>**/telemetry/**.java</sonar.exclusions>
 		<applicationinsights.enabled>true</applicationinsights.enabled>
 	</properties>
