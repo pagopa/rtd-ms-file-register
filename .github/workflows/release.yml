@@ -30,7 +30,7 @@ jobs:
         uses: cycjimmy/semantic-release-action@b1b432f13acb7768e0c8efdec416d363a57546f2 # v4.1.1
         with:
           extra_plugins: |
-            semantic-release/release-notes-generator#fff490d209c7bb69b71bd704cd19d0363eeca4ff
+            semantic-release/release-notes-generator#44c780c6f9c1bf2643fe48b6718bd9a84b820132
             semantic-release/git#3e934d45f97fd07a63617c0fc098c9ed3e67d97a
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
