@@ -1,6 +1,6 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.telemetry;
 
-import com.azure.monitor.opentelemetry.exporter.AzureMonitorExporterBuilder;
+import com.azure.monitor.opentelemetry.exporter.AzureMonitorExporter;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.mongo.v3_1.MongoTelemetry;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdkBuilder;
@@ -21,22 +21,17 @@ import org.springframework.context.annotation.Import;
 @Import(SpringCloudKafkaBinderInstrumentation.class)
 public class AppInsightConfig {
 
-  private final AzureMonitorExporterBuilder azureMonitorExporterBuilder;
-
-  public AppInsightConfig(
-      @Value("${applicationinsights.connection-string}") String applicationInsights) {
-    this.azureMonitorExporterBuilder = new AzureMonitorExporterBuilder().connectionString(
-        applicationInsights);
-  }
-
+  
   @Bean
-  public AutoConfigurationCustomizerProvider otelCustomizer() {
+  public AutoConfigurationCustomizerProvider otelCustomizer(
+      @Value("${applicationinsights.connection-string}") String applicationInsights) {
     return p -> {
       if (p instanceof AutoConfiguredOpenTelemetrySdkBuilder) {
-        this.azureMonitorExporterBuilder.install((AutoConfiguredOpenTelemetrySdkBuilder) p);
+        AzureMonitorExporter.customize(p, applicationInsights);
       }
     };
   }
+
 
   @Bean
   MongoClientSettingsBuilderCustomizer mongoOpenTelemetryBridge(
