@@ -6,12 +6,12 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.1</version>
+		<version>3.3.5</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>it.gov.pagopa.rtd.ms</groupId>
 	<artifactId>rtd-ms-file-register</artifactId>
-	<version>2.0.0</version>
+	<version>2.0.1</version>
 	<name>rtd-ms-file-register</name>
 	<description>Micro-service designed to register the state of each and every file ingested by RTD</description>
 
@@ -78,7 +78,7 @@
 		<dependency>
 			<groupId>com.azure</groupId>
 			<artifactId>azure-monitor-opentelemetry-exporter</artifactId>
-			<version>1.0.0-beta.21</version>
+			<version>1.0.0-beta.30</version>
 		</dependency>
 
 		<!--		test-->
@@ -122,14 +122,14 @@
 			<dependency>
 				<groupId>io.opentelemetry</groupId>
 				<artifactId>opentelemetry-bom</artifactId>
-				<version>1.37.0</version>
+				<version>1.43.0</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
 			<dependency>
 				<groupId>io.opentelemetry.instrumentation</groupId>
 				<artifactId>opentelemetry-instrumentation-bom-alpha</artifactId>
-				<version>2.3.0-alpha</version>
+				<version>2.9.0-alpha</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -140,12 +140,12 @@
 			<dependency>
 				<groupId>io.projectreactor.netty</groupId>
 				<artifactId>reactor-netty-http</artifactId>
-				<version>1.1.14</version>
+				<version>1.1.23</version>
 			</dependency>
 			<dependency>
 				<groupId>io.projectreactor.netty</groupId>
 				<artifactId>reactor-netty-core</artifactId>
-				<version>1.1.14</version>
+				<version>1.1.23</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -167,6 +167,8 @@
 							<buildArgs>
 								<arg>--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback</arg>
 								<arg>--initialize-at-build-time=com.azure.core.util.logging.ClientLogger</arg>
+								<arg>--initialize-at-build-time=org.slf4j.helpers.Reporter</arg>
+
 							</buildArgs>
 						</configuration>
 						<executions>
