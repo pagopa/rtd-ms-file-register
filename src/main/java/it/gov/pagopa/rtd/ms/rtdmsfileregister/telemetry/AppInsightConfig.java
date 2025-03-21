@@ -1,6 +1,6 @@
 package it.gov.pagopa.rtd.ms.rtdmsfileregister.telemetry;
 
-import com.azure.monitor.opentelemetry.exporter.AzureMonitorExporter;
+import com.azure.monitor.opentelemetry.autoconfigure.AzureMonitorAutoConfigure;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdkBuilder;
 import io.opentelemetry.sdk.autoconfigure.spi.AutoConfigurationCustomizerProvider;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +24,7 @@ public class AppInsightConfig {
       @Value("${applicationinsights.connection-string}") String applicationInsights) {
     return p -> {
       if (p instanceof AutoConfiguredOpenTelemetrySdkBuilder) {
-        AzureMonitorExporter.customize(p, applicationInsights);
+        AzureMonitorAutoConfigure.customize(p, applicationInsights);
       }
     };
   }
