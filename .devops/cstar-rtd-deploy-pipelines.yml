@@ -32,7 +32,7 @@ resources:
 
 variables:
 
-  vmImageNameDefault: 'ubuntu-latest'
+  vmImageNameDefault: 'ubuntu-24.04'
 
   imageRepository: '$(K8S_IMAGE_REPOSITORY_NAME)'
   deployNamespace: '$(DEPLOY_NAMESPACE)'
