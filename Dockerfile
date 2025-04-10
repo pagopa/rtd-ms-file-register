@@ -1,17 +1,17 @@
-FROM public.ecr.aws/docker/library/maven:3.9.6-amazoncorretto-17@sha256:b64f097a87e94f3fb433649f2a49270564fa626494d7d6bfd8955f32da794210 AS buildtime
+FROM public.ecr.aws/docker/library/maven:3.9.6-amazoncorretto-21@sha256:16dbd3a488a582cff1e42489f67b2b10b466e8a8eb1bdc4a1223d4e949812593 AS buildtime
 
 WORKDIR /build
 COPY . .
 
 RUN mvn clean package
 
-FROM public.ecr.aws/docker/library/eclipse-temurin:17-jre@sha256:97077b491447b095b0fe8d6d6863526dec637b3e6f8f34e50787690b529253f3 AS runtime
+FROM public.ecr.aws/docker/library/eclipse-temurin:21-jre@sha256:242219ed78dc9c09cef8a34808d18d93977dfd3a4cda3c3f18aba44fde444ea7 AS runtime
 
 VOLUME /tmp
 WORKDIR /app
 
 COPY --from=buildtime /build/target/*.jar /app/app.jar
-RUN chown -R nobody:nobody /app
+RUN chown -R nobody:nogroup /app
 
 EXPOSE 8080
 
