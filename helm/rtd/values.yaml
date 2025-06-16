@@ -38,16 +38,21 @@ microservice-chart:
     servicePort: 8080
 
   serviceAccount:
-    create: false
-    annotations: {}
-    name: ""
+    name: "rtd-workload-identity" # Replace with your service account name if using workload identity
+    # If using Azure Workload Identity, also add the azure section:
+    azure:
+      workloadIdentityClientId: "CHANGEME" # Insert your clientId here if needed
 
   podSecurityContext:
     seccompProfile:
       type: RuntimeDefault
 
   securityContext:
+    readOnlyRootFilesystem: true
     allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - all
     runAsNonRoot: true
     runAsUser: 65534
     runAsGroup: 65534
@@ -58,7 +63,15 @@ microservice-chart:
     KAFKA_SASL_JAAS_CONFIG_CONSUMER_BLOB_STORAGE_EVENTS: evh-rtd-platform-events-rtd-platform-events-sub-rtd
     KAFKA_RTD_PROJECTOR_SASL_JAAS_CONFIG: evh-rtd-file-register-projector-rtd-file-register-projector-producer-policy-rtd
 
-  envConfigMapExternals:
+  tmpVolumeMount:
+    create: true
+    mounts:
+      - name: tmp
+        mountPath: /tmp
+      - name: logs
+        mountPath: /app/logs
+
+  externalConfigMapValues:
     rtd-fileregister:
       OPENTELEMETRY_LOG_LEVEL: APPLICATIONINSIGHTS_INSTRUMENTATION_LOGGING_LEVEL
 
