@@ -7,7 +7,7 @@ parameters:
     type: boolean
     default: true
   - name: 'buildNative'
-    displayName: 'Deploy and build native version'
+    displayName: 'Build native version'
     type: boolean
     default: true
 
@@ -48,6 +48,7 @@ variables:
     kubernetesServiceConnection: '$(DEV_KUBERNETES_SERVICE_CONN)'
     containerRegistry: '$(DEV_CONTAINER_REGISTRY_NAME)'
     selfHostedAgentPool: $(DEV_AGENT_POOL)
+    workloadIdentityClientId: '$(DEV_RTD_WORKLOAD_IDENTITY_CLIENT_ID)'
 
   ${{ elseif startsWith(variables['Build.SourceBranch'], 'refs/heads/uat') }}:
     environment: 'UAT'
@@ -55,6 +56,7 @@ variables:
     kubernetesServiceConnection: '$(UAT_KUBERNETES_SERVICE_CONN)'
     containerRegistry: '$(UAT_CONTAINER_REGISTRY_NAME)'
     selfHostedAgentPool: $(UAT_AGENT_POOL)
+    workloadIdentityClientId: '$(UAT_RTD_WORKLOAD_IDENTITY_CLIENT_ID)'
 
   ${{ elseif startsWith(variables['Build.SourceBranch'], 'refs/heads/main') }}:
     environment: 'PROD'
@@ -62,6 +64,7 @@ variables:
     kubernetesServiceConnection: '$(PROD_KUBERNETES_SERVICE_CONN)'
     containerRegistry: '$(PROD_CONTAINER_REGISTRY_NAME)'
     selfHostedAgentPool: $(PROD_AGENT_POOL)
+    workloadIdentityClientId: '$(PROD_RTD_WORKLOAD_IDENTITY_CLIENT_ID)'
 
   ${{ else }}:
     environment: 'DEV'
@@ -71,6 +74,7 @@ variables:
     kubernetesServiceConnection: '$(DEV_KUBERNETES_SERVICE_CONN)'
     containerRegistry: '$(DEV_CONTAINER_REGISTRY_NAME)'
     selfHostedAgentPool: $(DEV_AGENT_POOL)
+    workloadIdentityClientId: '$(DEV_RTD_WORKLOAD_IDENTITY_CLIENT_ID)'
 
 stages:
   - stage: 'pom_version'
@@ -191,4 +195,4 @@ stages:
                     valueFile: "$(Pipeline.Workspace)/helm/rtd/values-${{ lower(variables.environment) }}.yaml"
                     install: true
                     waitForExecution: true
-                    arguments: "--timeout 5m00s --debug"
+                    arguments: "--timeout 5m00s --set microservice-chart.azure.workloadIdentityClientId=$(workloadIdentityClientId) --debug"
